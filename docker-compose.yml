@@ -1,0 +1,68 @@
+# ローカル開発環境用 Docker Compose
+version: '3.8'
+
+services:
+  # FastAPI バックエンド
+  detective-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=development
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - GOOGLE_CLOUD_PROJECT_ID=${GOOGLE_CLOUD_PROJECT_ID:-test-project}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+      - FIRESTORE_EMULATOR_HOST=firestore-emulator:8080
+      - FIRESTORE_COLLECTION_PREFIX=mystery_walk_dev
+    volumes:
+      - ./backend/src:/app/src
+      - ./shared:/app/shared
+    depends_on:
+      - firestore-emulator
+    restart: unless-stopped
+    command: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  # Firestore エミュレーター
+  firestore-emulator:
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+    ports:
+      - "8080:8080"
+      - "4000:4000"  # Firestore UI
+    environment:
+      - CLOUDSDK_CORE_PROJECT=test-project
+    command: >
+      sh -c "
+        gcloud emulators firestore start 
+        --host-port=0.0.0.0:8080 
+        --rules=firestore.rules
+      "
+    volumes:
+      - firestore-data:/opt/data
+
+  # Redis (キャッシュ用)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  # Nginx (リバースプロキシ)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - detective-api
+    restart: unless-stopped
+
+volumes:
+  firestore-data:
+  redis-data:

@@ -1,0 +1,30 @@
+# 開発用 Dockerfile (ホットリロード対応)
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# システムパッケージのインストール
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python依存関係のインストール
+COPY requirements.txt .
+COPY requirements-dev.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+# アプリケーションコードのマウント用
+VOLUME ["/app/src", "/app/shared"]
+
+# 環境変数
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# 開発用ポート
+EXPOSE 8000
+
+# 開発サーバー起動
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

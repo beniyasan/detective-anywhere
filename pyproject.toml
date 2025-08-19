@@ -1,0 +1,20 @@
+[project]
+name = "detective-anywhere"
+version = "1.0.0"
+description = "GPS連動のAI生成ミステリーゲーム"
+authors = [
+    {name = "Developer", email = "dev@detective-anywhere.com"},
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastapi>=0.104.1",
+    "uvicorn>=0.24.0",
+    "pydantic>=2.5.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,104 @@
+# Cloud Run サービス設定
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: detective-anywhere-api
+  labels:
+    cloud.googleapis.com/location: asia-northeast1
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+spec:
+  template:
+    metadata:
+      labels:
+        run.googleapis.com/startupProbeType: Default
+      annotations:
+        # CPU・メモリ設定
+        run.googleapis.com/cpu-throttling: 'true'
+        run.googleapis.com/memory: '1Gi'
+        run.googleapis.com/cpu: '1'
+        
+        # オートスケーリング設定
+        autoscaling.knative.dev/minScale: '0'
+        autoscaling.knative.dev/maxScale: '10'
+        
+        # ヘルスチェック設定
+        run.googleapis.com/startup-cpu-boost: 'true'
+        
+        # セキュリティ設定
+        run.googleapis.com/execution-environment: gen2
+        run.googleapis.com/sandbox: gvisor
+        
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: detective-anywhere-api@PROJECT_ID.iam.gserviceaccount.com
+      
+      containers:
+        - image: asia-northeast1-docker.pkg.dev/PROJECT_ID/detective-anywhere/backend:latest
+          name: detective-anywhere-api
+          
+          # ポート設定
+          ports:
+            - name: http1
+              containerPort: 8000
+          
+          # 環境変数
+          env:
+            - name: ENV
+              value: 'production'
+            - name: GOOGLE_CLOUD_PROJECT_ID
+              value: 'PROJECT_ID'
+            - name: GOOGLE_CLOUD_LOCATION
+              value: 'asia-northeast1'
+            - name: LOG_LEVEL
+              value: 'INFO'
+            - name: FIRESTORE_COLLECTION_PREFIX
+              value: 'mystery_walk_prod'
+          
+          # シークレット環境変数
+          envFrom:
+            - secretRef:
+                name: api-secrets
+          
+          # リソース設定
+          resources:
+            limits:
+              cpu: '1000m'
+              memory: '1Gi'
+            requests:
+              cpu: '100m'
+              memory: '256Mi'
+          
+          # ヘルスチェック
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 3
+            failureThreshold: 10
+          
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+            periodSeconds: 30
+            failureThreshold: 3
+          
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+
+  traffic:
+    - percent: 100
+      latestRevision: true

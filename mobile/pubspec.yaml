@@ -1,0 +1,56 @@
+name: detective_anywhere
+description: AIミステリー散歩 - GPS連動のAI生成ミステリーゲーム
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI
+  cupertino_icons: ^1.0.2
+  
+  # State Management
+  provider: ^6.1.1
+  
+  # HTTP client
+  dio: ^5.4.0
+  
+  # Location & GPS
+  geolocator: ^10.1.0
+  permission_handler: ^11.2.0
+  
+  # Maps
+  google_maps_flutter: ^2.5.3
+  
+  # Utilities
+  uuid: ^4.2.1
+  shared_preferences: ^2.2.2
+  
+  # Date/Time
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/icons/
+  
+  fonts:
+    - family: NotoSansJP
+      fonts:
+        - asset: assets/fonts/NotoSansJP-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansJP-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSansJP-Bold.ttf
+          weight: 700

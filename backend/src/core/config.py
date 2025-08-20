@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     
     # Gemini AI設定
     gemini_api_key: str = Field(default="", env="GEMINI_API_KEY")
-    gemini_model: str = Field(default="gemini-1.5-pro", env="GEMINI_MODEL")
+    gemini_model: str = Field(default="gemini-2.0-flash-exp", env="GEMINI_MODEL")
     
     # Google Maps設定
     google_maps_api_key: str = Field(default="", env="GOOGLE_MAPS_API_KEY")

@@ -135,7 +135,7 @@ async def start_game_demo(request: Request):
             raise Exception("Gemini APIキーが設定されていません")
         
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-pro")
+        model = genai.GenerativeModel("gemini-2.0-flash-exp")
         
         # 動的シナリオ生成プロンプト
         prompt = f"""

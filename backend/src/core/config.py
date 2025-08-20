@@ -3,8 +3,9 @@
 """
 
 import os
-from typing import Optional
-from pydantic import BaseSettings, Field
+from typing import Optional, List
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -16,15 +17,15 @@ class Settings(BaseSettings):
     api_prefix: str = "/api/v1"
     
     # Google Cloud設定
-    project_id: str = Field(..., env="GOOGLE_CLOUD_PROJECT_ID")
+    project_id: str = Field(default="detective-anywhere-local", env="GOOGLE_CLOUD_PROJECT_ID")
     location: str = Field(default="asia-northeast1", env="GOOGLE_CLOUD_LOCATION")
     
     # Gemini AI設定
-    gemini_api_key: str = Field(..., env="GEMINI_API_KEY")
+    gemini_api_key: str = Field(default="", env="GEMINI_API_KEY")
     gemini_model: str = Field(default="gemini-1.5-pro", env="GEMINI_MODEL")
     
     # Google Maps設定
-    google_maps_api_key: str = Field(..., env="GOOGLE_MAPS_API_KEY")
+    google_maps_api_key: str = Field(default="", env="GOOGLE_MAPS_API_KEY")
     
     # Firestore設定
     firestore_collection_prefix: str = Field(default="mystery_walk", env="FIRESTORE_COLLECTION_PREFIX")
@@ -43,14 +44,23 @@ class Settings(BaseSettings):
     
     # セキュリティ設定
     api_key_header: str = "X-API-Key"
-    cors_origins: list = ["*"]
+    cors_origins: str = Field(default="*")
+    
+    @field_validator('cors_origins')
+    @classmethod
+    def parse_cors_origins(cls, v):
+        if isinstance(v, str):
+            return [origin.strip() for origin in v.split(',')]
+        return v
     
     # ログ設定
     log_level: str = Field(default="INFO", env="LOG_LEVEL")
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
+    model_config = {
+        "env_file": ".env", 
+        "case_sensitive": False,
+        "extra": "ignore"
+    }
 
 
 # グローバル設定インスタンス

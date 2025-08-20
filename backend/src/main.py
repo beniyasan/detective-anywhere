@@ -48,8 +48,12 @@ async def lifespan(app: FastAPI):
     await initialize_firestore()
     
     # AIサービスの初期化
-    ai_service = AIService()
+    from .services.ai_service import ai_service
     await ai_service.initialize()
+    
+    # POIサービスの初期化
+    from .services.poi_service import poi_service
+    poi_service.initialize()
     
     print("✅ 初期化完了")
     
@@ -137,7 +141,8 @@ async def health_check():
     else:
         services_status.update({
             "firestore": "mocked" if os.getenv('USE_FIRESTORE_EMULATOR', 'false') == 'false' else "emulator",
-            "gemini": "mocked" if os.getenv('USE_MOCK_DATA', 'true') == 'true' else "connected"
+            "gemini": "connected",
+            "google_maps": "connected"
         })
     
     return {

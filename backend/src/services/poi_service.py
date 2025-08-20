@@ -9,6 +9,7 @@ import asyncio
 import random
 
 from ..core.config import settings
+from ..config.secrets import get_api_key
 from ...shared.models.location import Location, POI, POIType
 
 
@@ -35,8 +36,9 @@ class POIService:
     
     def initialize(self):
         """POI サービスの初期化"""
-        if settings.google_maps_api_key:
-            self.gmaps = googlemaps.Client(key=settings.google_maps_api_key)
+        google_maps_api_key = get_api_key('google_maps')
+        if google_maps_api_key:
+            self.gmaps = googlemaps.Client(key=google_maps_api_key)
         else:
             raise ValueError("Google Maps API キーが設定されていません")
     

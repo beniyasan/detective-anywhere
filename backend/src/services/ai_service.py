@@ -4,15 +4,16 @@ AI サービス - Gemini APIを使用したシナリオ生成と推理判定
 
 import json
 import asyncio
+import time
 from typing import List, Dict, Any, Optional
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
+import logging
+
+logger = logging.getLogger(__name__)
 
 from ..core.config import settings
-from ...shared.models.scenario import Scenario, ScenarioGenerationRequest
-from ...shared.models.character import Character, Temperament, CharacterReaction
-from ...shared.models.evidence import Evidence, EvidenceImportance
-from ...shared.models.location import Location, POIType
+from ..config.secrets import get_api_key
 
 
 class AIService:
@@ -44,15 +45,36 @@ class AIService:
                 "threshold": "BLOCK_MEDIUM_AND_ABOVE"
             }
         ]
+        
+        # レート制限とリトライ設定
+        self.last_request_time = 0
+        self.min_request_interval = 1.0  # 1秒間隔
+        self.max_retries = settings.max_scenario_generation_retries
+        self.retry_delay = 2.0  # 2秒
     
     async def initialize(self):
         """AIサービスの初期化"""
-        genai.configure(api_key=settings.gemini_api_key)
+        gemini_api_key = get_api_key('gemini')
+        if not gemini_api_key:
+            raise RuntimeError("Gemini API keyが設定されていません")
+            
+        genai.configure(api_key=gemini_api_key)
         self.model = genai.GenerativeModel(
             model_name=settings.gemini_model,
             generation_config=self.generation_config,
             safety_settings=self.safety_settings
         )
+    
+    async def _wait_for_rate_limit(self):
+        """レート制限のための待機"""
+        current_time = time.time()
+        time_since_last_request = current_time - self.last_request_time
+        
+        if time_since_last_request < self.min_request_interval:
+            wait_time = self.min_request_interval - time_since_last_request
+            await asyncio.sleep(wait_time)
+        
+        self.last_request_time = time.time()
     
     async def generate_mystery_scenario(
         self,
@@ -62,20 +84,54 @@ class AIService:
         
         prompt = self._create_scenario_prompt(request)
         
-        try:
-            response = await asyncio.to_thread(
-                self.model.generate_content,
-                prompt
-            )
-            
-            # JSONレスポンスをパース
-            scenario_data = json.loads(response.text)
-            
-            # Scenarioオブジェクトに変換
-            return self._parse_scenario_response(scenario_data)
-            
-        except Exception as e:
-            raise RuntimeError(f"シナリオ生成に失敗しました: {str(e)}")
+        for attempt in range(self.max_retries):
+            try:
+                # レート制限待機
+                await self._wait_for_rate_limit()
+                
+                logger.info(f"シナリオ生成開始 (試行 {attempt + 1}/{self.max_retries})")
+                
+                response = await asyncio.wait_for(
+                    asyncio.to_thread(
+                        self.model.generate_content,
+                        prompt
+                    ),
+                    timeout=settings.scenario_generation_timeout
+                )
+                
+                # JSONレスポンスをパース
+                scenario_data = json.loads(response.text)
+                
+                # Scenarioオブジェクトに変換
+                scenario = self._parse_scenario_response(scenario_data)
+                logger.info(f"シナリオ生成成功: {scenario.title}")
+                return scenario
+                
+            except asyncio.TimeoutError:
+                logger.warning(f"シナリオ生成がタイムアウトしました (試行 {attempt + 1})")
+                if attempt < self.max_retries - 1:
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    raise RuntimeError("シナリオ生成がタイムアウトしました")
+                    
+            except json.JSONDecodeError as e:
+                logger.warning(f"JSONパースエラー (試行 {attempt + 1}): {e}")
+                if attempt < self.max_retries - 1:
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    raise RuntimeError(f"シナリオ生成のレスポンス形式が不正です: {str(e)}")
+                    
+            except Exception as e:
+                logger.error(f"シナリオ生成エラー (試行 {attempt + 1}): {e}")
+                if attempt < self.max_retries - 1:
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    raise RuntimeError(f"シナリオ生成に失敗しました: {str(e)}")
+        
+        raise RuntimeError("最大リトライ回数を超えました")
     
     def _create_scenario_prompt(self, request: ScenarioGenerationRequest) -> str:
         """シナリオ生成用プロンプトを作成"""
@@ -241,43 +297,76 @@ class AIService:
 証拠を生成してください。
 """
         
-        try:
-            response = await asyncio.to_thread(
-                self.model.generate_content,
-                prompt
-            )
-            
-            evidence_data = json.loads(response.text)
-            evidence_list = []
-            
-            for i, item in enumerate(evidence_data["evidence"]):
-                # POI情報を取得
-                poi_info = next(
-                    (poi for poi in poi_list if poi["name"] == item["poi_name"]),
-                    poi_list[i % len(poi_list)]  # フォールバック
+        for attempt in range(self.max_retries):
+            try:
+                # レート制限待機
+                await self._wait_for_rate_limit()
+                
+                logger.info(f"証拠生成開始 (試行 {attempt + 1}/{self.max_retries})")
+                
+                response = await asyncio.wait_for(
+                    asyncio.to_thread(
+                        self.model.generate_content,
+                        prompt
+                    ),
+                    timeout=settings.scenario_generation_timeout
                 )
                 
-                evidence = Evidence(
-                    evidence_id=f"evidence_{i+1}",
-                    name=item["name"],
-                    description=item["description"],
-                    discovery_text=item["discovery_text"],
-                    importance=EvidenceImportance(item["importance"]),
-                    location=Location(
-                        lat=poi_info["lat"],
-                        lng=poi_info["lng"]
-                    ),
-                    poi_name=poi_info["name"],
-                    poi_type=poi_info.get("type", "unknown"),
-                    related_character=item.get("related_character"),
-                    clue_text=item.get("clue_text")
-                )
-                evidence_list.append(evidence)
-            
-            return evidence_list
-            
-        except Exception as e:
-            raise RuntimeError(f"証拠生成に失敗しました: {str(e)}")
+                evidence_data = json.loads(response.text)
+                evidence_list = []
+                
+                for i, item in enumerate(evidence_data["evidence"]):
+                    # POI情報を取得
+                    poi_info = next(
+                        (poi for poi in poi_list if poi["name"] == item["poi_name"]),
+                        poi_list[i % len(poi_list)]  # フォールバック
+                    )
+                    
+                    evidence = Evidence(
+                        evidence_id=f"evidence_{i+1}",
+                        name=item["name"],
+                        description=item["description"],
+                        discovery_text=item["discovery_text"],
+                        importance=EvidenceImportance(item["importance"]),
+                        location=Location(
+                            lat=poi_info["lat"],
+                            lng=poi_info["lng"]
+                        ),
+                        poi_name=poi_info["name"],
+                        poi_type=poi_info.get("type", "unknown"),
+                        related_character=item.get("related_character"),
+                        clue_text=item.get("clue_text")
+                    )
+                    evidence_list.append(evidence)
+                
+                logger.info(f"証拠生成成功: {len(evidence_list)}個の証拠を生成")
+                return evidence_list
+                
+            except asyncio.TimeoutError:
+                logger.warning(f"証拠生成がタイムアウトしました (試行 {attempt + 1})")
+                if attempt < self.max_retries - 1:
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    raise RuntimeError("証拠生成がタイムアウトしました")
+                    
+            except json.JSONDecodeError as e:
+                logger.warning(f"証拠生成JSONパースエラー (試行 {attempt + 1}): {e}")
+                if attempt < self.max_retries - 1:
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    raise RuntimeError(f"証拠生成のレスポンス形式が不正です: {str(e)}")
+                    
+            except Exception as e:
+                logger.error(f"証拠生成エラー (試行 {attempt + 1}): {e}")
+                if attempt < self.max_retries - 1:
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    raise RuntimeError(f"証拠生成に失敗しました: {str(e)}")
+        
+        raise RuntimeError("最大リトライ回数を超えました")
     
     async def judge_deduction(
         self,
@@ -330,31 +419,64 @@ class AIService:
 キャラクター反応を生成してください。
 """
         
-        try:
-            response = await asyncio.to_thread(
-                self.model.generate_content,
-                prompt
-            )
-            
-            reaction_data = json.loads(response.text)
-            reactions = []
-            
-            for item in reaction_data["reactions"]:
-                character = scenario.get_suspect_by_name(item["character_name"])
-                if character:
-                    reaction = CharacterReaction(
-                        character_name=item["character_name"],
-                        reaction=item["reaction"],
-                        reaction_type=item["reaction_type"],
-                        temperament=character.temperament,
-                        emotion_intensity=item.get("emotion_intensity", 0.5)
-                    )
-                    reactions.append(reaction)
-            
-            return reactions
-            
-        except Exception as e:
-            raise RuntimeError(f"判定生成に失敗しました: {str(e)}")
+        for attempt in range(self.max_retries):
+            try:
+                # レート制限待機
+                await self._wait_for_rate_limit()
+                
+                logger.info(f"推理判定開始 (試行 {attempt + 1}/{self.max_retries})")
+                
+                response = await asyncio.wait_for(
+                    asyncio.to_thread(
+                        self.model.generate_content,
+                        prompt
+                    ),
+                    timeout=settings.scenario_generation_timeout
+                )
+                
+                reaction_data = json.loads(response.text)
+                reactions = []
+                
+                for item in reaction_data["reactions"]:
+                    character = scenario.get_suspect_by_name(item["character_name"])
+                    if character:
+                        reaction = CharacterReaction(
+                            character_name=item["character_name"],
+                            reaction=item["reaction"],
+                            reaction_type=item["reaction_type"],
+                            temperament=character.temperament,
+                            emotion_intensity=item.get("emotion_intensity", 0.5)
+                        )
+                        reactions.append(reaction)
+                
+                logger.info(f"推理判定成功: {len(reactions)}個の反応を生成")
+                return reactions
+                
+            except asyncio.TimeoutError:
+                logger.warning(f"推理判定がタイムアウトしました (試行 {attempt + 1})")
+                if attempt < self.max_retries - 1:
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    raise RuntimeError("推理判定がタイムアウトしました")
+                    
+            except json.JSONDecodeError as e:
+                logger.warning(f"推理判定JSONパースエラー (試行 {attempt + 1}): {e}")
+                if attempt < self.max_retries - 1:
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    raise RuntimeError(f"推理判定のレスポンス形式が不正です: {str(e)}")
+                    
+            except Exception as e:
+                logger.error(f"推理判定エラー (試行 {attempt + 1}): {e}")
+                if attempt < self.max_retries - 1:
+                    await asyncio.sleep(self.retry_delay)
+                    continue
+                else:
+                    raise RuntimeError(f"推理判定に失敗しました: {str(e)}")
+        
+        raise RuntimeError("最大リトライ回数を超えました")
 
 
 # グローバルAIサービスインスタンス

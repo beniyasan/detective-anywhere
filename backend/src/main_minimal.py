@@ -263,7 +263,7 @@ async def start_game(request: GameStartRequest):
             "game_id": game_id,
             "player_id": request.player_id,
             "scenario": scenario_data,
-            "evidence": [ev.dict() for ev in evidence_list],
+            "evidence": [ev.model_dump() for ev in evidence_list],
             "discovered_evidence": [],
             "status": "active",
             "created_at": datetime.now().isoformat()

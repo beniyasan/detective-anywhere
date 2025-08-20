@@ -15,6 +15,7 @@ from .api.routes import game, evidence, deduction, poi
 from .core.config import settings
 from .core.database import initialize_firestore
 from .services.ai_service import AIService
+from .config.secrets import validate_required_secrets, get_database_config
 
 
 @asynccontextmanager
@@ -22,6 +23,26 @@ async def lifespan(app: FastAPI):
     """アプリケーションライフサイクル管理"""
     # スタートアップ
     print("🚀 AIミステリー散歩 API サーバーを起動中...")
+    
+    # 本番環境でのシークレット検証
+    env = os.getenv('ENV', 'development')
+    if env == 'production':
+        print("🔐 本番環境: APIキーの検証中...")
+        secrets_validation = validate_required_secrets()
+        
+        for secret_name, is_valid in secrets_validation.items():
+            status = "✅" if is_valid else "❌"
+            print(f"   {status} {secret_name}: {'設定済み' if is_valid else '未設定'}")
+        
+        if not all(secrets_validation.values()):
+            print("❌ 必須APIキーが不足しています。docs/GOOGLE_CLOUD_SETUP.md を参照してください。")
+            raise RuntimeError("必須APIキーが設定されていません")
+        
+        print("✅ 本番環境APIキー検証完了")
+    
+    # データベース設定取得
+    db_config = get_database_config()
+    print(f"📊 データベース設定: {db_config['project_id']} (エミュレーター: {db_config['use_emulator']})")
     
     # Firestoreの初期化
     await initialize_firestore()
@@ -47,9 +68,10 @@ app = FastAPI(
 )
 
 # CORS設定
+cors_origins = os.getenv('CORS_ORIGINS', '*').split(',')
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 本番環境では適切に設定
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -95,13 +117,32 @@ async def root():
 @app.get("/health")
 async def health_check():
     """ヘルスチェック"""
+    env = os.getenv('ENV', 'development')
+    
+    # 本番環境での詳細ヘルスチェック
+    services_status = {
+        "api": "running",
+        "environment": env
+    }
+    
+    if env == 'production':
+        # 本番環境でのAPIキー検証
+        secrets_validation = validate_required_secrets()
+        services_status.update({
+            "gemini_api": "available" if secrets_validation.get('GEMINI_API_KEY', False) else "unavailable",
+            "google_maps_api": "available" if secrets_validation.get('GOOGLE_MAPS_API_KEY', False) else "unavailable",
+            "firestore": "connected",
+            "secret_manager": "enabled"
+        })
+    else:
+        services_status.update({
+            "firestore": "mocked" if os.getenv('USE_FIRESTORE_EMULATOR', 'false') == 'false' else "emulator",
+            "gemini": "mocked" if os.getenv('USE_MOCK_DATA', 'true') == 'true' else "connected"
+        })
+    
     return {
         "status": "healthy",
-        "services": {
-            "api": "running",
-            "firestore": "connected",
-            "gemini": "available"
-        }
+        "services": services_status
     }
 
 

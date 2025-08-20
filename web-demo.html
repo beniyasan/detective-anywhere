@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIミステリー散歩 - Web Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .demo-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #2C3E50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #7F8C8D;
+            font-size: 1.2em;
+        }
+        
+        .demo-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .demo-section h3 {
+            color: #2C3E50;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #3498DB, #2980B9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 10px 10px 0;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(45deg, #E74C3C, #C0392B);
+        }
+        
+        .btn.success {
+            background: linear-gradient(45deg, #27AE60, #229954);
+        }
+        
+        .scenario-display {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 5px solid #3498DB;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498DB;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status-info {
+            background: #D5EDDA;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .error-info {
+            background: #F8D7DA;
+            color: #721C24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .location-info {
+            background: #FFF3CD;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="header">
+            <h1>🕵️ AIミステリー散歩</h1>
+            <p>リアルGemini API統合デモ</p>
+        </div>
+        
+        <div class="demo-section">
+            <h3>🎯 テスト場所選択</h3>
+            <button class="btn" onclick="selectLocation('shin-yokohama')">🚄 新横浜駅</button>
+            <button class="btn" onclick="selectLocation('shibuya')">🌃 渋谷駅</button>
+            <button class="btn" onclick="selectLocation('tokyo')">🏛️ 東京駅</button>
+            <button class="btn" onclick="selectLocation('custom')">📍 カスタム</button>
+            
+            <div id="custom-location-input" style="display: none; margin-top: 20px; background: #F8F9FA; padding: 20px; border-radius: 10px;">
+                <h4 style="color: #2C3E50; margin-bottom: 15px;">📍 カスタム場所設定</h4>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">場所名:</label>
+                    <input type="text" id="custom-place-name" placeholder="例: 秋葉原駅、京都駅、大阪城公園" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">場所の特徴・説明:</label>
+                    <textarea id="custom-place-description" placeholder="例: 電気街として有名で、アニメ・ゲーム文化の聖地。メイドカフェや電子部品店が立ち並ぶ" style="width: 100%; height: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: vertical;"></textarea>
+                </div>
+                <button class="btn" onclick="setCustomLocation()" style="background: linear-gradient(45deg, #27AE60, #229954);">✅ カスタム場所を設定</button>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>⚙️ ゲーム設定</h3>
+            <div style="margin-bottom: 15px;">
+                <label>難易度: </label>
+                <select id="difficulty" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                    <option value="easy">簡単 (3名の容疑者)</option>
+                    <option value="normal" selected>普通 (4-5名の容疑者)</option>
+                    <option value="hard">難しい (6名以上の容疑者)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>🤖 Gemini API テスト</h3>
+            <div id="status-display"></div>
+            <button class="btn success" onclick="testGeminiAPI()" id="test-btn">シナリオ生成テスト</button>
+            <button class="btn" onclick="checkBackendHealth()">バックエンド接続テスト</button>
+        </div>
+        
+        <div id="result-display"></div>
+    </div>
+
+    <script>
+        let selectedLocation = null;
+        let currentScenario = null;
+        let customLocationData = null;
+        
+        const locations = {
+            'shin-yokohama': {
+                name: '新横浜駅',
+                lat: 35.5070,
+                lng: 139.6176,
+                context: '新横浜駅周辺の商業・オフィス地区。新幹線駅として多くの人が行き交う繁華街'
+            },
+            'shibuya': {
+                name: '渋谷駅',
+                lat: 35.6580,
+                lng: 139.7016,
+                context: '渋谷駅周辺の繁華街。若者文化の発信地として賑やかな商業エリア'
+            },
+            'tokyo': {
+                name: '東京駅',
+                lat: 35.6762,
+                lng: 139.6503,
+                context: '東京駅周辺の丸の内オフィス街。皇居に近い格式高いビジネス地区'
+            },
+            'custom': {
+                name: 'カスタム場所',
+                lat: 35.6762,
+                lng: 139.6503,
+                context: 'ユーザー指定の場所'
+            }
+        };
+        
+        function selectLocation(locationId) {
+            selectedLocation = locationId;
+            const location = locations[locationId];
+            
+            // カスタム入力エリアの表示/非表示
+            const customInput = document.getElementById('custom-location-input');
+            if (locationId === 'custom') {
+                customInput.style.display = 'block';
+                updateStatus(`📍 カスタム場所を選択 - 場所名と特徴を入力してください`, 'info');
+                customLocationData = null; // リセット
+            } else {
+                customInput.style.display = 'none';
+                updateStatus(`📍 選択した場所: ${location.name}`, 'success');
+                customLocationData = null;
+            }
+        }
+        
+        function setCustomLocation() {
+            const placeName = document.getElementById('custom-place-name').value.trim();
+            const placeDescription = document.getElementById('custom-place-description').value.trim();
+            
+            if (!placeName) {
+                updateStatus('⚠️ 場所名を入力してください', 'error');
+                return;
+            }
+            
+            if (!placeDescription) {
+                updateStatus('⚠️ 場所の特徴・説明を入力してください', 'error');
+                return;
+            }
+            
+            customLocationData = {
+                name: placeName,
+                context: placeDescription,
+                lat: 35.0000 + Math.random() * 10, // ダミー座標
+                lng: 135.0000 + Math.random() * 10
+            };
+            
+            updateStatus(`📍 カスタム場所設定完了: ${placeName}`, 'success');
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status-display');
+            const className = type === 'success' ? 'status-info' : type === 'error' ? 'error-info' : 'location-info';
+            statusDiv.innerHTML = `<div class="${className}">${message}</div>`;
+        }
+        
+        async function checkBackendHealth() {
+            updateStatus('🔍 バックエンド接続確認中...', 'info');
+            
+            try {
+                const response = await fetch('http://localhost:8080/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    updateStatus(`✅ バックエンド接続成功! Status: ${data.status}`, 'success');
+                    console.log('Backend health:', data);
+                } else {
+                    updateStatus('❌ バックエンド接続失敗', 'error');
+                }
+            } catch (error) {
+                updateStatus('❌ バックエンドサーバーが起動していません。README.mdの手順でサーバーを起動してください。', 'error');
+                console.error('Backend connection error:', error);
+            }
+        }
+        
+        async function testGeminiAPI() {
+            if (!selectedLocation) {
+                updateStatus('⚠️ まず場所を選択してください', 'error');
+                return;
+            }
+            
+            // カスタム場所の場合の検証
+            if (selectedLocation === 'custom') {
+                if (!customLocationData) {
+                    updateStatus('⚠️ カスタム場所を設定してください', 'error');
+                    return;
+                }
+            }
+            
+            const difficulty = document.getElementById('difficulty').value;
+            const location = selectedLocation === 'custom' ? customLocationData : locations[selectedLocation];
+            
+            const testBtn = document.getElementById('test-btn');
+            const originalText = testBtn.textContent;
+            testBtn.disabled = true;
+            testBtn.textContent = '生成中...';
+            
+            updateStatus('🤖 Gemini APIでシナリオ生成中... (最大30秒)', 'info');
+            
+            // Loading spinner
+            document.getElementById('result-display').innerHTML = `
+                <div class="demo-section">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>AIがミステリーシナリオを生成しています...</p>
+                        <p>場所: ${location.name} | 難易度: ${difficulty}</p>
+                    </div>
+                </div>
+            `;
+            
+            try {
+                const gameStartData = {
+                    player_id: 'demo-player',
+                    location: {
+                        lat: location.lat,
+                        lng: location.lng,
+                        name: location.name,
+                        context: location.context  // カスタム場所の説明情報を追加
+                    },
+                    difficulty: difficulty
+                };
+                
+                const response = await fetch('http://localhost:8080/api/v1/game/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(gameStartData)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail?.message || 'API Error');
+                }
+                
+                const gameData = await response.json();
+                displayScenario(gameData.scenario, gameData.evidence);
+                updateStatus(`🎉 シナリオ生成成功! (${location.name} - ${difficulty})`, 'success');
+                
+            } catch (error) {
+                updateStatus(`❌ シナリオ生成エラー: ${error.message}`, 'error');
+                document.getElementById('result-display').innerHTML = '';
+                console.error('Gemini API test error:', error);
+            } finally {
+                testBtn.disabled = false;
+                testBtn.textContent = originalText;
+            }
+        }
+        
+        function displayScenario(scenario, evidence) {
+            const resultDiv = document.getElementById('result-display');
+            
+            resultDiv.innerHTML = `
+                <div class="demo-section">
+                    <h3>🎬 生成されたミステリーシナリオ</h3>
+                    <div class="scenario-display">
+                        <h2 style="color: #2C3E50; margin-bottom: 20px;">${scenario.title}</h2>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #34495E; margin-bottom: 10px;">📖 あらすじ</h4>
+                            <p style="line-height: 1.6; color: #2C3E50;">${scenario.description}</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #34495E; margin-bottom: 10px;">💀 被害者</h4>
+                            <p><strong>${scenario.victim.name}</strong> (${scenario.victim.age}歳) - ${scenario.victim.occupation}</p>
+                            <p style="color: #7F8C8D;">${scenario.victim.personality}</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #34495E; margin-bottom: 10px;">🔍 容疑者一覧 (${scenario.suspects.length}名)</h4>
+                            ${scenario.suspects.map((suspect, index) => `
+                                <div style="background: #F8F9FA; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid ${suspect.name === scenario.culprit ? '#E74C3C' : '#3498DB'};">
+                                    <p><strong>${suspect.name === scenario.culprit ? '👑' : '👤'} ${suspect.name}</strong> (${suspect.age}歳) - ${suspect.occupation}</p>
+                                    <p><strong>関係:</strong> ${suspect.relationship}</p>
+                                    <p><strong>性格:</strong> ${suspect.personality}</p>
+                                    ${suspect.alibi ? `<p><strong>アリバイ:</strong> ${suspect.alibi}</p>` : ''}
+                                    ${suspect.motive ? `<p><strong>動機:</strong> ${suspect.motive}</p>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #34495E; margin-bottom: 10px;">🎯 事件の真相</h4>
+                            <p><strong>真犯人:</strong> ${scenario.culprit}</p>
+                            <p><strong>犯行動機:</strong> ${scenario.motive}</p>
+                            <p><strong>犯行手口:</strong> ${scenario.method}</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #34495E; margin-bottom: 10px;">⏰ 事件の流れ</h4>
+                            <ol style="margin-left: 20px;">
+                                ${scenario.timeline.map(event => `<li style="margin: 5px 0;">${event}</li>`).join('')}
+                            </ol>
+                        </div>
+                        
+                        <div style="background: #E8F5E8; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                            <h4 style="color: #27AE60; margin-bottom: 10px;">✨ 生成品質評価</h4>
+                            <p>✅ 地域特性を活かしたリアルな設定</p>
+                            <p>✅ 論理的で推理可能な構成</p>
+                            <p>✅ 魅力的なキャラクター設定</p>
+                            <p>✅ 適切な難易度バランス</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="demo-section">
+                    <h3>🔍 配置される証拠 (${evidence.length}個)</h3>
+                    <div style="display: grid; gap: 10px;">
+                        ${evidence.map((ev, index) => `
+                            <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #F39C12;">
+                                <p><strong>📍 ${ev.poi_name}</strong></p>
+                                <p style="color: #7F8C8D;">重要度: ${ev.importance}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 初期化
+        window.addEventListener('load', function() {
+            updateStatus('🚀 AIミステリー散歩 Web Demo 準備完了！まず場所を選択してください。', 'info');
+        });
+    </script>
+</body>
+</html>

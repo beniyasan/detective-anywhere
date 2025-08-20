@@ -271,11 +271,12 @@
             updateStatus('🔍 バックエンド接続確認中...', 'info');
             
             try {
-                const response = await fetch('http://localhost:8080/health');
+                // 正しいポートとエンドポイントを使用
+                const response = await fetch('http://localhost:8080/');
                 const data = await response.json();
                 
                 if (response.ok) {
-                    updateStatus(`✅ バックエンド接続成功! Status: ${data.status}`, 'success');
+                    updateStatus(`✅ バックエンド接続成功! ${data.message}`, 'success');
                     console.log('Backend health:', data);
                 } else {
                     updateStatus('❌ バックエンド接続失敗', 'error');
@@ -324,16 +325,14 @@
             try {
                 const gameStartData = {
                     player_id: 'demo-player',
-                    location: {
+                    location: {  // API仕様に合わせて修正
                         lat: location.lat,
-                        lng: location.lng,
-                        name: location.name,
-                        context: location.context  // カスタム場所の説明情報を追加
+                        lng: location.lng
                     },
                     difficulty: difficulty
                 };
                 
-                const response = await fetch('http://localhost:8080/api/v1/game/start', {
+                const response = await fetch('http://localhost:8080/api/v1/game/start', {  // ポート修正
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -347,7 +346,7 @@
                 }
                 
                 const gameData = await response.json();
-                displayScenario(gameData.scenario, gameData.evidence);
+                displayScenario(gameData.scenario, gameData.evidence, gameData.game_id);
                 updateStatus(`🎉 シナリオ生成成功! (${location.name} - ${difficulty})`, 'success');
                 
             } catch (error) {
@@ -360,7 +359,7 @@
             }
         }
         
-        function displayScenario(scenario, evidence) {
+        function displayScenario(scenario, evidence, gameId) {
             const resultDiv = document.getElementById('result-display');
             
             resultDiv.innerHTML = `
@@ -368,6 +367,13 @@
                     <h3>🎬 生成されたミステリーシナリオ</h3>
                     <div class="scenario-display">
                         <h2 style="color: #2C3E50; margin-bottom: 20px;">${scenario.title}</h2>
+                        
+                        <div style="margin-bottom: 20px; background: #E3F2FD; padding: 15px; border-radius: 8px;">
+                            <h4 style="color: #1976D2; margin-bottom: 10px;">🎮 ゲーム情報</h4>
+                            <p><strong>ゲームID:</strong> ${gameId}</p>
+                            <p><strong>証拠数:</strong> ${evidence.length}個</p>
+                            <p><strong>発見半径:</strong> 実装済みのGPS検証システムを使用</p>
+                        </div>
                         
                         <div style="margin-bottom: 25px;">
                             <h4 style="color: #34495E; margin-bottom: 10px;">📖 あらすじ</h4>
@@ -396,23 +402,15 @@
                         <div style="margin-bottom: 25px;">
                             <h4 style="color: #34495E; margin-bottom: 10px;">🎯 事件の真相</h4>
                             <p><strong>真犯人:</strong> ${scenario.culprit}</p>
-                            <p><strong>犯行動機:</strong> ${scenario.motive}</p>
-                            <p><strong>犯行手口:</strong> ${scenario.method}</p>
-                        </div>
-                        
-                        <div style="margin-bottom: 25px;">
-                            <h4 style="color: #34495E; margin-bottom: 10px;">⏰ 事件の流れ</h4>
-                            <ol style="margin-left: 20px;">
-                                ${scenario.timeline.map(event => `<li style="margin: 5px 0;">${event}</li>`).join('')}
-                            </ol>
                         </div>
                         
                         <div style="background: #E8F5E8; padding: 15px; border-radius: 8px; margin-top: 20px;">
-                            <h4 style="color: #27AE60; margin-bottom: 10px;">✨ 生成品質評価</h4>
-                            <p>✅ 地域特性を活かしたリアルな設定</p>
-                            <p>✅ 論理的で推理可能な構成</p>
-                            <p>✅ 魅力的なキャラクター設定</p>
-                            <p>✅ 適切な難易度バランス</p>
+                            <h4 style="color: #27AE60; margin-bottom: 10px;">✨ 実装済み機能</h4>
+                            <p>✅ Firestore統合データベース</p>
+                            <p>✅ GPS精度ベース証拠発見</p>
+                            <p>✅ 適応的発見半径計算</p>
+                            <p>✅ GPS偽造検出システム</p>
+                            <p>✅ ゲームセッション永続化</p>
                         </div>
                     </div>
                 </div>
@@ -422,10 +420,20 @@
                     <div style="display: grid; gap: 10px;">
                         ${evidence.map((ev, index) => `
                             <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #F39C12;">
-                                <p><strong>📍 ${ev.poi_name}</strong></p>
+                                <p><strong>📍 ${ev.poi_name}</strong> (${ev.poi_type})</p>
+                                <p><strong>証拠:</strong> ${ev.name}</p>
                                 <p style="color: #7F8C8D;">重要度: ${ev.importance}</p>
+                                <p style="font-size: 0.9em; color: #666;">GPS座標: ${ev.location.lat.toFixed(4)}, ${ev.location.lng.toFixed(4)}</p>
                             </div>
                         `).join('')}
+                    </div>
+                    
+                    <div style="background: #FFF3E0; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                        <h4 style="color: #F57F17; margin-bottom: 10px;">🚶‍♂️ 実際のゲームプレイ方法</h4>
+                        <p>1. モバイルデバイスでGPS機能を有効にする</p>
+                        <p>2. 証拠の位置に実際に移動する</p>
+                        <p>3. GPS検証システムが位置を確認して証拠を発見</p>
+                        <p>4. すべての証拠を集めて推理を完成させる</p>
                     </div>
                 </div>
             `;

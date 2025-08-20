@@ -6,7 +6,7 @@ import uuid
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 
-from ..core.database import game_session_repo, player_repo, game_history_repo
+from .database_service import database_service
 from ...shared.models.game import (
     GameSession, GameStatus, Difficulty, GameScore, 
     DeductionRequest, DeductionResult
@@ -18,6 +18,8 @@ from ...shared.models.character import CharacterReaction
 
 from .ai_service import ai_service
 from .poi_service import poi_service
+from .enhanced_poi_service import enhanced_poi_service
+from .gps_service import gps_service, GPSReading, GPSAccuracy
 
 
 class GameService:
@@ -46,18 +48,22 @@ class GameService:
             raise ValueError("無効な位置情報です")
         
         # 同じプレイヤーのアクティブなゲーム数チェック
-        active_games = await game_session_repo.get_active_games_by_player(player_id)
+        active_games = await database_service.get_active_games_by_player(player_id)
         if len(active_games) >= 3:  # 最大3つまで
             raise ValueError("同時進行可能なゲーム数を超えています")
         
-        # 周辺POI検索
-        nearby_pois = await poi_service.find_nearby_pois(
+        # 拡張POIサービスを初期化
+        await enhanced_poi_service.initialize()
+        
+        # 証拠配置に最適化されたPOI検索
+        evidence_count = self._get_evidence_count(difficulty)
+        evidence_pois = await enhanced_poi_service.find_evidence_suitable_pois(
             player_location,
             radius=1000,
-            min_count=5
+            evidence_count=evidence_count
         )
         
-        if len(nearby_pois) < 3:
+        if len(evidence_pois) < 3:
             raise ValueError("この地域にはゲーム作成に十分なPOIがありません")
         
         # 地域コンテキスト取得
@@ -67,22 +73,19 @@ class GameService:
         scenario_request = ScenarioGenerationRequest(
             difficulty=difficulty.value,
             location_context=location_context,
-            poi_types=[poi.poi_type.value for poi in nearby_pois],
+            poi_types=[poi.poi_type.value for poi in evidence_pois],
             suspect_count_range=self._get_suspect_count_range(difficulty)
         )
         
         # AIでシナリオ生成
         scenario = await ai_service.generate_mystery_scenario(scenario_request)
         
-        # 証拠配置用POI選択
-        evidence_count = self._get_evidence_count(difficulty)
-        evidence_pois = poi_service.select_evidence_pois(nearby_pois, evidence_count)
-        
-        # 証拠生成
+        # 証拠生成（選択されたPOIを使用）
         evidence_list = await ai_service.generate_evidence(
             scenario,
             [{"name": poi.name, "type": poi.poi_type.value, 
-              "lat": poi.location.lat, "lng": poi.location.lng} for poi in evidence_pois],
+              "lat": poi.location.lat, "lng": poi.location.lng,
+              "poi_id": poi.poi_id, "address": poi.address} for poi in evidence_pois],
             evidence_count
         )
         
@@ -98,14 +101,14 @@ class GameService:
         )
         
         # データベースに保存
-        await self._save_game_session(game_session)
+        await database_service.save_game_session(game_session.game_id, self._serialize_game_session(game_session))
         
         return game_session
     
     async def get_game_session(self, game_id: str) -> Optional[GameSession]:
         """ゲームセッションを取得"""
         
-        game_data = await game_session_repo.get(game_id)
+        game_data = await database_service.get_game_session(game_id)
         if not game_data:
             return None
         
@@ -116,16 +119,18 @@ class GameService:
         game_id: str,
         player_id: str,
         player_location: Location,
-        evidence_id: str
+        evidence_id: str,
+        gps_reading: Optional[GPSReading] = None
     ) -> EvidenceDiscoveryResult:
         """
-        証拠発見処理
+        証拠発見処理（GPS検証付き）
         
         Args:
             game_id: ゲームID
             player_id: プレイヤーID 
             player_location: プレイヤー現在位置
             evidence_id: 証拠ID
+            gps_reading: GPS読み取り情報（精度情報含む）
         
         Returns:
             EvidenceDiscoveryResult: 発見結果
@@ -166,13 +171,44 @@ class GameService:
                 0.0, "指定された証拠が見つかりません"
             )
         
-        # 距離チェック
-        distance = player_location.distance_to(evidence.location)
-        if distance > game_session.game_rules.discovery_radius:
-            return EvidenceDiscoveryResult.failure_result(
-                distance, 
-                f"証拠から{distance:.1f}m離れています。{game_session.game_rules.discovery_radius}m以内に近づいてください。"
+        # GPS検証付き距離チェック
+        if gps_reading:
+            # 高度なGPS検証
+            validation_result = gps_service.validate_evidence_discovery(
+                gps_reading, evidence.location, player_id
             )
+            
+            # GPS偽造検出
+            spoofing_check = gps_service.detect_gps_spoofing(gps_reading, player_id)
+            if spoofing_check["is_likely_spoofed"]:
+                return EvidenceDiscoveryResult.failure_result(
+                    validation_result.distance_to_target,
+                    "位置情報に問題があります。GPS設定を確認してください。"
+                )
+            
+            # 検証失敗の場合
+            if not validation_result.is_valid:
+                # 適応的な発見半径を計算
+                adaptive_radius = gps_service.calculate_adaptive_discovery_radius(
+                    gps_reading, evidence.location, evidence.poi_type
+                )
+                
+                return EvidenceDiscoveryResult.failure_result(
+                    validation_result.distance_to_target,
+                    f"証拠から{validation_result.distance_to_target:.1f}m離れています。"
+                    f"GPS精度: {gps_reading.accuracy.horizontal_accuracy:.1f}m "
+                    f"（{adaptive_radius:.1f}m以内に近づいてください）"
+                )
+            
+            distance = validation_result.distance_to_target
+        else:
+            # フォールバック：従来の単純距離チェック
+            distance = player_location.distance_to(evidence.location)
+            if distance > game_session.game_rules.discovery_radius:
+                return EvidenceDiscoveryResult.failure_result(
+                    distance, 
+                    f"証拠から{distance:.1f}m離れています。{game_session.game_rules.discovery_radius}m以内に近づいてください。"
+                )
         
         # 証拠発見処理
         game_session.discover_evidence(evidence_id)
@@ -182,7 +218,10 @@ class GameService:
         next_clue = await self._generate_next_clue(game_session, evidence)
         
         # データベース更新
-        await self._save_game_session(game_session)
+        await database_service.update_game_session(game_session.game_id, {
+            "discovered_evidence": game_session.discovered_evidence,
+            "last_activity": datetime.now()
+        })
         
         return EvidenceDiscoveryResult.success_result(
             evidence, distance, next_clue
@@ -237,7 +276,13 @@ class GameService:
         
         # ゲーム完了処理
         game_session.complete_game(score)
-        await self._save_game_session(game_session)
+        
+        # データベース更新
+        await database_service.update_game_session(game_session.game_id, {
+            "status": "completed",
+            "completed_at": game_session.completed_at,
+            "final_score": score.total_score
+        })
         
         # 履歴保存
         await self._save_game_history(game_session)
@@ -303,12 +348,6 @@ class GameService:
         
         return None
     
-    async def _save_game_session(self, game_session: GameSession):
-        """ゲームセッションをデータベースに保存"""
-        
-        game_data = self._serialize_game_session(game_session)
-        await game_session_repo.create(game_session.game_id, game_data)
-    
     async def _save_game_history(self, game_session: GameSession):
         """ゲーム履歴を保存"""
         
@@ -332,7 +371,7 @@ class GameService:
             )
         }
         
-        await game_history_repo.create(
+        await database_service.save_game_history(
             f"{game_session.game_id}_history",
             history_data
         )

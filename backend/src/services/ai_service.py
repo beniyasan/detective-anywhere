@@ -325,8 +325,8 @@ class AIService:
                     evidence = Evidence(
                         evidence_id=f"evidence_{i+1}",
                         name=item["name"],
-                        description=item["description"],
-                        discovery_text=item["discovery_text"],
+                        description=item.get("description", f"詳しい情報は{poi_info['name']}で発見してください"),
+                        discovery_text=item.get("discovery_text", f"あなたは{poi_info['name']}で{item['name']}を発見した！これは事件に関わる重要な手がかりのようだ..."),
                         importance=EvidenceImportance(item["importance"]),
                         location=Location(
                             lat=poi_info["lat"],

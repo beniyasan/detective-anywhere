@@ -3,10 +3,12 @@
 """
 
 from typing import Optional
+from datetime import datetime
 from fastapi import APIRouter, HTTPException, Path
 from pydantic import BaseModel
 
 from ...services.game_service import game_service
+from ...services.gps_service import GPSReading, GPSAccuracy
 from ....shared.models.location import Location
 from ....shared.models.evidence import Evidence, EvidenceDiscoveryResult
 
@@ -15,12 +17,28 @@ router = APIRouter()
 
 
 # リクエスト/レスポンス モデル
+class GPSAccuracyInfo(BaseModel):
+    """GPS精度情報"""
+    horizontal_accuracy: float
+    vertical_accuracy: Optional[float] = None
+    timestamp: datetime
+    provider: str = "unknown"
+
+class GPSInfo(BaseModel):
+    """GPS情報"""
+    location: Location
+    accuracy: GPSAccuracyInfo
+    speed: Optional[float] = None
+    bearing: Optional[float] = None
+    altitude: Optional[float] = None
+
 class EvidenceDiscoveryRequest(BaseModel):
-    """証拠発見リクエスト"""
+    """証拠発見リクエスト（GPS情報付き）"""
     game_id: str
     player_id: str
     current_location: Location
     evidence_id: str
+    gps_info: Optional[GPSInfo] = None
 
 
 class EvidenceDiscoveryResponse(BaseModel):
@@ -36,20 +54,38 @@ class EvidenceDiscoveryResponse(BaseModel):
 @router.post("/discover", response_model=EvidenceDiscoveryResponse)
 async def discover_evidence(request: EvidenceDiscoveryRequest):
     """
-    証拠を発見する
+    証拠を発見する（GPS検証付き）
     
     - プレイヤーが証拠の場所に到達した時に呼び出し
-    - 距離チェックを行い、範囲内なら証拠を発見
+    - GPS精度を考慮した距離チェックを行い、範囲内なら証拠を発見
+    - GPS偽造検出機能も含む
     - 発見時は詳細な証拠情報と次のヒントを返却
     """
     
     try:
-        # 証拠発見処理
+        # GPS情報をGPSReadingオブジェクトに変換（提供されている場合）
+        gps_reading = None
+        if request.gps_info:
+            gps_reading = GPSReading(
+                location=request.gps_info.location,
+                accuracy=GPSAccuracy(
+                    horizontal_accuracy=request.gps_info.accuracy.horizontal_accuracy,
+                    vertical_accuracy=request.gps_info.accuracy.vertical_accuracy,
+                    timestamp=request.gps_info.accuracy.timestamp,
+                    provider=request.gps_info.accuracy.provider
+                ),
+                speed=request.gps_info.speed,
+                bearing=request.gps_info.bearing,
+                altitude=request.gps_info.altitude
+            )
+        
+        # 証拠発見処理（GPS検証付き）
         result = await game_service.discover_evidence(
             game_id=request.game_id,
             player_id=request.player_id,
             player_location=request.current_location,
-            evidence_id=request.evidence_id
+            evidence_id=request.evidence_id,
+            gps_reading=gps_reading
         )
         
         return EvidenceDiscoveryResponse(

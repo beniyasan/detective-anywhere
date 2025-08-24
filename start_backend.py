@@ -9,6 +9,7 @@ import sys
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 
 # 環境変数読み込み
@@ -69,12 +70,38 @@ async def health_check():
         }
     }
 
+@app.get("/web-demo.html")
+async def serve_web_demo():
+    """Web Demo HTMLファイル提供"""
+    return FileResponse("/mnt/c/docker/detective-anywhere/web-demo.html")
+
+@app.get("/mobile-app.html")
+async def serve_mobile_app():
+    """Mobile App HTMLファイル提供"""
+    return FileResponse("/mnt/c/docker/detective-anywhere/mobile-app.html")
+
+@app.get("/manifest.json")
+async def serve_manifest():
+    """PWA Manifestファイル提供"""
+    return FileResponse("/mnt/c/docker/detective-anywhere/manifest.json")
+
+@app.get("/service-worker.js")
+async def serve_service_worker():
+    """Service Workerファイル提供"""
+    return FileResponse("/mnt/c/docker/detective-anywhere/service-worker.js")
+
 @app.post("/api/v1/game/start")
 async def start_game_demo(request: Request):
     """デモ用ゲーム開始エンドポイント - 直接Gemini API使用"""
     import google.generativeai as genai
     import json
     from fastapi import Request
+    import sys
+    import os
+    
+    # POIサービスのインポートパスを追加
+    sys.path.append('/mnt/c/docker/detective-anywhere/backend/src')
+    from services.poi_service import POIService
     from backend.src.config.secrets import get_api_key
     
     try:
@@ -116,16 +143,51 @@ async def start_game_demo(request: Request):
             location_key = 'custom'
             print(f"DEBUG: カスタム場所を使用 - {location_info['name']}")
         else:
-            # 座標による場所判定
-            location_key = 'shin-yokohama'
-            if location.get('lat') == 35.6580:  # 渋谷
-                location_key = 'shibuya'
-            elif location.get('lat') == 35.6762:  # 東京
-                location_key = 'tokyo'
-            elif location.get('lat') == 35.5070:  # 新横浜
-                location_key = 'shin-yokohama'
+            # 座標による場所判定（近接判定に変更）
+            user_lat = location.get('lat', 35.5070)
+            user_lng = location.get('lng', 139.6176)
             
-            location_info = location_prompts[location_key]
+            # 各地点との距離を計算
+            def calculate_distance(lat1, lon1, lat2, lon2):
+                import math
+                R = 6371e3  # 地球の半径（メートル）
+                φ1 = lat1 * math.pi / 180
+                φ2 = lat2 * math.pi / 180
+                Δφ = (lat2 - lat1) * math.pi / 180
+                Δλ = (lon2 - lon1) * math.pi / 180
+                a = math.sin(Δφ/2) * math.sin(Δφ/2) + math.cos(φ1) * math.cos(φ2) * math.sin(Δλ/2) * math.sin(Δλ/2)
+                c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+                return R * c
+            
+            # 各地点の中心座標
+            locations_centers = {
+                'shibuya': (35.6580, 139.7016),
+                'tokyo': (35.6762, 139.6503),
+                'shin-yokohama': (35.5070, 139.6176)
+            }
+            
+            # 最も近い場所を判定（10km以内）
+            min_distance = float('inf')
+            location_key = 'shin-yokohama'  # デフォルト
+            
+            for loc_key, (lat, lng) in locations_centers.items():
+                distance = calculate_distance(user_lat, user_lng, lat, lng)
+                if distance < min_distance and distance < 10000:  # 10km以内
+                    min_distance = distance
+                    location_key = loc_key
+            
+            print(f"DEBUG: ユーザー位置 ({user_lat:.4f}, {user_lng:.4f}) から最も近い場所: {location_key} (距離: {min_distance:.0f}m)")
+            
+            # 距離が5km以上離れている場合は、ユーザーの現在地ベースのカスタムシナリオを生成
+            if min_distance > 5000:
+                location_info = {
+                    'name': '現在地周辺',
+                    'context': 'あなたの現在地周辺の街。身近な場所で起きた事件',
+                    'features': '地域のランドマーク、商店街、公園などが点在する日常的な風景'
+                }
+                print(f"DEBUG: 既定の場所が遠いため、現在地周辺のシナリオを生成")
+            else:
+                location_info = location_prompts[location_key]
         
         print(f"DEBUG: 選択された場所 = {location_info['name']}, 難易度 = {difficulty}")
         
@@ -137,9 +199,9 @@ async def start_game_demo(request: Request):
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-2.0-flash-exp")
         
-        # 動的シナリオ生成プロンプト
+        # 動的シナリオ生成プロンプト（推理要素を強化）
         prompt = f"""
-あなたは優秀な推理小説作家です。{location_info['name']}周辺を舞台にしたミステリーシナリオを作成してください。
+あなたは本格推理小説の巨匠です。論理的に解決可能な緻密なミステリーシナリオを作成してください。
 
 ## 条件設定
 - 場所: {location_info['context']}
@@ -150,12 +212,15 @@ async def start_game_demo(request: Request):
 ## 出力形式（必ずJSON形式で出力）
 {{
   "title": "事件のタイトル",
-  "description": "導入文（300字程度、ドラマチック）",
+  "description": "事件の導入部分（500-800字程度、ドラマチックで詳細）。事件発生の背景、現場の状況、発見時の様子、初期の調査状況などを含む魅力的な物語として描写",
+  "incident_time": "事件発生時刻（例: 22:30）",
+  "discovery_time": "発見時刻（例: 23:45）",
   "victim": {{
     "name": "被害者名",
     "age": 年齢,
     "occupation": "職業",
-    "personality": "性格・特徴"
+    "personality": "性格・特徴",
+    "last_seen": "最後に目撃された時刻と場所（例: 21:30 レストランで食事）"
   }},
   "suspects": [
     {{
@@ -164,17 +229,49 @@ async def start_game_demo(request: Request):
       "occupation": "職業",
       "personality": "性格・特徴",
       "relationship": "被害者との関係",
-      "alibi": "アリバイ",
-      "motive": "動機"
+      "alibi": "具体的な時刻を含むアリバイ（例: 21:00-23:00 バーで友人と飲酒、レシート有）",
+      "motive": "動機",
+      "contradiction": "アリバイや証言の矛盾点（真犯人のみ）",
+      "suspicious_point": "不審な点や行動"
     }}
   ],
   "culprit": "真犯人の名前",
-  "motive": "真の犯行動機",
-  "method": "犯行手口",
-  "timeline": ["時系列1", "時系列2", "時系列3"]
+  "true_motive": "真の犯行動機（表面的な動機とは異なる深い理由）",
+  "method": "詳細な犯行手口と使用された凶器",
+  "trick": "犯人が使ったトリックや偽装工作（アリバイ工作など）",
+  "timeline": [
+    "20:00 - 被害者が現場付近に到着",
+    "21:00 - 容疑者Aと被害者が口論（目撃者あり）",
+    "22:00 - 容疑者Bが被害者と電話（通話記録あり）",
+    "22:30 - 推定犯行時刻",
+    "23:45 - 遺体発見"
+  ],
+  "key_evidence": [
+    "決定的な物的証拠とその意味",
+    "重要な証言の矛盾",
+    "見落としやすい状況証拠"
+  ],
+  "resolution_logic": "犯人を論理的に特定する推理の道筋（プレイヤーへのヒント）"
 }}
 
-{location_info['name']}の特徴を活かしたリアルなシナリオを生成してください。
+## 重要な要件
+1. **導入文（description）**:
+   - 500-800字で詳細に描写
+   - 事件現場の雰囲気（天気、時間帯、環境音など）
+   - 発見者の心境と現場の第一印象
+   - 警察到着時の状況
+   - 読者を物語に引き込む文学的な表現を使用
+   
+2. **推理要素**:
+   - アリバイには必ず具体的な時刻（21:00-23:00など）を含める
+   - 真犯人のアリバイには巧妙だが見破れる矛盾を仕込む
+   - 他の容疑者にも動機を持たせてミスリードを誘う
+   - タイムラインは詳細で、事件の流れが明確に分かるようにする
+   - 証拠と証言から論理的に真犯人を特定できるようにする
+   - トリックは現実的で、実行可能なものにする
+
+{location_info['name']}の特徴を活かした本格推理シナリオを生成してください。
+導入文は推理小説の冒頭のように、読者を事件の世界に没入させる魅力的な文章にしてください。
 """
         
         # Gemini APIでシナリオ生成
@@ -260,40 +357,136 @@ async def start_game_demo(request: Request):
                 "timeline": ["午前9時: 被害者出社", "午前10時: 容疑者たちとの会議", "午前11時: 事件発生"]
             }
         
-        # 証拠データ（場所に応じて動的生成）
-        evidence_templates = {
+        # シナリオに関連した証拠を動的に生成
+        # 基本的な証拠テンプレート（シナリオの内容に応じて詳細が変わる）
+        evidence_templates_by_location = {
             'shin-yokohama': [
-                {"name": "血痕の付いたハンカチ", "poi_name": "新横浜駅構内カフェ", "lat": 35.5070, "lng": 139.6176},
-                {"name": "破れた名刺", "poi_name": "新横浜プリンスホテル", "lat": 35.5080, "lng": 139.6186},
-                {"name": "謎の鍵", "poi_name": "新横浜アリーナ", "lat": 35.5090, "lng": 139.6196}
+                {
+                    "name": "血痕の付いたハンカチ",
+                    "description": f"高級ブランドのハンカチに血痕が付着。イニシャルの刺繍があり、{scenario_data.get('culprit', '誰か')}と関連がありそう。",
+                    "hint": "イニシャルと容疑者の名前を照合してみよう。真犯人は偽装している可能性もある。",
+                    "importance": "critical",
+                    "related_to": "犯人の所持品または偽装工作"
+                },
+                {
+                    "name": "破れた名刺",
+                    "description": f"半分に破れた名刺。時刻「{scenario_data.get('incident_time', '22:30')}」と誰かの電話番号が書かれている。",
+                    "hint": "この時刻は事件発生時刻と一致する。誰との約束だったのか？",
+                    "importance": "important",
+                    "related_to": "アリバイの矛盾を示す証拠"
+                },
+                {
+                    "name": "レシートまたは切符",
+                    "description": f"事件当夜のレシート。時刻は{scenario_data.get('incident_time', '22:30')}の30分前。購入品から誰かの行動が推測できる。",
+                    "hint": "購入時刻と場所から、誰かのアリバイが崩れるかもしれない。",
+                    "importance": "important",
+                    "related_to": "アリバイ検証の証拠"
+                }
             ],
             'shibuya': [
-                {"name": "割れたスマートフォン", "poi_name": "渋谷スクランブル交差点", "lat": 35.6580, "lng": 139.7016},
-                {"name": "血痕のある領収書", "poi_name": "渋谷109", "lat": 35.6590, "lng": 139.7026},
-                {"name": "怪しいメモ", "poi_name": "ハチ公前広場", "lat": 35.6600, "lng": 139.7036}
+                {
+                    "name": "割れたスマートフォン",
+                    "description": "画面が割れたスマートフォン。最後の通話履歴が残っている。",
+                    "hint": "通話履歴から被害者の最後の行動が分かるかもしれない。",
+                    "importance": "critical"
+                },
+                {
+                    "name": "血痕のある領収書",
+                    "description": "カフェの領収書に血痕が付着。時刻は事件発生の30分前。",
+                    "hint": "誰かと一緒にいた証拠かもしれない。",
+                    "importance": "important"
+                },
+                {
+                    "name": "怪しいメモ",
+                    "description": "急いで書かれたようなメモ。「23:00 裏口」と読める。",
+                    "hint": "密会の約束だったのだろうか。",
+                    "importance": "important"
+                }
             ],
             'tokyo': [
-                {"name": "高級万年筆", "poi_name": "東京駅丸の内口", "lat": 35.6762, "lng": 139.6503},
-                {"name": "機密書類の一部", "poi_name": "丸の内ビルディング", "lat": 35.6772, "lng": 139.6513},
-                {"name": "謎の会員証", "poi_name": "皇居東御苑", "lat": 35.6851, "lng": 139.7544}
+                {
+                    "name": "高級万年筆",
+                    "description": "限定品の万年筆。インクが最近補充されたばかり。",
+                    "hint": "この万年筆で何か重要な書類にサインされた可能性がある。",
+                    "importance": "critical"
+                },
+                {
+                    "name": "機密書類の一部",
+                    "description": "シュレッダーを免れた書類の一部。金額と日付が見える。",
+                    "hint": "巨額の取引に関する証拠かもしれない。",
+                    "importance": "important"
+                },
+                {
+                    "name": "謎の会員証",
+                    "description": "高級クラブの会員証。偽名で登録されている。",
+                    "hint": "被害者の隠された一面を示している。",
+                    "importance": "important"
+                }
             ],
             'custom': [
-                {"name": "謎の手がかり", "poi_name": f"{location_info['name']}中央部", "lat": location.get('lat', 35.0), "lng": location.get('lng', 135.0)},
-                {"name": "重要な証拠品", "poi_name": f"{location_info['name']}周辺施設", "lat": location.get('lat', 35.0) + 0.001, "lng": location.get('lng', 135.0) + 0.001},
-                {"name": "決定的証拠", "poi_name": f"{location_info['name']}近郊", "lat": location.get('lat', 35.0) + 0.002, "lng": location.get('lng', 135.0) + 0.002}
+                {
+                    "name": "謎の手がかり",
+                    "description": "事件現場に残された不可解な物品。一見すると無関係に見える。",
+                    "hint": "この手がかりの真の意味を理解することが事件解決の鍵となる。",
+                    "importance": "critical"
+                },
+                {
+                    "name": "重要な証拠品",
+                    "description": "被害者が最後に触れたと思われる物品。指紋が残っている可能性がある。",
+                    "hint": "誰の指紋が検出されるかが重要だ。",
+                    "importance": "important"
+                },
+                {
+                    "name": "決定的証拠",
+                    "description": "犯人を特定できる可能性がある証拠。慎重な分析が必要。",
+                    "hint": "この証拠が示す真実は予想外のものかもしれない。",
+                    "importance": "important"
+                }
             ]
         }
         
-        evidence_list = evidence_templates.get(location_key, evidence_templates['shin-yokohama'])
+        import random
+        evidence_templates = evidence_templates_by_location.get(location_key, evidence_templates_by_location['custom'])
+        
+        # ユーザーの位置を取得
+        base_lat = location.get('lat', 35.5070)
+        base_lng = location.get('lng', 139.6176)
+        
+        # POIサービスを使用して実際の場所を取得
+        poi_service = POIService()
+        
+        # Google Maps APIキーの確認（環境変数から）
+        maps_api_key = os.getenv('GOOGLE_MAPS_API_KEY')
+        if maps_api_key:
+            print(f"DEBUG: Google Maps API使用 - 実際のPOIを取得")
+        else:
+            print(f"DEBUG: Google Maps APIキーなし - フォールバックPOI使用")
+        
+        # 非同期でPOI情報を取得
+        import asyncio
+        evidence_locations = await poi_service.get_evidence_locations(
+            base_lat,
+            base_lng,
+            evidence_count=len(evidence_templates),
+            min_distance=100,  # 100m以上
+            max_distance=500   # 500m以内に変更
+        )
+        
+        # 証拠を配置
         evidence = []
-        for i, ev in enumerate(evidence_list, 1):
+        for i, (template, location_info) in enumerate(zip(evidence_templates, evidence_locations), 1):
             evidence.append({
                 "evidence_id": f"evidence_{i}",
-                "name": ev["name"],
-                "importance": "critical" if i == 1 else "important",
-                "poi_name": ev["poi_name"],
-                "location": {"lat": ev["lat"], "lng": ev["lng"]}
+                "name": template["name"],
+                "description": template["description"],
+                "hint": template["hint"],
+                "importance": template["importance"],
+                "poi_name": location_info['poi_name'],
+                "location": {"lat": location_info['lat'], "lng": location_info['lng']}
             })
+            print(f"DEBUG: 証拠配置 - {template['name']} at {location_info['poi_name']} ({location_info['lat']:.4f}, {location_info['lng']:.4f})")
+        
+        print(f"DEBUG: 証拠を配置 - ベース位置 ({base_lat:.4f}, {base_lng:.4f}) 周辺の実際のPOI使用")
         
         return {
             "game_id": "demo-game-12345",

@@ -4,6 +4,8 @@ AIミステリー散歩 - メインアプリケーション
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 import os
 from dotenv import load_dotenv
@@ -149,6 +151,28 @@ async def health_check():
         "status": "healthy",
         "services": services_status
     }
+
+
+# 静的ファイルの提供
+@app.get("/web-demo.html")
+async def serve_web_demo():
+    """Web Demo HTMLファイル提供"""
+    return FileResponse("/mnt/c/docker/detective-anywhere/web-demo.html")
+
+@app.get("/mobile-app.html")
+async def serve_mobile_app():
+    """Mobile App HTMLファイル提供"""
+    return FileResponse("/mnt/c/docker/detective-anywhere/mobile-app.html")
+
+@app.get("/manifest.json")
+async def serve_manifest():
+    """PWA Manifestファイル提供"""
+    return FileResponse("/mnt/c/docker/detective-anywhere/manifest.json")
+
+@app.get("/service-worker.js")
+async def serve_service_worker():
+    """Service Workerファイル提供"""
+    return FileResponse("/mnt/c/docker/detective-anywhere/service-worker.js")
 
 
 # エラーハンドラー

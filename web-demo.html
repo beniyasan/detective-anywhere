@@ -435,8 +435,251 @@
                         <p>3. GPS検証システムが位置を確認して証拠を発見</p>
                         <p>4. すべての証拠を集めて推理を完成させる</p>
                     </div>
+                    
+                    <div style="background: #E8F5E9; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                        <h4 style="color: #2E7D32; margin-bottom: 10px;">🕵️ 推理フェーズ（デモ）</h4>
+                        <button class="btn success" onclick="startDeductionPhase('${gameId}')">推理フェーズを開始</button>
+                        <p style="margin-top: 10px; font-size: 0.9em;">※ すべての証拠を集めた後、容疑者に質問して犯人を推理します</p>
+                    </div>
                 </div>
             `;
+        }
+        
+        // 推理フェーズの関数
+        async function startDeductionPhase(gameId) {
+            updateStatus('🕵️ 推理フェーズを開始しています...', 'info');
+            
+            // 推理フェーズUIを表示
+            const deductionHTML = `
+                <div class="demo-section">
+                    <h3>🕵️ 推理フェーズ</h3>
+                    <div class="scenario-display">
+                        <h4 style="color: #2C3E50; margin-bottom: 20px;">容疑者への質問</h4>
+                        
+                        <div id="suspects-list" style="margin-bottom: 20px;">
+                            <p>容疑者リストを読み込み中...</p>
+                        </div>
+                        
+                        <div id="question-section" style="display: none; background: #F5F5F5; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h5>質問する容疑者を選択:</h5>
+                            <select id="suspect-select" style="padding: 10px; margin: 10px 0; width: 100%;">
+                                <option value="">容疑者を選択...</option>
+                            </select>
+                            
+                            <h5>質問タイプ:</h5>
+                            <select id="question-type" style="padding: 10px; margin: 10px 0; width: 100%;">
+                                <option value="alibi">アリバイについて</option>
+                                <option value="motive">動機について</option>
+                                <option value="relationship">被害者との関係</option>
+                                <option value="witness">他の人について</option>
+                                <option value="behavior">事件当日の行動</option>
+                            </select>
+                            
+                            <button class="btn" onclick="askQuestion('${gameId}')">質問する</button>
+                            <span id="questions-remaining" style="margin-left: 20px;">残り質問回数: 10</span>
+                        </div>
+                        
+                        <div id="conversation-log" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">
+                            <!-- 質問と回答のログ -->
+                        </div>
+                        
+                        <div style="background: #E3F2FD; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                            <h4 style="color: #1565C0;">🎯 推理を提出</h4>
+                            
+                            <div style="margin: 15px 0;">
+                                <label style="font-weight: bold;">犯人は誰？</label>
+                                <select id="culprit-guess" style="padding: 10px; width: 100%; margin-top: 5px;">
+                                    <option value="">選択してください...</option>
+                                </select>
+                            </div>
+                            
+                            <div style="margin: 15px 0;">
+                                <label style="font-weight: bold;">犯行動機は？</label>
+                                <textarea id="motive-guess" style="padding: 10px; width: 100%; height: 80px; margin-top: 5px;" 
+                                    placeholder="なぜこの人が犯人だと思うか、動機を推理してください"></textarea>
+                            </div>
+                            
+                            <button class="btn success" onclick="submitDeduction('${gameId}')" style="width: 100%;">
+                                推理を提出する
+                            </button>
+                        </div>
+                        
+                        <div id="deduction-result" style="display: none; margin-top: 20px;">
+                            <!-- 推理結果表示エリア -->
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('result-display').innerHTML = deductionHTML;
+            
+            // 容疑者リストを取得
+            try {
+                const response = await fetch(\`http://localhost:8080/api/v1/deduction/\${gameId}/suspects\`);
+                if (response.ok) {
+                    const data = await response.json();
+                    displaySuspects(data);
+                } else {
+                    updateStatus('❌ 容疑者リストの取得に失敗しました', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading suspects:', error);
+                updateStatus('❌ 容疑者リストの読み込みエラー', 'error');
+            }
+        }
+        
+        function displaySuspects(data) {
+            const suspectsList = data.suspects.map(suspect => `
+                <div style="background: white; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #3498DB;">
+                    <p><strong>👤 ${suspect.name}</strong> (${suspect.age}歳) - ${suspect.occupation}</p>
+                    <p><strong>関係:</strong> ${suspect.relationship}</p>
+                    <p><strong>アリバイ:</strong> ${suspect.alibi || '不明'}</p>
+                </div>
+            `).join('');
+            
+            document.getElementById('suspects-list').innerHTML = `
+                <h5>容疑者一覧:</h5>
+                ${suspectsList}
+            `;
+            
+            // 質問セクションを表示
+            document.getElementById('question-section').style.display = 'block';
+            
+            // セレクトボックスに容疑者を追加
+            const suspectSelect = document.getElementById('suspect-select');
+            const culpritGuess = document.getElementById('culprit-guess');
+            
+            data.suspects.forEach(suspect => {
+                suspectSelect.innerHTML += `<option value="${suspect.name}">${suspect.name}</option>`;
+                culpritGuess.innerHTML += `<option value="${suspect.name}">${suspect.name}</option>`;
+            });
+        }
+        
+        let questionsRemaining = 10;
+        
+        async function askQuestion(gameId) {
+            const suspectName = document.getElementById('suspect-select').value;
+            const questionType = document.getElementById('question-type').value;
+            
+            if (!suspectName) {
+                alert('容疑者を選択してください');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/deduction/question', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        game_id: gameId,
+                        suspect_name: suspectName,
+                        question_type: questionType
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    displayQuestionResult(result);
+                    questionsRemaining = result.questions_remaining;
+                    document.getElementById('questions-remaining').textContent = `残り質問回数: ${questionsRemaining}`;
+                } else {
+                    alert('質問に失敗しました');
+                }
+            } catch (error) {
+                console.error('Question error:', error);
+                alert('質問エラー');
+            }
+        }
+        
+        function displayQuestionResult(result) {
+            const logDiv = document.getElementById('conversation-log');
+            const conversationHTML = `
+                <div style="background: #E8F5E9; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                    <p><strong>🔍 あなた:</strong> ${result.question}</p>
+                </div>
+                <div style="background: #FFF3E0; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                    <p><strong>👤 ${result.suspect_name}:</strong></p>
+                    <p>${result.answer}</p>
+                    <p style="font-style: italic; color: #666; margin-top: 10px;">${result.reaction}</p>
+                    ${result.hint_revealed ? `<p style="color: #2E7D32; margin-top: 10px;">💡 ヒント: ${result.hint_revealed}</p>` : ''}
+                </div>
+            `;
+            logDiv.innerHTML = conversationHTML + logDiv.innerHTML;
+        }
+        
+        async function submitDeduction(gameId) {
+            const culpritGuess = document.getElementById('culprit-guess').value;
+            const motiveGuess = document.getElementById('motive-guess').value;
+            
+            if (!culpritGuess || !motiveGuess) {
+                alert('犯人と動機を両方入力してください');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/deduction/submit', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        game_id: gameId,
+                        player_id: 'demo-player',
+                        culprit_guess: culpritGuess,
+                        motive_guess: motiveGuess
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    displayDeductionResult(result);
+                } else {
+                    alert('推理提出に失敗しました');
+                }
+            } catch (error) {
+                console.error('Deduction error:', error);
+                alert('推理提出エラー');
+            }
+        }
+        
+        function displayDeductionResult(result) {
+            const resultDiv = document.getElementById('deduction-result');
+            const isCorrect = result.culprit_correct && result.motive_correct;
+            
+            resultDiv.innerHTML = `
+                <div style="background: ${isCorrect ? '#E8F5E9' : '#FFEBEE'}; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: ${isCorrect ? '#2E7D32' : '#C62828'};">
+                        ${isCorrect ? '🎉 正解！' : '😔 不正解...'}
+                    </h3>
+                    
+                    <div style="margin: 20px 0;">
+                        <p><strong>犯人当て:</strong> ${result.culprit_correct ? '✅ 正解' : '❌ 不正解'}</p>
+                        <p><strong>動機当て:</strong> ${result.motive_correct ? '✅ 正解' : '❌ 不正解'}</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <h4>📖 事件の真相</h4>
+                        <p><strong>真犯人:</strong> ${result.true_culprit}</p>
+                        <p><strong>真の動機:</strong> ${result.true_motive}</p>
+                        <p style="margin-top: 10px;">${result.full_story}</p>
+                    </div>
+                    
+                    <div style="background: #E3F2FD; padding: 15px; border-radius: 8px;">
+                        <h4>🏆 スコア</h4>
+                        <p>基本スコア: ${result.base_score}点</p>
+                        <p>証拠ボーナス: +${result.evidence_bonus}点</p>
+                        <p>質問効率: +${result.question_efficiency_bonus}点</p>
+                        <p>時間ボーナス: +${result.time_bonus}点</p>
+                        <hr style="margin: 10px 0;">
+                        <p style="font-size: 1.2em; font-weight: bold;">合計: ${result.total_score}点</p>
+                        ${result.high_score ? '<p style="color: #FF6B35;">🔥 ハイスコア達成！</p>' : ''}
+                    </div>
+                    
+                    <button class="btn" onclick="location.reload()" style="margin-top: 20px; width: 100%;">
+                        新しいゲームを開始
+                    </button>
+                </div>
+            `;
+            
+            resultDiv.style.display = 'block';
         }
         
         // 初期化

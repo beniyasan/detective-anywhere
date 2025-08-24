@@ -1,0 +1,99 @@
+{
+  "name": "AIミステリー散歩 - Detective Anywhere",
+  "short_name": "探偵散歩",
+  "description": "AIが生成するミステリーを解く位置情報ゲーム",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "ja-JP",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "/static/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/static/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/static/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/static/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/static/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/static/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/static/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/static/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/screenshots/game-1.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "label": "ゲーム開始画面"
+    },
+    {
+      "src": "/static/screenshots/game-2.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "label": "証拠発見画面"
+    },
+    {
+      "src": "/static/screenshots/game-3.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "label": "推理フェーズ"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "新しいゲーム",
+      "short_name": "新規",
+      "description": "新しいミステリーゲームを開始",
+      "url": "/game/new",
+      "icons": [
+        {
+          "src": "/static/icons/new-game.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
+}

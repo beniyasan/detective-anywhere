@@ -1,291 +1,195 @@
 """
-POI（興味のある場所）サービス - Google Maps API連携
+Google Maps Places APIを使用してPOI情報を取得するサービス
 """
 
-from typing import List, Dict, Any, Optional, Tuple
-import googlemaps
-from geopy import distance
-import asyncio
+import os
+import json
 import random
+import aiohttp
+from typing import List, Dict, Optional, Tuple
+from dataclasses import dataclass
 
-from ..core.config import settings
-from ..config.secrets import get_api_key
-from ...shared.models.location import Location, POI, POIType
+
+@dataclass
+class POI:
+    """POI (Point of Interest) データクラス"""
+    name: str
+    location: Tuple[float, float]  # (lat, lng)
+    place_type: str
+    address: Optional[str] = None
+    place_id: Optional[str] = None
 
 
 class POIService:
-    """POI サービス"""
+    """Google Maps Places APIを使用してPOI情報を取得"""
     
-    def __init__(self):
-        self.gmaps = None
-        self.poi_type_mapping = {
-            # Google Places APIのタイプをPOITypeにマッピング
-            "restaurant": POIType.RESTAURANT,
-            "cafe": POIType.CAFE,
-            "park": POIType.PARK,
-            "tourist_attraction": POIType.LANDMARK,
-            "subway_station": POIType.STATION,
-            "train_station": POIType.STATION,
-            "store": POIType.SHOP,
-            "shopping_mall": POIType.SHOP,
-            "school": POIType.SCHOOL,
-            "hospital": POIType.HOSPITAL,
-            "library": POIType.LIBRARY,
-            "museum": POIType.LIBRARY,
-        }
-    
-    def initialize(self):
-        """POI サービスの初期化"""
-        google_maps_api_key = get_api_key('google_maps')
-        if google_maps_api_key:
-            self.gmaps = googlemaps.Client(key=google_maps_api_key)
-        else:
-            raise ValueError("Google Maps API キーが設定されていません")
-    
-    async def find_nearby_pois(
-        self,
-        location: Location,
-        radius: int = 1000,
-        poi_types: Optional[List[str]] = None,
-        min_count: int = 5
+    def __init__(self, api_key: Optional[str] = None):
+        self.api_key = api_key or os.getenv('GOOGLE_MAPS_API_KEY')
+        self.places_api_url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+        
+    async def get_nearby_pois(
+        self, 
+        lat: float, 
+        lng: float, 
+        radius: int = 500,  # デフォルトを500mに変更
+        poi_types: Optional[List[str]] = None
     ) -> List[POI]:
         """
-        指定位置周辺のPOIを検索
+        指定座標周辺のPOIを取得
         
         Args:
-            location: 中心位置
+            lat: 緯度
+            lng: 経度
             radius: 検索半径（メートル）
-            poi_types: 検索するPOIタイプ（Noneの場合は全タイプ）
-            min_count: 最小POI数（足りない場合は範囲を広げる）
+            poi_types: 検索するPOIタイプのリスト
         
         Returns:
-            POIリスト
+            POIのリスト
         """
-        if not self.gmaps:
-            # 開発環境用のモックデータ
-            return await self._get_mock_pois(location, min_count)
         
-        try:
-            all_pois = []
-            search_types = poi_types or list(self.poi_type_mapping.keys())
-            
-            # 各POIタイプで検索
-            for place_type in search_types:
-                pois = await asyncio.to_thread(
-                    self._search_places_by_type,
-                    location,
-                    place_type,
-                    radius
-                )
-                all_pois.extend(pois)
-            
-            # 重複除去とソート
-            unique_pois = self._deduplicate_pois(all_pois)
-            sorted_pois = sorted(unique_pois, key=lambda p: p.distance_from(location))
-            
-            # 最小数に満たない場合は範囲を拡大して再検索
-            if len(sorted_pois) < min_count and radius < 5000:
-                extended_pois = await self.find_nearby_pois(
-                    location, radius * 2, poi_types, min_count
-                )
-                return extended_pois[:min_count * 2]  # 多すぎないように制限
-            
-            return sorted_pois[:20]  # 最大20個まで
-            
-        except Exception as e:
-            print(f"POI検索エラー: {e}")
-            return await self._get_mock_pois(location, min_count)
+        # APIキーがない場合はフォールバック
+        if not self.api_key:
+            return self._get_fallback_pois(lat, lng, radius)
+        
+        # POIタイプのデフォルト設定
+        if not poi_types:
+            poi_types = [
+                'cafe', 'restaurant', 'park', 'convenience_store',
+                'shopping_mall', 'museum', 'train_station', 'bus_station'
+            ]
+        
+        all_pois = []
+        
+        async with aiohttp.ClientSession() as session:
+            for poi_type in poi_types:
+                params = {
+                    'location': f'{lat},{lng}',
+                    'radius': radius,
+                    'type': poi_type,
+                    'key': self.api_key,
+                    'language': 'ja'
+                }
+                
+                try:
+                    async with session.get(self.places_api_url, params=params) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            
+                            for place in data.get('results', [])[:3]:  # 各タイプから最大3件
+                                poi = POI(
+                                    name=place.get('name'),
+                                    location=(
+                                        place['geometry']['location']['lat'],
+                                        place['geometry']['location']['lng']
+                                    ),
+                                    place_type=poi_type,
+                                    address=place.get('vicinity'),
+                                    place_id=place.get('place_id')
+                                )
+                                all_pois.append(poi)
+                                
+                except Exception as e:
+                    print(f"Error fetching POIs for type {poi_type}: {e}")
+                    continue
+        
+        # POIが少ない場合はフォールバックを追加
+        if len(all_pois) < 3:
+            fallback_pois = self._get_fallback_pois(lat, lng, radius)
+            all_pois.extend(fallback_pois[:3 - len(all_pois)])
+        
+        return all_pois[:9]  # 最大9件まで返す
     
-    def _search_places_by_type(
-        self,
-        location: Location,
-        place_type: str,
-        radius: int
-    ) -> List[POI]:
-        """指定タイプの場所を検索"""
+    def _get_fallback_pois(self, lat: float, lng: float, radius: int) -> List[POI]:
+        """
+        APIが使用できない場合のフォールバックPOI生成
         
-        places_result = self.gmaps.places_nearby(
-            location=(location.lat, location.lng),
-            radius=radius,
-            type=place_type,
-            language='ja'
-        )
+        Args:
+            lat: 中心緯度
+            lng: 中心経度
+            radius: 半径（メートル）
+        
+        Returns:
+            仮想的なPOIのリスト
+        """
+        import math
+        
+        fallback_names = [
+            ("カフェ", "cafe"),
+            ("コンビニ", "convenience_store"),
+            ("公園", "park"),
+            ("駐車場", "parking"),
+            ("バス停", "bus_station"),
+            ("交差点", "intersection"),
+            ("商店", "store"),
+            ("レストラン", "restaurant"),
+            ("自動販売機", "vending_machine")
+        ]
         
         pois = []
-        for place in places_result.get('results', []):
-            poi = self._create_poi_from_place(place)
-            if poi:
-                pois.append(poi)
+        for i, (name_base, poi_type) in enumerate(random.sample(fallback_names, min(9, len(fallback_names)))):
+            # ランダムな距離と方向で配置（より近い範囲に）
+            distance = random.uniform(radius * 0.2, radius * 0.8)  # 範囲の20%〜80%
+            angle = (i * 40 + random.uniform(-20, 20)) * math.pi / 180  # 40度ずつ分散
+            
+            # 新しい座標を計算
+            lat_offset = (distance / 111000) * math.cos(angle)
+            lng_offset = (distance / (111000 * math.cos(math.radians(lat)))) * math.sin(angle)
+            
+            poi = POI(
+                name=f"{name_base} ({int(distance)}m先)",
+                location=(lat + lat_offset, lng + lng_offset),
+                place_type=poi_type,
+                address=f"約{int(distance)}m先"
+            )
+            pois.append(poi)
         
         return pois
     
-    def _create_poi_from_place(self, place: Dict[str, Any]) -> Optional[POI]:
-        """Google Places APIの結果からPOIオブジェクトを作成"""
-        
-        try:
-            # POIタイプの決定
-            poi_type = POIType.LANDMARK  # デフォルト
-            for gmap_type in place.get('types', []):
-                if gmap_type in self.poi_type_mapping:
-                    poi_type = self.poi_type_mapping[gmap_type]
-                    break
-            
-            # 位置情報の取得
-            geometry = place.get('geometry', {})
-            location_data = geometry.get('location', {})
-            
-            poi = POI(
-                poi_id=place.get('place_id', ''),
-                name=place.get('name', ''),
-                poi_type=poi_type,
-                location=Location(
-                    lat=location_data.get('lat', 0.0),
-                    lng=location_data.get('lng', 0.0)
-                ),
-                address=place.get('vicinity', ''),
-                description=f"Rating: {place.get('rating', 'N/A')}"
-            )
-            
-            return poi
-            
-        except Exception as e:
-            print(f"POI作成エラー: {e}")
-            return None
-    
-    def _deduplicate_pois(self, pois: List[POI]) -> List[POI]:
-        """POIの重複除去"""
-        
-        seen_names = set()
-        unique_pois = []
-        
-        for poi in pois:
-            # 名前と位置が近い場合は重複とみなす
-            key = f"{poi.name}_{int(poi.location.lat*1000)}_{int(poi.location.lng*1000)}"
-            
-            if key not in seen_names:
-                seen_names.add(key)
-                unique_pois.append(poi)
-        
-        return unique_pois
-    
-    async def _get_mock_pois(self, center: Location, count: int) -> List[POI]:
-        """開発用モックPOIデータ"""
-        
-        mock_pois = []
-        poi_templates = [
-            {"name": "スターバックス", "type": POIType.CAFE},
-            {"name": "中央公園", "type": POIType.PARK},
-            {"name": "市立図書館", "type": POIType.LIBRARY},
-            {"name": "ファミリーマート", "type": POIType.SHOP},
-            {"name": "地下鉄駅", "type": POIType.STATION},
-            {"name": "タワーレコード", "type": POIType.SHOP},
-            {"name": "イタリアンレストラン", "type": POIType.RESTAURANT},
-            {"name": "総合病院", "type": POIType.HOSPITAL},
-            {"name": "商業ビル", "type": POIType.OFFICE},
-            {"name": "歴史博物館", "type": POIType.LANDMARK}
-        ]
-        
-        # ランダムな位置にPOIを配置
-        for i in range(min(count, len(poi_templates))):
-            template = poi_templates[i]
-            
-            # 中心から半径500m以内にランダム配置
-            lat_offset = random.uniform(-0.005, 0.005)
-            lng_offset = random.uniform(-0.005, 0.005)
-            
-            mock_poi = POI(
-                poi_id=f"mock_{i+1}",
-                name=f"{template['name']}_{i+1}",
-                poi_type=template["type"],
-                location=Location(
-                    lat=center.lat + lat_offset,
-                    lng=center.lng + lng_offset
-                ),
-                address=f"模擬住所{i+1}",
-                description="開発用モックデータ"
-            )
-            mock_pois.append(mock_poi)
-        
-        return mock_pois
-    
-    async def get_location_context(self, location: Location) -> str:
-        """位置から地域コンテキストを取得"""
-        
-        if not self.gmaps:
-            return "東京都内の商業エリア"
-        
-        try:
-            # リバースジオコーディング
-            reverse_geocode_result = await asyncio.to_thread(
-                self.gmaps.reverse_geocode,
-                (location.lat, location.lng),
-                language='ja'
-            )
-            
-            if reverse_geocode_result:
-                address_components = reverse_geocode_result[0].get('address_components', [])
-                
-                locality = ""
-                sublocality = ""
-                
-                for component in address_components:
-                    types = component.get('types', [])
-                    if 'locality' in types:
-                        locality = component.get('long_name', '')
-                    elif 'sublocality' in types:
-                        sublocality = component.get('long_name', '')
-                
-                context = f"{locality}{sublocality}周辺"
-                return context if context.strip() else "市街地エリア"
-            
-        except Exception as e:
-            print(f"位置コンテキスト取得エラー: {e}")
-        
-        return "市街地エリア"
-    
-    def select_evidence_pois(
+    async def get_evidence_locations(
         self,
-        available_pois: List[POI],
-        evidence_count: int
-    ) -> List[POI]:
-        """証拠配置に適したPOIを選択"""
+        center_lat: float,
+        center_lng: float,
+        evidence_count: int = 3,
+        min_distance: int = 100,  # 100m以上
+        max_distance: int = 500   # 500m以内
+    ) -> List[Dict]:
+        """
+        証拠配置用のPOI情報を取得
         
-        # 証拠配置に適したPOIを優先
-        suitable_pois = [poi for poi in available_pois if poi.is_suitable_for_evidence()]
+        Args:
+            center_lat: 中心緯度
+            center_lng: 中心経度
+            evidence_count: 証拠の数
+            min_distance: 最小距離（メートル）
+            max_distance: 最大距離（メートル）
         
-        if len(suitable_pois) >= evidence_count:
-            # ランダムに選択（分散させるため）
-            selected = random.sample(suitable_pois, evidence_count)
-        else:
-            # 不足分は全POIから補完
-            selected = suitable_pois.copy()
-            remaining = [poi for poi in available_pois if poi not in suitable_pois]
-            need_more = evidence_count - len(selected)
-            selected.extend(random.sample(remaining, min(need_more, len(remaining))))
+        Returns:
+            証拠配置情報のリスト
+        """
+        # POIを取得
+        pois = await self.get_nearby_pois(
+            center_lat, 
+            center_lng, 
+            max_distance,
+            ['cafe', 'restaurant', 'park', 'convenience_store', 'shopping_mall']
+        )
         
-        return selected
-    
-    async def validate_location(self, location: Location) -> bool:
-        """位置の有効性を検証"""
+        # POIが足りない場合は追加生成
+        if len(pois) < evidence_count:
+            fallback_pois = self._get_fallback_pois(center_lat, center_lng, max_distance)
+            pois.extend(fallback_pois[:evidence_count - len(pois)])
         
-        # 基本的な範囲チェック
-        if not (-90 <= location.lat <= 90 and -180 <= location.lng <= 180):
-            return False
+        # ランダムに選択
+        selected_pois = random.sample(pois, min(evidence_count, len(pois)))
         
-        # 日本国内かチェック（大まかな範囲）
-        japan_bounds = {
-            "north": 45.5,
-            "south": 24.0,
-            "east": 146.0,
-            "west": 129.0
-        }
+        evidence_locations = []
+        for poi in selected_pois:
+            evidence_locations.append({
+                'poi_name': poi.name,
+                'lat': poi.location[0],
+                'lng': poi.location[1],
+                'place_type': poi.place_type,
+                'address': poi.address
+            })
         
-        if not (japan_bounds["south"] <= location.lat <= japan_bounds["north"] and
-                japan_bounds["west"] <= location.lng <= japan_bounds["east"]):
-            return False
-        
-        return True
-
-
-# グローバルPOIサービスインスタンス
-poi_service = POIService()
+        return evidence_locations

@@ -2,13 +2,14 @@
 推理判定関連APIルーター
 """
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from ...services.game_service import game_service
 from ....shared.models.game import DeductionRequest, DeductionResult, GameScore
 from ....shared.models.character import CharacterReaction
+from ..errors import APIError, GameAPIError
 
 
 router = APIRouter()
@@ -33,7 +34,7 @@ class SuspectListResponse(BaseModel):
 
 
 @router.post("/submit", response_model=DeductionSubmitResponse)
-async def submit_deduction(request: DeductionRequest):
+async def submit_deduction(request: DeductionRequest) -> DeductionSubmitResponse:
     """
     推理回答を提出して判定
     
@@ -56,24 +57,17 @@ async def submit_deduction(request: DeductionRequest):
         )
         
     except ValueError as e:
-        raise HTTPException(status_code=400, detail={
-            "error": {
-                "code": "INVALID_REQUEST",
-                "message": str(e)
-            }
-        })
+        raise APIError.bad_request(message=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail={
-            "error": {
-                "code": "DEDUCTION_FAILED",
-                "message": "推理判定処理に失敗しました",
-                "details": str(e)
-            }
-        })
+        raise APIError.internal_server_error(
+            code="DEDUCTION_FAILED",
+            message="推理判定処理に失敗しました",
+            details=str(e)
+        )
 
 
 @router.get("/{game_id}/suspects", response_model=SuspectListResponse)
-async def get_suspects_list(game_id: str):
+async def get_suspects_list(game_id: str) -> SuspectListResponse:
     """
     容疑者リストを取得
     
@@ -84,12 +78,7 @@ async def get_suspects_list(game_id: str):
     game_session = await game_service.get_game_session(game_id)
     
     if not game_session:
-        raise HTTPException(status_code=404, detail={
-            "error": {
-                "code": "GAME_NOT_FOUND",
-                "message": "ゲームセッションが見つかりません"
-            }
-        })
+        raise GameAPIError.game_not_found(game_id)
     
     suspects_info = []
     for suspect in game_session.scenario.suspects:
@@ -118,7 +107,7 @@ async def get_suspects_list(game_id: str):
 
 
 @router.get("/{game_id}/summary")
-async def get_case_summary(game_id: str):
+async def get_case_summary(game_id: str) -> Dict[str, Any]:
     """
     事件の要約情報を取得
     
@@ -129,12 +118,7 @@ async def get_case_summary(game_id: str):
     game_session = await game_service.get_game_session(game_id)
     
     if not game_session:
-        raise HTTPException(status_code=404, detail={
-            "error": {
-                "code": "GAME_NOT_FOUND",
-                "message": "ゲームセッションが見つかりません"
-            }
-        })
+        raise GameAPIError.game_not_found(game_id)
     
     # 発見済み証拠の情報
     discovered_evidence = []
@@ -172,7 +156,7 @@ async def get_case_summary(game_id: str):
 
 
 @router.get("/{game_id}/analysis-help")
-async def get_analysis_help(game_id: str):
+async def get_analysis_help(game_id: str) -> Dict[str, Any]:
     """
     推理分析のヒントを提供
     
@@ -184,12 +168,7 @@ async def get_analysis_help(game_id: str):
     game_session = await game_service.get_game_session(game_id)
     
     if not game_session:
-        raise HTTPException(status_code=404, detail={
-            "error": {
-                "code": "GAME_NOT_FOUND",
-                "message": "ゲームセッションが見つかりません"
-            }
-        })
+        raise GameAPIError.game_not_found(game_id)
     
     # 発見済み証拠から分析ヒントを生成
     discovered_evidence = []

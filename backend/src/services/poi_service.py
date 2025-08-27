@@ -24,7 +24,12 @@ class POIService:
     """Google Maps Places APIを使用してPOI情報を取得"""
     
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or os.getenv('GOOGLE_MAPS_API_KEY')
+        if api_key:
+            self.api_key = api_key
+        else:
+            from ..config.settings import get_settings
+            settings = get_settings()
+            self.api_key = settings.api.google_maps_api_key
         self.places_api_url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
         
     async def get_nearby_pois(

@@ -1,0 +1,133 @@
+{
+  "scenario": {
+    "title": "ニュータウンの影",
+    "description": "午後2時、横浜市都筑区のセンター北駅近くにあるHoshino Coffeeで、常連客の田村健一(52歳・不動産会社勤務)が突然倒れた。救急車で運ばれたが既に息を引き取っており、警察は事件性が高いと判断。ニュータウン開発に関わる複雑な人間関係が浮かび上がる中、あなたは現場に居合わせた探偵として、この謎の解明を任された。",
+    "victim": {
+      "name": "田村健一",
+      "age": 52,
+      "occupation": "不動産会社勤務",
+      "personality": "野心的で商才があるが、時々強引な手法を取る",
+      "temperament": "ambitious",
+      "relationship": "被害者"
+    },
+    "suspects": [
+      {
+        "name": "佐々木恵子",
+        "age": 38,
+        "occupation": "カフェ店長",
+        "personality": "地域密着型の経営で人情味があるが、最近は経営に悩んでいた",
+        "temperament": "caring",
+        "relationship": "店長として被害者とよく話していた",
+        "alibi": "事件時は厨房で新メニューの試作をしていた",
+        "motive": "田村に店舗立ち退きを迫られており、経営難に追い込まれていた"
+      },
+      {
+        "name": "山下大輔",
+        "age": 29,
+        "occupation": "地域開発コンサルタント",
+        "personality": "理想主義者で地域コミュニティを大切にする反面、現実と理想のギャップに苦悩",
+        "temperament": "idealistic",
+        "relationship": "ニュータウン再開発プロジェクトで対立",
+        "alibi": "近くのコワーキングスペースで資料作成していた",
+        "motive": "田村の開発計画が地域コミュニティを破壊すると激しく対立していた"
+      },
+      {
+        "name": "中村美智子",
+        "age": 45,
+        "occupation": "地域住民代表",
+        "personality": "地域のことを誰よりも愛しているが、変化に対して保守的",
+        "temperament": "protective",
+        "relationship": "住民代表として田村と何度も交渉",
+        "alibi": "近所の商店街で買い物をしていた",
+        "motive": "田村の再開発計画で長年住んでいた地域が変わってしまうことに強く反発していた"
+      },
+      {
+        "name": "小林雅人",
+        "age": 34,
+        "occupation": "田村の不動産会社の部下",
+        "personality": "真面目で忠実だが、最近上司との方針に疑問を抱いている",
+        "temperament": "conflicted",
+        "relationship": "田村の直属の部下",
+        "alibi": "会社でプレゼン資料の準備をしていた",
+        "motive": "田村の強引な開発手法に反発し、内部告発を検討していた"
+      }
+    ],
+    "culprit": "山下大輔"
+  },
+  "evidence": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "開発計画書の一部",
+      "description": "田村の開発計画に関する重要な手がかり",
+      "location": {
+        "lat": 35.5963118,
+        "lng": 139.5590573
+      },
+      "poi_name": "Hoshino Coffee",
+      "poi_type": "cafe",
+      "importance": "critical"
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "住民の抗議文",
+      "description": "地域住民からの強い反発を示す証拠",
+      "location": {
+        "lat": 35.5900729,
+        "lng": 139.5666876
+      },
+      "poi_name": "Hotel Toumei",
+      "poi_type": "lodging",
+      "importance": "important"
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "内部告発メール",
+      "description": "会社内部の不正を告発しようとしていた証拠",
+      "location": {
+        "lat": 35.5929687,
+        "lng": 139.5697504
+      },
+      "poi_name": "ラーメン丸宮",
+      "poi_type": "restaurant",
+      "importance": "critical"
+    },
+    {
+      "evidence_id": "evidence_4",
+      "name": "カフェのレシート",
+      "description": "事件当日の時系列を示すが、ミスリードの可能性",
+      "location": {
+        "lat": 35.5966853,
+        "lng": 139.5608859
+      },
+      "poi_name": "Soke Minamoto Kitchoan Miyamae Store",
+      "poi_type": "store",
+      "importance": "misleading"
+    },
+    {
+      "evidence_id": "evidence_5",
+      "name": "コンサルタント契約書",
+      "description": "山下と田村の間の契約関係を示す重要資料",
+      "location": {
+        "lat": 35.59656090000001,
+        "lng": 139.5602605
+      },
+      "poi_name": "個別指導の明光義塾 初山教室",
+      "poi_type": "school",
+      "importance": "important"
+    }
+  ],
+  "location_info": {
+    "name": "センター北駅周辺",
+    "prefecture": "神奈川県",
+    "city": "横浜市都筑区",
+    "characteristics": "ニュータウン、計画都市、住宅街とビジネス地区の融合"
+  },
+  "difficulty_adjustments": {
+    "hard": {
+      "additional_red_herrings": 2,
+      "complex_alibis": true,
+      "multiple_motives": true,
+      "time_pressure": false
+    }
+  }
+}

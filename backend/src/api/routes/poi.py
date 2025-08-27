@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from ...services.poi_service import poi_service
 from ....shared.models.location import Location, POI, POIType
+from ..errors import APIError, POIAPIError
 
 
 router = APIRouter()
@@ -50,12 +51,7 @@ async def get_nearby_pois(
         
         # 位置の有効性チェック
         if not await poi_service.validate_location(location):
-            raise HTTPException(status_code=400, detail={
-                "error": {
-                    "code": "INVALID_LOCATION",
-                    "message": "指定された位置情報が無効です"
-                }
-            })
+            raise POIAPIError.invalid_location()
         
         # POI検索
         poi_types = [poi_type] if poi_type else None
@@ -91,20 +87,12 @@ async def get_nearby_pois(
         )
         
     except ValueError as e:
-        raise HTTPException(status_code=400, detail={
-            "error": {
-                "code": "INVALID_LOCATION",
-                "message": str(e)
-            }
-        })
+        raise APIError.bad_request(
+            code="INVALID_LOCATION",
+            message=str(e)
+        )
     except Exception as e:
-        raise HTTPException(status_code=502, detail={
-            "error": {
-                "code": "EXTERNAL_API_ERROR",
-                "message": "POI検索サービスでエラーが発生しました",
-                "details": str(e)
-            }
-        })
+        raise POIAPIError.poi_search_failed()
 
 
 @router.get("/context", response_model=LocationContextResponse)
@@ -123,12 +111,7 @@ async def get_location_context(
         location = Location(lat=lat, lng=lng)
         
         if not await poi_service.validate_location(location):
-            raise HTTPException(status_code=400, detail={
-                "error": {
-                    "code": "INVALID_LOCATION",
-                    "message": "指定された位置情報が無効です"
-                }
-            })
+            raise POIAPIError.invalid_location()
         
         context = await poi_service.get_location_context(location)
         
@@ -139,13 +122,11 @@ async def get_location_context(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=502, detail={
-            "error": {
-                "code": "EXTERNAL_API_ERROR",
-                "message": "位置情報取得に失敗しました",
-                "details": str(e)
-            }
-        })
+        raise APIError.bad_gateway(
+            code="EXTERNAL_API_ERROR",
+            message="位置情報取得に失敗しました",
+            service="Google Maps API"
+        )
 
 
 @router.get("/types")

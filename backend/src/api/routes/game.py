@@ -61,6 +61,7 @@ async def start_game(request: GameStartRequest):
     - 証拠をPOIに配置
     - ゲームセッションを作成
     """
+    from ..errors import APIError, GameAPIError
     
     try:
         # 新しいゲームセッション開始
@@ -93,20 +94,9 @@ async def start_game(request: GameStartRequest):
         )
         
     except ValueError as e:
-        raise HTTPException(status_code=400, detail={
-            "error": {
-                "code": "INVALID_REQUEST",
-                "message": str(e)
-            }
-        })
+        raise APIError.bad_request(message=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail={
-            "error": {
-                "code": "SCENARIO_GENERATION_FAILED",
-                "message": "シナリオ生成に失敗しました",
-                "details": str(e)
-            }
-        })
+        raise GameAPIError.scenario_generation_failed(details=str(e))
 
 
 @router.get("/{game_id}", response_model=GameStatusResponse)
@@ -120,16 +110,12 @@ async def get_game_status(
     - 発見済み証拠
     - 残り証拠（位置情報のみ）
     """
+    from ..errors import GameAPIError
     
     game_session = await game_service.get_game_session(game_id)
     
     if not game_session:
-        raise HTTPException(status_code=404, detail={
-            "error": {
-                "code": "GAME_NOT_FOUND",
-                "message": "ゲームセッションが見つかりません"
-            }
-        })
+        raise GameAPIError.game_not_found(game_id)
     
     progress_info = game_session.progress
     
@@ -207,24 +193,18 @@ async def abandon_game(
     - ゲーム状態を'abandoned'に変更
     - データは保持される
     """
+    from ..errors import APIError, GameAPIError
     
     game_session = await game_service.get_game_session(game_id)
     
     if not game_session:
-        raise HTTPException(status_code=404, detail={
-            "error": {
-                "code": "GAME_NOT_FOUND", 
-                "message": "ゲームセッションが見つかりません"
-            }
-        })
+        raise GameAPIError.game_not_found(game_id)
     
     if game_session.player_id != player_id:
-        raise HTTPException(status_code=403, detail={
-            "error": {
-                "code": "FORBIDDEN",
-                "message": "このゲームを操作する権限がありません"
-            }
-        })
+        raise APIError.forbidden(
+            code="FORBIDDEN",
+            message="このゲームを操作する権限がありません"
+        )
     
     # TODO: ゲーム放棄処理の実装
     # game_session.status = GameStatus.ABANDONED

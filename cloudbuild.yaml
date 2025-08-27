@@ -1,0 +1,31 @@
+# Cloud Build設定ファイル
+steps:
+  # Dockerイメージをビルド
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:$SHORT_SHA', '.']
+  
+  # Dockerイメージをプッシュ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:$SHORT_SHA']
+  
+  # Cloud Runにデプロイ
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+    - 'run'
+    - 'deploy'
+    - 'detective-anywhere'
+    - '--image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:$SHORT_SHA'
+    - '--platform=managed'
+    - '--region=asia-northeast1'
+    - '--allow-unauthenticated'
+    - '--port=8080'
+    - '--memory=2Gi'
+    - '--cpu=2'
+    - '--min-instances=0'
+    - '--max-instances=10'
+    - '--set-env-vars=ENV=production,GOOGLE_CLOUD_PROJECT=$PROJECT_ID'
+    - '--set-secrets=GEMINI_API_KEY=gemini-api-key:latest,GOOGLE_MAPS_API_KEY=google-maps-api-key:latest'
+
+# 生成された画像
+images:
+  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:$SHORT_SHA'

@@ -8,11 +8,15 @@ import time
 from typing import List, Dict, Any, Optional
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
-import logging
+from ..core.logging import get_ai_logger
 
-logger = logging.getLogger(__name__)
+logger = get_ai_logger(__name__)
+from ....shared.models.scenario import Scenario, ScenarioGenerationRequest
+from ....shared.models.character import Character, Temperament, CharacterReaction
+from ....shared.models.evidence import Evidence, EvidenceImportance
+from ....shared.models.location import Location
 
-from ..core.config import settings
+from ..config.settings import get_settings
 from ..config.secrets import get_api_key
 
 
@@ -52,7 +56,7 @@ class AIService:
         self.max_retries = settings.max_scenario_generation_retries
         self.retry_delay = 2.0  # 2秒
     
-    async def initialize(self):
+    async def initialize(self) -> None:
         """AIサービスの初期化"""
         gemini_api_key = get_api_key('gemini')
         if not gemini_api_key:
@@ -65,7 +69,7 @@ class AIService:
             safety_settings=self.safety_settings
         )
     
-    async def _wait_for_rate_limit(self):
+    async def _wait_for_rate_limit(self) -> None:
         """レート制限のための待機"""
         current_time = time.time()
         time_since_last_request = current_time - self.last_request_time

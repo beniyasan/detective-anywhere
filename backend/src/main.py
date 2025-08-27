@@ -2,7 +2,8 @@
 AIミステリー散歩 - メインアプリケーション
 """
 
-from fastapi import FastAPI, HTTPException
+from typing import Dict, Any
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -14,37 +15,38 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from .api.routes import game, evidence, deduction, poi
-from .core.config import settings
 from .core.database import initialize_firestore
+from .core.logging import setup_logging, get_logger, LogCategory
 from .services.ai_service import AIService
-from .config.secrets import validate_required_secrets, get_database_config
+from .config.settings import get_settings
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """アプリケーションライフサイクル管理"""
     # スタートアップ
-    print("🚀 AIミステリー散歩 API サーバーを起動中...")
+    logger.info("Starting AI Mystery Walk API server")
     
-    # 本番環境でのシークレット検証
-    env = os.getenv('ENV', 'development')
-    if env == 'production':
-        print("🔐 本番環境: APIキーの検証中...")
-        secrets_validation = validate_required_secrets()
-        
-        for secret_name, is_valid in secrets_validation.items():
-            status = "✅" if is_valid else "❌"
-            print(f"   {status} {secret_name}: {'設定済み' if is_valid else '未設定'}")
-        
-        if not all(secrets_validation.values()):
-            print("❌ 必須APIキーが不足しています。docs/GOOGLE_CLOUD_SETUP.md を参照してください。")
-            raise RuntimeError("必須APIキーが設定されていません")
-        
-        print("✅ 本番環境APIキー検証完了")
+    # ログ設定の初期化
+    setup_logging()
+    logger = get_logger(__name__, LogCategory.SYSTEM)
     
-    # データベース設定取得
-    db_config = get_database_config()
-    print(f"📊 データベース設定: {db_config['project_id']} (エミュレーター: {db_config['use_emulator']})")
+    # 統一設定管理を使用
+    settings = get_settings()
+    
+    # 設定情報をログ出力
+    logger.info(
+        "Application startup",
+        environment=settings.environment.value,
+        database_project=settings.database.project_id,
+        use_emulator=settings.database.use_emulator,
+        structured_logging=settings.logging.enable_structured_logging
+    )
+    
+    if settings.is_production:
+        logger.info("Production environment configuration validated")
+    elif settings.is_development:
+        logger.info("Running in development environment")
     
     # Firestoreの初期化
     await initialize_firestore()
@@ -73,8 +75,9 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS設定
-cors_origins = os.getenv('CORS_ORIGINS', '*').split(',')
+# 統一設定から CORS 設定を取得
+settings = get_settings()
+cors_origins = settings.security.allowed_origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
@@ -111,7 +114,7 @@ app.include_router(
 
 
 @app.get("/")
-async def root():
+async def root() -> Dict[str, str]:
     """ヘルスチェックエンドポイント"""
     return {
         "message": "AIミステリー散歩 API",
@@ -121,35 +124,35 @@ async def root():
 
 
 @app.get("/health")
-async def health_check():
+async def health_check() -> Dict[str, Any]:
     """ヘルスチェック"""
-    env = os.getenv('ENV', 'development')
+    settings = get_settings()
     
-    # 本番環境での詳細ヘルスチェック
+    # サービス状態を統一設定から取得
     services_status = {
         "api": "running",
-        "environment": env
+        "environment": settings.environment.value
     }
     
-    if env == 'production':
+    if settings.is_production:
         # 本番環境でのAPIキー検証
-        secrets_validation = validate_required_secrets()
         services_status.update({
-            "gemini_api": "available" if secrets_validation.get('GEMINI_API_KEY', False) else "unavailable",
-            "google_maps_api": "available" if secrets_validation.get('GOOGLE_MAPS_API_KEY', False) else "unavailable",
+            "gemini_api": "available" if settings.api.gemini_api_key else "unavailable",
+            "google_maps_api": "available" if settings.api.google_maps_api_key else "unavailable",
             "firestore": "connected",
-            "secret_manager": "enabled"
+            "secret_manager": "enabled" if settings.security.use_secret_manager else "disabled"
         })
     else:
         services_status.update({
-            "firestore": "mocked" if os.getenv('USE_FIRESTORE_EMULATOR', 'false') == 'false' else "emulator",
-            "gemini": "connected",
-            "google_maps": "connected"
+            "firestore": "emulator" if settings.database.use_emulator else "production",
+            "gemini": "available" if settings.api.gemini_api_key else "unavailable",
+            "google_maps": "available" if settings.api.google_maps_api_key else "unavailable"
         })
     
     return {
         "status": "healthy",
-        "services": services_status
+        "services": services_status,
+        "configuration": settings.to_dict() if settings.is_development else None
     }
 
 
@@ -177,7 +180,7 @@ async def serve_service_worker():
 
 # エラーハンドラー
 @app.exception_handler(404)
-async def not_found_handler(request, exc):
+async def not_found_handler(request: Request, exc: HTTPException) -> Dict[str, Any]:
     return {
         "error": {
             "code": "NOT_FOUND",
@@ -188,7 +191,7 @@ async def not_found_handler(request, exc):
 
 
 @app.exception_handler(500)
-async def internal_error_handler(request, exc):
+async def internal_error_handler(request: Request, exc: Exception) -> Dict[str, Any]:
     return {
         "error": {
             "code": "INTERNAL_SERVER_ERROR", 

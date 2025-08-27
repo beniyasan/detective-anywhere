@@ -11,6 +11,7 @@ from ...services.game_service import game_service
 from ...services.gps_service import GPSReading, GPSAccuracy
 from ....shared.models.location import Location
 from ....shared.models.evidence import Evidence, EvidenceDiscoveryResult
+from ..errors import APIError, EvidenceAPIError, GameAPIError
 
 
 router = APIRouter()
@@ -98,20 +99,13 @@ async def discover_evidence(request: EvidenceDiscoveryRequest):
         )
         
     except ValueError as e:
-        raise HTTPException(status_code=400, detail={
-            "error": {
-                "code": "INVALID_REQUEST",
-                "message": str(e)
-            }
-        })
+        raise APIError.bad_request(message=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail={
-            "error": {
-                "code": "EVIDENCE_DISCOVERY_FAILED",
-                "message": "証拠発見処理に失敗しました",
-                "details": str(e)
-            }
-        })
+        raise APIError.internal_server_error(
+            code="EVIDENCE_DISCOVERY_FAILED",
+            message="証拠発見処理に失敗しました",
+            details=str(e)
+        )
 
 
 @router.get("/{evidence_id}/hint")
@@ -128,31 +122,21 @@ async def get_evidence_hint(
     """
     
     if not game_id or not player_id:
-        raise HTTPException(status_code=400, detail={
-            "error": {
-                "code": "MISSING_PARAMETERS",
-                "message": "game_idとplayer_idが必要です"
-            }
-        })
+        raise APIError.bad_request(
+            code="MISSING_PARAMETERS",
+            message="game_idとplayer_idが必要です"
+        )
     
     # ゲームセッション取得
     game_session = await game_service.get_game_session(game_id)
     
     if not game_session:
-        raise HTTPException(status_code=404, detail={
-            "error": {
-                "code": "GAME_NOT_FOUND",
-                "message": "ゲームセッションが見つかりません"
-            }
-        })
+        raise GameAPIError.game_not_found(game_id)
     
     if game_session.player_id != player_id:
-        raise HTTPException(status_code=403, detail={
-            "error": {
-                "code": "FORBIDDEN",
-                "message": "このゲームのヒントを取得する権限がありません"
-            }
-        })
+        raise APIError.forbidden(
+            message="このゲームのヒントを取得する権限がありません"
+        )
     
     # 該当証拠を検索
     evidence = None
@@ -162,12 +146,7 @@ async def get_evidence_hint(
             break
     
     if not evidence:
-        raise HTTPException(status_code=404, detail={
-            "error": {
-                "code": "EVIDENCE_NOT_FOUND",
-                "message": "指定された証拠が見つかりません"
-            }
-        })
+        raise EvidenceAPIError.evidence_not_found(evidence_id)
     
     # 既に発見済みの場合
     if evidence_id in game_session.discovered_evidence:
@@ -219,32 +198,25 @@ async def get_evidence_location_info(
     """
     
     if not game_id:
-        raise HTTPException(status_code=400, detail={
-            "error": {
-                "code": "MISSING_GAME_ID",
-                "message": "game_idが必要です"
-            }
-        })
+        raise APIError.bad_request(
+            code="MISSING_GAME_ID",
+            message="game_idが必要です"
+        )
     
     # 開発環境でのみ有効
     import os
-    if os.getenv("ENV", "production") != "development":
-        raise HTTPException(status_code=403, detail={
-            "error": {
-                "code": "DEBUG_ONLY",
-                "message": "このエンドポイントは開発環境でのみ利用可能です"
-            }
-        })
+    from ...config.settings import get_settings
+    settings = get_settings()
+    if not settings.is_development:
+        raise APIError.forbidden(
+            code="DEBUG_ONLY",
+            message="このエンドポイントは開発環境でのみ利用可能です"
+        )
     
     game_session = await game_service.get_game_session(game_id)
     
     if not game_session:
-        raise HTTPException(status_code=404, detail={
-            "error": {
-                "code": "GAME_NOT_FOUND",
-                "message": "ゲームセッションが見つかりません"
-            }
-        })
+        raise GameAPIError.game_not_found(game_id)
     
     evidence = None
     for ev in game_session.evidence_list:
@@ -253,12 +225,7 @@ async def get_evidence_location_info(
             break
     
     if not evidence:
-        raise HTTPException(status_code=404, detail={
-            "error": {
-                "code": "EVIDENCE_NOT_FOUND",
-                "message": "指定された証拠が見つかりません"
-            }
-        })
+        raise EvidenceAPIError.evidence_not_found(evidence_id)
     
     return {
         "evidence_id": evidence_id,

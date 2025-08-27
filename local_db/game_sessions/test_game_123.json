@@ -1,0 +1,32 @@
+{
+  "game_id": "test_game_123",
+  "player_id": "test_player_456",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "テストミステリー",
+    "culprit": "テスト犯人",
+    "motive": "テスト動機"
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "ev1",
+      "name": "テスト証拠1",
+      "poi_name": "テストPOI",
+      "location": {
+        "lat": 35.6762,
+        "lng": 139.6503
+      }
+    }
+  ],
+  "discovered_evidence": [
+    "ev1"
+  ],
+  "player_location": {
+    "lat": 35.6762,
+    "lng": 139.6503
+  },
+  "created_at": "2025-08-21T01:03:41.832850",
+  "updated_at": "2025-08-21T01:03:41.845769",
+  "last_activity": "2025-08-21T01:03:41.842193"
+}

@@ -4,16 +4,16 @@
 
 import asyncio
 import random
-import logging
 from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime, timedelta
 import googlemaps
 from geopy.distance import geodesic
 
 from ..config.secrets import get_api_key
+from ..core.logging import get_logger, LogCategory
 from ....shared.models.location import Location, POI, POIType
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__, LogCategory.POI_SERVICE)
 
 
 class EvidencePlacementStrategy:

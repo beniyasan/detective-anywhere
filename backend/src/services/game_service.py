@@ -3,7 +3,7 @@
 """
 
 import uuid
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple
 from datetime import datetime
 
 from .database_service import database_service
@@ -113,6 +113,162 @@ class GameService:
             return None
         
         return self._deserialize_game_session(game_data)
+
+    async def _validate_game_session(
+        self,
+        game_id: str,
+        player_id: str
+    ) -> Tuple[Optional[GameSession], Optional[EvidenceDiscoveryResult]]:
+        """
+        ゲームセッションの検証
+        
+        Returns:
+            tuple: (game_session, error_result) 
+                   エラーの場合は(None, error_result)を返す
+        """
+        game_session = await self.get_game_session(game_id)
+        if not game_session:
+            return None, EvidenceDiscoveryResult.failure_result(
+                0.0, "ゲームセッションが見つかりません"
+            )
+        
+        if game_session.player_id != player_id:
+            return None, EvidenceDiscoveryResult.failure_result(
+                0.0, "プレイヤーIDが一致しません"
+            )
+        
+        if game_session.status != GameStatus.ACTIVE:
+            return None, EvidenceDiscoveryResult.failure_result(
+                0.0, "ゲームは終了しています"
+            )
+        
+        return game_session, None
+    
+    async def _validate_evidence(
+        self,
+        game_session: GameSession,
+        evidence_id: str
+    ) -> Tuple[Optional[Evidence], Optional[EvidenceDiscoveryResult]]:
+        """
+        証拠の検証
+        
+        Returns:
+            tuple: (evidence, error_result)
+                   エラーの場合は(None, error_result)を返す
+        """
+        # 証拠が既に発見済みかチェック
+        if evidence_id in game_session.discovered_evidence:
+            return None, EvidenceDiscoveryResult.failure_result(
+                0.0, "この証拠は既に発見済みです"
+            )
+        
+        # 該当証拠を検索
+        evidence = None
+        for ev in game_session.evidence_list:
+            if ev.evidence_id == evidence_id:
+                evidence = ev
+                break
+        
+        if not evidence:
+            return None, EvidenceDiscoveryResult.failure_result(
+                0.0, "指定された証拠が見つかりません"
+            )
+        
+        return evidence, None
+    
+    async def _validate_distance_with_gps(
+        self,
+        gps_reading: GPSReading,
+        evidence: Evidence,
+        player_id: str,
+        game_session: GameSession
+    ) -> Tuple[float, Optional[EvidenceDiscoveryResult]]:
+        """
+        GPS検証付き距離チェック
+        
+        Returns:
+            tuple: (distance, error_result)
+                   成功の場合は(distance, None)を返す
+        """
+        # 高度なGPS検証
+        validation_result = gps_service.validate_evidence_discovery(
+            gps_reading, evidence.location, player_id
+        )
+        
+        # GPS偽造検出
+        spoofing_check = gps_service.detect_gps_spoofing(gps_reading, player_id)
+        if spoofing_check["is_likely_spoofed"]:
+            return validation_result.distance_to_target, EvidenceDiscoveryResult.failure_result(
+                validation_result.distance_to_target,
+                "位置情報に問題があります。GPS設定を確認してください。"
+            )
+        
+        # 検証失敗の場合
+        if not validation_result.is_valid:
+            # 適応的な発見半径を計算
+            adaptive_radius = gps_service.calculate_adaptive_discovery_radius(
+                gps_reading, evidence.location, evidence.poi_type
+            )
+            
+            return validation_result.distance_to_target, EvidenceDiscoveryResult.failure_result(
+                validation_result.distance_to_target,
+                f"証拠から{validation_result.distance_to_target:.1f}m離れています。"
+                f"GPS精度: {gps_reading.accuracy.horizontal_accuracy:.1f}m "
+                f"（{adaptive_radius:.1f}m以内に近づいてください）"
+            )
+        
+        return validation_result.distance_to_target, None
+    
+    async def _validate_distance_simple(
+        self,
+        player_location: Location,
+        evidence: Evidence,
+        game_session: GameSession
+    ) -> Tuple[float, Optional[EvidenceDiscoveryResult]]:
+        """
+        単純な距離チェック（GPS情報なしのフォールバック）
+        
+        Returns:
+            tuple: (distance, error_result)
+                   成功の場合は(distance, None)を返す
+        """
+        distance = player_location.distance_to(evidence.location)
+        if distance > game_session.game_rules.discovery_radius:
+            return distance, EvidenceDiscoveryResult.failure_result(
+                distance, 
+                f"証拠から{distance:.1f}m離れています。{game_session.game_rules.discovery_radius}m以内に近づいてください。"
+            )
+        return distance, None
+    
+    async def _process_evidence_discovery(
+        self,
+        game_session: GameSession,
+        evidence: Evidence,
+        evidence_id: str,
+        distance: float
+    ) -> EvidenceDiscoveryResult:
+        """
+        証拠発見処理の実行
+        
+        Returns:
+            EvidenceDiscoveryResult: 発見結果
+        """
+        # 証拠発見処理
+        game_session.discover_evidence(evidence_id)
+        evidence.discover()
+        
+        # 次のヒント生成（オプション）
+        next_clue = await self._generate_next_clue(game_session, evidence)
+        
+        # データベース更新
+        await database_service.update_game_session(game_session.game_id, {
+            "discovered_evidence": game_session.discovered_evidence,
+            "last_activity": datetime.now()
+        })
+        
+        return EvidenceDiscoveryResult.success_result(
+            evidence, distance, next_clue
+        )
     
     async def discover_evidence(
         self,
@@ -136,95 +292,33 @@ class GameService:
             EvidenceDiscoveryResult: 発見結果
         """
         
-        # ゲームセッション取得
-        game_session = await self.get_game_session(game_id)
-        if not game_session:
-            return EvidenceDiscoveryResult.failure_result(
-                0.0, "ゲームセッションが見つかりません"
-            )
+        # ゲームセッションの検証
+        game_session, error = await self._validate_game_session(game_id, player_id)
+        if error:
+            return error
         
-        if game_session.player_id != player_id:
-            return EvidenceDiscoveryResult.failure_result(
-                0.0, "プレイヤーIDが一致しません"
-            )
+        # 証拠の検証
+        evidence, error = await self._validate_evidence(game_session, evidence_id)
+        if error:
+            return error
         
-        if game_session.status != GameStatus.ACTIVE:
-            return EvidenceDiscoveryResult.failure_result(
-                0.0, "ゲームは終了しています"
-            )
-        
-        # 証拠が既に発見済みかチェック
-        if evidence_id in game_session.discovered_evidence:
-            return EvidenceDiscoveryResult.failure_result(
-                0.0, "この証拠は既に発見済みです"
-            )
-        
-        # 該当証拠を検索
-        evidence = None
-        for ev in game_session.evidence_list:
-            if ev.evidence_id == evidence_id:
-                evidence = ev
-                break
-        
-        if not evidence:
-            return EvidenceDiscoveryResult.failure_result(
-                0.0, "指定された証拠が見つかりません"
-            )
-        
-        # GPS検証付き距離チェック
+        # 距離検証
         if gps_reading:
-            # 高度なGPS検証
-            validation_result = gps_service.validate_evidence_discovery(
-                gps_reading, evidence.location, player_id
+            distance, error = await self._validate_distance_with_gps(
+                gps_reading, evidence, player_id, game_session
             )
-            
-            # GPS偽造検出
-            spoofing_check = gps_service.detect_gps_spoofing(gps_reading, player_id)
-            if spoofing_check["is_likely_spoofed"]:
-                return EvidenceDiscoveryResult.failure_result(
-                    validation_result.distance_to_target,
-                    "位置情報に問題があります。GPS設定を確認してください。"
-                )
-            
-            # 検証失敗の場合
-            if not validation_result.is_valid:
-                # 適応的な発見半径を計算
-                adaptive_radius = gps_service.calculate_adaptive_discovery_radius(
-                    gps_reading, evidence.location, evidence.poi_type
-                )
-                
-                return EvidenceDiscoveryResult.failure_result(
-                    validation_result.distance_to_target,
-                    f"証拠から{validation_result.distance_to_target:.1f}m離れています。"
-                    f"GPS精度: {gps_reading.accuracy.horizontal_accuracy:.1f}m "
-                    f"（{adaptive_radius:.1f}m以内に近づいてください）"
-                )
-            
-            distance = validation_result.distance_to_target
+            if error:
+                return error
         else:
-            # フォールバック：従来の単純距離チェック
-            distance = player_location.distance_to(evidence.location)
-            if distance > game_session.game_rules.discovery_radius:
-                return EvidenceDiscoveryResult.failure_result(
-                    distance, 
-                    f"証拠から{distance:.1f}m離れています。{game_session.game_rules.discovery_radius}m以内に近づいてください。"
-                )
+            distance, error = await self._validate_distance_simple(
+                player_location, evidence, game_session
+            )
+            if error:
+                return error
         
-        # 証拠発見処理
-        game_session.discover_evidence(evidence_id)
-        evidence.discover()
-        
-        # 次のヒント生成（オプション）
-        next_clue = await self._generate_next_clue(game_session, evidence)
-        
-        # データベース更新
-        await database_service.update_game_session(game_session.game_id, {
-            "discovered_evidence": game_session.discovered_evidence,
-            "last_activity": datetime.now()
-        })
-        
-        return EvidenceDiscoveryResult.success_result(
-            evidence, distance, next_clue
+        # 証拠発見処理の実行
+        return await self._process_evidence_discovery(
+            game_session, evidence, evidence_id, distance
         )
     
     async def submit_deduction(
@@ -309,7 +403,7 @@ class GameService:
         
         return game_session.is_evidence_nearby(player_location)
     
-    def _get_suspect_count_range(self, difficulty: Difficulty) -> tuple[int, int]:
+    def _get_suspect_count_range(self, difficulty: Difficulty) -> Tuple[int, int]:
         """難易度に応じた容疑者数範囲を取得"""
         ranges = {
             Difficulty.EASY: (3, 4),
@@ -348,7 +442,7 @@ class GameService:
         
         return None
     
-    async def _save_game_history(self, game_session: GameSession):
+    async def _save_game_history(self, game_session: GameSession) -> None:
         """ゲーム履歴を保存"""
         
         if not game_session.completed_at or not game_session.final_score:

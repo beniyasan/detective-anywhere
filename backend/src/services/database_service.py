@@ -9,9 +9,9 @@ import asyncio
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 from pathlib import Path
-import logging
+from ..core.logging import get_database_logger
 
-logger = logging.getLogger(__name__)
+logger = get_database_logger(__name__)
 
 class LocalFileDatabase:
     """ローカルファイルベースのデータベース（開発用）"""
@@ -39,11 +39,22 @@ class LocalFileDatabase:
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(serializable_data, f, ensure_ascii=False, indent=2)
             
-            logger.debug(f"ドキュメント保存成功: {collection}/{document_id}")
+            logger.db_operation(
+                operation="save_document",
+                collection=collection,
+                document_id=document_id,
+                success=True
+            )
             return True
             
         except Exception as e:
-            logger.error(f"ドキュメント保存エラー: {e}")
+            logger.db_error(
+                operation="save_document",
+                error_message="Document save failed",
+                collection=collection,
+                document_id=document_id,
+                exception=e
+            )
             return False
     
     async def get_document(self, collection: str, document_id: str) -> Optional[Dict[str, Any]]:
@@ -191,7 +202,10 @@ class DatabaseService:
     """統合データベースサービス"""
     
     def __init__(self):
-        self.use_firestore = os.getenv('USE_FIRESTORE_EMULATOR', 'false').lower() == 'true'
+        from ..config.settings import get_settings
+        settings = get_settings()
+        
+        self.use_firestore = settings.database.use_firestore
         self.firestore_client = None
         self.local_db = None
         
@@ -199,20 +213,22 @@ class DatabaseService:
             self._initialize_firestore()
         else:
             self.local_db = LocalFileDatabase()
-            logger.info("ローカルファイルデータベースを使用します")
+            logger.info("Using local file database", database_type="local_file")
     
     def _initialize_firestore(self):
         """Firestore初期化"""
         try:
             from google.cloud import firestore
             
-            project_id = os.getenv('GOOGLE_CLOUD_PROJECT', 'detective-anywhere-local')
+            from ..config.settings import get_settings
+            settings = get_settings()
+            
+            project_id = settings.database.project_id or 'detective-anywhere-local'
             
             # エミュレーター設定
-            emulator_host = os.getenv('FIRESTORE_EMULATOR_HOST')
-            if emulator_host:
-                os.environ['FIRESTORE_EMULATOR_HOST'] = emulator_host
-                logger.info(f"Firestoreエミュレーターを使用: {emulator_host}")
+            if settings.database.use_emulator and settings.database.emulator_host:
+                os.environ['FIRESTORE_EMULATOR_HOST'] = settings.database.emulator_host
+                logger.info(f"Firestoreエミュレーターを使用: {settings.database.emulator_host}")
             
             self.firestore_client = firestore.Client(project=project_id)
             logger.info("Firestoreクライアント初期化成功")

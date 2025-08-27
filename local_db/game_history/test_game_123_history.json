@@ -1,0 +1,9 @@
+{
+  "game_id": "test_game_123",
+  "player_id": "test_player_456",
+  "title": "テストミステリー",
+  "completed_at": "2025-08-21T01:03:41.868804",
+  "score": 850,
+  "difficulty": "normal",
+  "duration": 1200
+}

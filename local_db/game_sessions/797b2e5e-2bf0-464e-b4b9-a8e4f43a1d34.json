@@ -1,0 +1,133 @@
+{
+  "game_id": "797b2e5e-2bf0-464e-b4b9-a8e4f43a1d34",
+  "player_id": "test_random_123",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "駐車場の襲撃事件",
+    "description": "東京都内の都市部。東京駅、皇居、国会議事堂付近の周辺エリア。で起きた衝撃的な事件。午前2時、地下駐車場で伊藤健一さん（48歳・タクシー運転手）が遺体で発見された。現場の状況から鈍器による殴打と推定される。警察の捜査により、3人の重要参考人が浮上。それぞれに動機があり、アリバイも曖昧だ。限られた証拠から真犯人を見つけ出せ！",
+    "victim": {
+      "name": "伊藤健一",
+      "age": 48,
+      "occupation": "タクシー運転手",
+      "personality": "真面目で几帳面な性格",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "東京都内の都市部。東京駅、皇居、国会議事堂付近の周辺エリア。でタクシー運転手として働いていた"
+    },
+    "suspects": [
+      {
+        "name": "佐藤花子",
+        "age": 25,
+        "occupation": "パート店員",
+        "personality": "表面上は明るいが計算高い",
+        "temperament": "nervous",
+        "relationship": "近隣住民",
+        "alibi": "事件当時、自宅にいたと主張",
+        "motive": "過去の秘密を握られていた",
+        "background": "東京都内の都市部。東京駅、皇居、国会議事堂付近の周辺エリア。在住"
+      },
+      {
+        "name": "田中美咲",
+        "age": 35,
+        "occupation": "主婦",
+        "personality": "嫉妬深く執念深い",
+        "temperament": "nervous",
+        "relationship": "知人",
+        "alibi": "事件当時、現場付近にいたと主張",
+        "motive": "金銭トラブルで恨みを持っていた",
+        "background": "東京都内の都市部。東京駅、皇居、国会議事堂付近の周辺エリア。在住"
+      },
+      {
+        "name": "鈴木一郎",
+        "age": 40,
+        "occupation": "自営業",
+        "personality": "プライドが高く頑固",
+        "temperament": "calm",
+        "relationship": "近隣住民",
+        "alibi": "事件当時、自宅にいたと主張",
+        "motive": "金銭トラブルで恨みを持っていた",
+        "background": "東京都内の都市部。東京駅、皇居、国会議事堂付近の周辺エリア。在住"
+      }
+    ],
+    "culprit": "田中美咲",
+    "motive": "金銭トラブルで恨みを持っていた",
+    "method": "鈍器による殴打",
+    "timeline": [
+      "午前2時の30分前: 被害者が地下駐車場に到着",
+      "午前2時: 事件発生",
+      "午前2時の30分後: 遺体発見、通報"
+    ],
+    "theme": "classic_mystery",
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "血痕の付いた花瓶",
+      "description": "コミュニティセンター会議室の床に落ちていた陶製の花瓶。被害者の血液と複数人の指紋が付着している。",
+      "discovery_text": "会議室の床に散らばった花瓶の破片を発見した。底の部分に血痕があり、持ち手部分には複数の指紋が確認できる。田中、佐藤、鈴木の指紋が全て検出された...",
+      "importance": "critical",
+      "location": {
+        "lat": 35.6824361,
+        "lng": 139.7665257
+      },
+      "poi_name": "東京ステーションギャラリー",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "全容疑者",
+      "clue_text": "全員の指紋があるため、まだ犯人を特定できない"
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "破れた騒音苦情書",
+      "description": "ゴミ箱から発見された、田中直筆の騒音苦情書。山田に対する強い怒りの言葉が書かれ、最後に「もう我慢の限界だ」と記されている。",
+      "discovery_text": "ゴミ箱の中から破り捨てられた苦情書を発見した。田中の直筆で書かれており、山田への激しい怒りと「今夜話し合いに行く」という予告が記されている...",
+      "importance": "important",
+      "location": {
+        "lat": 35.68009929999999,
+        "lng": 139.7680666
+      },
+      "poi_name": "グランルーフ ガーデン",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "田中が事件当夜に山田と会う予定だったことを示す"
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "防犯カメラの映像",
+      "description": "会議終了後の映像記録。佐藤と鈴木は8時45分に帰宅、田中のみ9時まで残り、その後会議室へ向かう姿が記録されている。",
+      "discovery_text": "防犯カメラの映像を詳しく分析すると、他の参加者は早めに帰宅しているが、田中だけが最後まで残り、一人で会議室に向かっている決定的な瞬間が記録されていた...",
+      "importance": "critical",
+      "location": {
+        "lat": 35.6820335,
+        "lng": 139.7686549
+      },
+      "poi_name": "東京キャラクターストリート",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "他の容疑者にはアリバイがあり、田中のみが犯行可能時間に現場にいた"
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.6812,
+    "lng": 139.7671
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T17:13:26.939447",
+  "updated_at": "2025-08-27T17:13:26.939591",
+  "completed_at": null,
+  "final_score": null
+}

@@ -33,7 +33,7 @@ class DatabaseConfig:
             collection_prefix=os.getenv('FIRESTORE_COLLECTION_PREFIX', 'mystery_walk_prod'),
             use_emulator=os.getenv('USE_FIRESTORE_EMULATOR', 'false').lower() == 'true',
             emulator_host=os.getenv('FIRESTORE_EMULATOR_HOST'),
-            use_firestore=os.getenv('USE_FIRESTORE', 'true').lower() == 'true',
+            use_firestore=os.getenv('USE_FIRESTORE', 'false').lower() == 'true',
             local_db_path=os.getenv('LOCAL_DB_PATH', 'local_db')
         )
 

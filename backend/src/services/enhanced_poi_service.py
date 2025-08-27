@@ -11,7 +11,7 @@ from geopy.distance import geodesic
 
 from ..config.secrets import get_api_key
 from ..core.logging import get_logger, LogCategory
-from ....shared.models.location import Location, POI, POIType
+from shared.models.location import Location, POI, POIType
 
 logger = get_logger(__name__, LogCategory.POI_SERVICE)
 
@@ -59,14 +59,19 @@ class EvidencePlacementStrategy:
         evidence_count: int,
         min_distance_between: float = 150.0
     ) -> List[POI]:
-        """証拠間の適切な分散を確保"""
+        """証拠間の適切な分散を確保（ランダム性追加）"""
         
         if len(pois) <= evidence_count:
             return pois
         
-        selected = [pois[0]]  # 最初のPOIを選択
+        # ランダムシャッフルを追加して毎回異なる選択を可能にする
+        import random
+        shuffled_pois = pois.copy()
+        random.shuffle(shuffled_pois)
         
-        for poi in pois[1:]:
+        selected = [shuffled_pois[0]]  # 最初のPOIを選択
+        
+        for poi in shuffled_pois[1:]:
             if len(selected) >= evidence_count:
                 break
             
@@ -82,7 +87,7 @@ class EvidencePlacementStrategy:
         
         # まだ足りない場合は距離制限を緩めて追加
         if len(selected) < evidence_count:
-            remaining = [p for p in pois if p not in selected]
+            remaining = [p for p in shuffled_pois if p not in selected]
             need_more = evidence_count - len(selected)
             selected.extend(remaining[:need_more])
         

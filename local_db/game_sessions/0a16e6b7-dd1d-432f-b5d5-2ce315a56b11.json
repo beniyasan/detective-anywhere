@@ -1,0 +1,135 @@
+{
+  "game_id": "0a16e6b7-dd1d-432f-b5d5-2ce315a56b11",
+  "player_id": "test_chofu_456",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "調布市の住宅街殺人事件",
+    "description": "東京都調布市の住宅街で発生した殺人事件。被害者は地元の商店経営者。平和な住宅地で起きた事件の真相を解き明かせ。",
+    "victim": {
+      "name": "山田一郎",
+      "age": 45,
+      "occupation": "商店経営者",
+      "personality": "地域の世話役だが、お金にはシビア",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "調布市で長年米屋を経営。地域の商店街組合長も務めている"
+    },
+    "suspects": [
+      {
+        "name": "田中太郎",
+        "age": 35,
+        "occupation": "近所の住民",
+        "personality": "真面目だが金銭トラブルを抱えている",
+        "temperament": "nervous",
+        "relationship": "近隣住民",
+        "alibi": "事件時間は自宅で在宅勤務をしていたと主張",
+        "motive": "山田の店から借りた金を返せず、厳しく取り立てられていた",
+        "background": "最近リストラされ、山田の米屋から生活費を借りていた"
+      },
+      {
+        "name": "佐藤花子",
+        "age": 28,
+        "occupation": "商店街の花屋店員",
+        "personality": "明るいが、競争心が強い",
+        "temperament": "calm",
+        "relationship": "同業者",
+        "alibi": "花屋で接客をしていたと証言",
+        "motive": "山田が商店街の土地買収を進めており、自分の店が立ち退きの危機",
+        "background": "家族で営む花屋で働いている。山田の土地買収計画に反対していた"
+      },
+      {
+        "name": "鈴木次郎",
+        "age": 40,
+        "occupation": "配達員",
+        "personality": "無口で人とのトラブルを避けがち",
+        "temperament": "defensive",
+        "relationship": "取引先",
+        "alibi": "他の店への配達をしていたが、明確な目撃者はいない",
+        "motive": "配達料金の未払いを理由に山田から取引を一方的に停止された",
+        "background": "個人で配達業を営む。山田の米屋とは長年取引があった"
+      }
+    ],
+    "culprit": "田中太郎",
+    "motive": "借金の取り立てで追い詰められ、山田への恨みが爆発して衝動的に犯行に及んだ",
+    "method": "米屋の店内で口論となり、レジ横にあった包丁で刺殺",
+    "timeline": [
+      "午後2時00分: 山田が米屋で店番をしている時間",
+      "午後2時30分: 田中が借金返済の相談に米屋を訪問",
+      "午後3時00分: 取り立てを迫る山田と田中が激しく口論",
+      "午後3時15分: 事件発生（田中が包丁で刺殺）",
+      "午後4時00分: 買い物客が遺体を発見、通報"
+    ],
+    "theme": null,
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "血痕の付いた包丁",
+      "description": "米屋のレジ横から発見された包丁。被害者の血液と田中の指紋が付着している。",
+      "discovery_text": "レジ横に置かれた包丁を発見した。刃に血液が付着し、柄の部分には明確な指紋が残っている...",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5333144,
+        "lng": 139.5575128
+      },
+      "poi_name": "ゆうばえの道",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "田中の指紋が検出される決定的な凶器"
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "借金の証書",
+      "description": "米屋の金庫から発見された、田中の借用証書。返済期限は昨日だった。",
+      "discovery_text": "金庫の中から田中宛ての借用証書を発見した。金額は50万円、返済期限は昨日となっている...",
+      "importance": "important",
+      "location": {
+        "lat": 35.53156269999999,
+        "lng": 139.560454
+      },
+      "poi_name": "二の丸こぶし公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "金銭トラブルの動機を裏付ける重要な証拠"
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "商店街の防犯カメラ映像",
+      "description": "午後2時30分頃、田中が米屋に入店し、3時20分頃に慌てて店から出てくる様子が記録されている。",
+      "discovery_text": "商店街の防犯カメラの映像を確認すると、田中が事件時間帯に米屋を出入りする決定的な証拠が記録されていた...",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5299722,
+        "lng": 139.5585024
+      },
+      "poi_name": "都田公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "犯行時間帯の田中の行動を完全に裏付ける映像"
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T15:36:33.994087",
+  "updated_at": "2025-08-27T15:36:33.994178",
+  "completed_at": null,
+  "final_score": null
+}

@@ -9,8 +9,8 @@ from pydantic import BaseModel
 
 from ...services.game_service import game_service
 from ...services.gps_service import GPSReading, GPSAccuracy
-from ....shared.models.location import Location
-from ....shared.models.evidence import Evidence, EvidenceDiscoveryResult
+from shared.models.location import Location
+from shared.models.evidence import Evidence, EvidenceDiscoveryResult
 from ..errors import APIError, EvidenceAPIError, GameAPIError
 
 

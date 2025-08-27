@@ -1,0 +1,133 @@
+{
+  "game_id": "71cb290a-7b8d-4d3f-aa10-f95700ba64a2",
+  "player_id": "player_1756286306899_j60zhu9k2",
+  "status": "active",
+  "difficulty": "easy",
+  "scenario": {
+    "title": "公園のベンチでの謎",
+    "description": "静かな日曜日の午後、A公園のベンチで男性が倒れているのが発見された。名前は山田一郎、50歳。死因は毒物によるものとみられる。現場には3人の人物がいた。山田の同僚である佐藤、公園の常連客の田中、そして山田の妻、花子。一見平和な公園で、一体何が起きたのか？",
+    "victim": {
+      "name": "山田一郎",
+      "age": 50,
+      "occupation": "会社員",
+      "personality": "温厚",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "真面目な性格で、職場でも家庭でも信頼されていた。"
+    },
+    "suspects": [
+      {
+        "name": "佐藤",
+        "age": 45,
+        "occupation": "会社員",
+        "personality": "几帳面",
+        "temperament": "nervous",
+        "relationship": "同僚",
+        "alibi": "B公園でジョギングをしていた",
+        "motive": "山田が昇進したことに対する嫉妬",
+        "background": "山田の昇進で自身の立場が危うくなると感じていた。"
+      },
+      {
+        "name": "田中",
+        "age": 60,
+        "occupation": "無職",
+        "personality": "無口",
+        "temperament": "calm",
+        "relationship": "公園の常連客",
+        "alibi": "C公園で読書をしていた",
+        "motive": "山田にベンチを占領されていたことに対する苛立ち",
+        "background": "いつも同じベンチに座ることを日課としていた。"
+      },
+      {
+        "name": "花子",
+        "age": 48,
+        "occupation": "主婦",
+        "personality": "心配性",
+        "temperament": "defensive",
+        "relationship": "妻",
+        "alibi": "家で家事をしていた",
+        "motive": "多額の保険金",
+        "background": "最近、山田と口論が増えていた。"
+      }
+    ],
+    "culprit": "花子",
+    "motive": "多額の保険金目当て",
+    "method": "毒入りの飲み物を飲ませた",
+    "timeline": [
+      "午前10時: 山田がA公園へ",
+      "午前11時: 花子が山田に毒入りの飲み物を差し入れる",
+      "正午: 山田が倒れているのが発見される"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "ランニングシューズの痕跡",
+      "description": "B公園のジョギングコース脇のぬかるみで、佐藤のものと一致するランニングシューズの痕跡が見つかった。サイズは26cmで、佐藤が普段履いているものと同じモデルである。土に深く刻まれた跡から、事件発生時刻頃にこの場所で走っていたことが推測される。",
+      "discovery_text": "B公園を捜索していた刑事が、ジョギングコース脇のぬかるみに目を留めた。よく見ると、ランニングシューズの独特なパターンが刻まれている。これは…佐藤のものと一致するのではないか？",
+      "importance": "important",
+      "location": {
+        "lat": 35.5333144,
+        "lng": 139.5575128
+      },
+      "poi_name": "ゆうばえの道",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "佐藤",
+      "clue_text": ""
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "図書館の貸出記録",
+      "description": "C公園に隣接する図書館の貸出記録から、田中が事件発生時刻頃に推理小説を借りていたことが判明した。図書館員は田中が読書スペースで静かに過ごしていたことを証言している。",
+      "discovery_text": "田中のアリバイを検証するため、近隣の施設を調べていた刑事は、C公園に隣接する図書館の存在に気づいた。図書館の貸出記録を調べると、そこに田中の名前があった！",
+      "importance": "important",
+      "location": {
+        "lat": 35.536904,
+        "lng": 139.5595391
+      },
+      "poi_name": "高山くすのき公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中",
+      "clue_text": ""
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "空の毒物瓶",
+      "description": "二の丸こぶし公園のゴミ箱から、山田が飲んでいた飲み物と同じ種類の空のペットボトルが見つかった。ペットボトルの内側からは微量の毒物が検出され、花子の自宅にあった殺虫剤の成分と一致した。花子は自宅で殺虫剤を使っていることを認めているが、このペットボトルについては「知らない」と主張している。",
+      "discovery_text": "事件現場周辺をくまなく捜索していた刑事は、公園のゴミ箱に目を向けた。何気なくゴミを漁ると、空のペットボトルが目に留まった。山田が飲んでいたものと同じ種類だ…そして、この微かな匂いは…まさか！",
+      "importance": "critical",
+      "location": {
+        "lat": 35.53156269999999,
+        "lng": 139.560454
+      },
+      "poi_name": "二の丸こぶし公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "花子",
+      "clue_text": ""
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:18:51.733188",
+  "updated_at": "2025-08-27T18:18:51.733268",
+  "completed_at": null,
+  "final_score": null
+}

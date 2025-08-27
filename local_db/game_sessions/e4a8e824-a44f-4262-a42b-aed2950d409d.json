@@ -1,0 +1,133 @@
+{
+  "game_id": "e4a8e824-a44f-4262-a42b-aed2950d409d",
+  "player_id": "test_easy_diff",
+  "status": "active",
+  "difficulty": "easy",
+  "scenario": {
+    "title": "公園のベンチでの悲劇",
+    "description": "穏やかな日曜日の午後、A公園のベンチで男性が倒れているのが発見された。被害者は地元で有名なパン屋の店主、山田太郎。死因は毒物によるものと判明。現場には争った形跡はなく、警察はすぐに殺人事件と断定した。容疑者は3人。第一発見者でライバル店の店主、佐藤一郎。山田に多額の借金があった元従業員、田中次郎。そして、山田と最近些細なトラブルを起こしていた近所の住人、鈴木三郎。３つの公園を巡り、真相を解き明かせ！",
+    "victim": {
+      "name": "山田太郎",
+      "age": 50,
+      "occupation": "パン屋の店主",
+      "personality": "温厚で真面目",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "地域で愛される人気店を経営していた"
+    },
+    "suspects": [
+      {
+        "name": "佐藤一郎",
+        "age": 45,
+        "occupation": "パン屋の店主",
+        "personality": "野心家で競争心旺盛",
+        "temperament": "volatile",
+        "relationship": "ライバル店の店主",
+        "alibi": "B公園でジョギングをしていた",
+        "motive": "山田の店を潰して自分の店を繁盛させたい",
+        "background": "最近開店したばかりで経営が苦しい"
+      },
+      {
+        "name": "田中次郎",
+        "age": 30,
+        "occupation": "無職",
+        "personality": "おとなしく内向的",
+        "temperament": "nervous",
+        "relationship": "元従業員",
+        "alibi": "C公園で読書をしていた",
+        "motive": "借金を帳消しにしてほしい",
+        "background": "ギャンブルで借金を抱えている"
+      },
+      {
+        "name": "鈴木三郎",
+        "age": 60,
+        "occupation": "無職",
+        "personality": "頑固で短気",
+        "temperament": "defensive",
+        "relationship": "近所の住人",
+        "alibi": "A公園の近くの家で昼寝をしていた",
+        "motive": "山田の店の前で騒音を出さないでほしい",
+        "background": "神経質な性格で些細なことで怒る"
+      }
+    ],
+    "culprit": "佐藤一郎",
+    "motive": "山田の店を潰して自分の店を繁盛させたい。山田の評判を落とすために、毒を盛ったパンを山田に食べさせた。",
+    "method": "毒入りパン",
+    "timeline": [
+      "午前10時: 山田がA公園のベンチに座る",
+      "午前11時: 佐藤が山田に毒入りパンを渡す",
+      "午後1時: 山田が死亡しているのを佐藤が発見"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "図書館の貸出記録",
+      "description": "C公園内の図書館の貸出記録。田中次郎が事件発生時刻に『星を見るのが好きな人のためのガイドブック』を借りていたことが記録されている。",
+      "discovery_text": "図書館のカウンターで、職員が貸出記録を調べていると、田中次郎の名前と事件発生時刻の記録が見つかった。",
+      "importance": "important",
+      "location": {
+        "lat": 35.547783,
+        "lng": 139.571994
+      },
+      "poi_name": "横浜市役所 環境創造局都筑中央公園自然体験施設",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中次郎",
+      "clue_text": "田中次郎のアリバイは本当だろうか？"
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "近隣住民の目撃証言",
+      "description": "鈴木三郎が事件発生時刻にA公園近くの自宅の庭でガーデニングをしていたという近隣住民の目撃証言。",
+      "discovery_text": "聞き込み捜査を進める中で、A公園近くの住民が鈴木三郎を目撃していたことが判明した。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5434558,
+        "lng": 139.5732446
+      },
+      "poi_name": "砂の広場",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "鈴木三郎",
+      "clue_text": "鈴木三郎のアリバイは確かなものだろうか？"
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "毒入りパンの包み紙",
+      "description": "B公園のゴミ箱から、被害者が食べた毒入りパンと同じ種類のパンの包み紙が見つかった。包み紙には佐藤一郎の指紋が付着していた。",
+      "discovery_text": "B公園のゴミ箱を念入りに捜索した結果、くしゃくしゃになったパンの包み紙が見つかった。鑑識の結果、佐藤一郎の指紋と一致した。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5481705,
+        "lng": 139.5698947
+      },
+      "poi_name": "都筑中央公園 展望広場",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "佐藤一郎",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:15:26.279360",
+  "updated_at": "2025-08-27T18:15:26.279484",
+  "completed_at": null,
+  "final_score": null
+}

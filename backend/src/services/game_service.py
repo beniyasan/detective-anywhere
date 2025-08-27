@@ -7,14 +7,14 @@ from typing import List, Optional, Dict, Any, Tuple
 from datetime import datetime
 
 from .database_service import database_service
-from ...shared.models.game import (
+from shared.models.game import (
     GameSession, GameStatus, Difficulty, GameScore, 
     DeductionRequest, DeductionResult
 )
-from ...shared.models.scenario import Scenario, ScenarioGenerationRequest
-from ...shared.models.evidence import Evidence, EvidenceDiscoveryResult
-from ...shared.models.location import Location
-from ...shared.models.character import CharacterReaction
+from shared.models.scenario import Scenario, ScenarioGenerationRequest
+from shared.models.evidence import Evidence, EvidenceDiscoveryResult
+from shared.models.location import Location
+from shared.models.character import CharacterReaction
 
 from .ai_service import ai_service
 from .poi_service import poi_service
@@ -29,7 +29,8 @@ class GameService:
         self,
         player_id: str,
         player_location: Location,
-        difficulty: Difficulty
+        difficulty: Difficulty,
+        radius: int = 1000
     ) -> GameSession:
         """
         新しいゲームセッションを開始
@@ -38,10 +39,15 @@ class GameService:
             player_id: プレイヤーID
             player_location: プレイヤーの現在位置
             difficulty: 難易度
+            radius: 証拠検索半径（メートル）、デフォルト1000m
         
         Returns:
             GameSession: 作成されたゲームセッション
         """
+        
+        # 半径の妥当性チェック
+        if radius not in [200, 500, 1000, 2000]:
+            raise ValueError("検索半径は200m, 500m, 1000m, 2000mのいずれかを指定してください")
         
         # 位置の有効性チェック
         if not await poi_service.validate_location(player_location):
@@ -55,16 +61,16 @@ class GameService:
         # 拡張POIサービスを初期化
         await enhanced_poi_service.initialize()
         
-        # 証拠配置に最適化されたPOI検索
+        # 証拠配置に最適化されたPOI検索（動的半径を使用）
         evidence_count = self._get_evidence_count(difficulty)
         evidence_pois = await enhanced_poi_service.find_evidence_suitable_pois(
             player_location,
-            radius=1000,
+            radius=radius,  # 動的半径を使用
             evidence_count=evidence_count
         )
         
         if len(evidence_pois) < 3:
-            raise ValueError("この地域にはゲーム作成に十分なPOIがありません")
+            raise ValueError(f"半径{radius}m内にゲーム作成に十分なPOI（最低3件）がありません。より大きな半径を選択してください。")
         
         # 地域コンテキスト取得
         location_context = await poi_service.get_location_context(player_location)

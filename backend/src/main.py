@@ -6,7 +6,7 @@ from typing import Dict, Any
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from contextlib import asynccontextmanager
 import os
 from dotenv import load_dotenv
@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 # ローカル環境用の設定読み込み
 load_dotenv()
 
-from .api.routes import game, evidence, deduction, poi
+from .api.routes import game, evidence, deduction, poi, route
 from .core.database import initialize_firestore
 from .core.logging import setup_logging, get_logger, LogCategory
 from .services.ai_service import AIService
@@ -25,11 +25,10 @@ from .config.settings import get_settings
 async def lifespan(app: FastAPI):
     """アプリケーションライフサイクル管理"""
     # スタートアップ
-    logger.info("Starting AI Mystery Walk API server")
-    
     # ログ設定の初期化
     setup_logging()
     logger = get_logger(__name__, LogCategory.SYSTEM)
+    logger.info("Starting AI Mystery Walk API server")
     
     # 統一設定管理を使用
     settings = get_settings()
@@ -49,7 +48,12 @@ async def lifespan(app: FastAPI):
         logger.info("Running in development environment")
     
     # Firestoreの初期化
-    await initialize_firestore()
+    try:
+        await initialize_firestore()
+        logger.info("Firestore initialized successfully")
+    except Exception as e:
+        logger.warning(f"Firestore initialization failed, using local database: {e}")
+        # ローカルデータベースにフォールバック
     
     # AIサービスの初期化
     from .services.ai_service import ai_service
@@ -57,7 +61,10 @@ async def lifespan(app: FastAPI):
     
     # POIサービスの初期化
     from .services.poi_service import poi_service
-    poi_service.initialize()
+    
+    # ルート生成サービスの初期化
+    from .services.route_generation_service import route_generation_service
+    await route_generation_service.initialize()
     
     print("✅ 初期化完了")
     
@@ -112,6 +119,12 @@ app.include_router(
     tags=["poi"]
 )
 
+app.include_router(
+    route.router,
+    prefix="/api/v1/route",
+    tags=["route"]
+)
+
 
 @app.get("/")
 async def root() -> Dict[str, str]:
@@ -156,6 +169,9 @@ async def health_check() -> Dict[str, Any]:
     }
 
 
+# 静的ファイルマウント
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # 静的ファイルの提供
 @app.get("/web-demo.html")
 async def serve_web_demo():
@@ -180,25 +196,31 @@ async def serve_service_worker():
 
 # エラーハンドラー
 @app.exception_handler(404)
-async def not_found_handler(request: Request, exc: HTTPException) -> Dict[str, Any]:
-    return {
-        "error": {
-            "code": "NOT_FOUND",
-            "message": "リソースが見つかりません",
-            "details": str(exc)
+async def not_found_handler(request: Request, exc: HTTPException) -> JSONResponse:
+    return JSONResponse(
+        status_code=404,
+        content={
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "リソースが見つかりません",
+                "details": str(exc)
+            }
         }
-    }
+    )
 
 
 @app.exception_handler(500)
-async def internal_error_handler(request: Request, exc: Exception) -> Dict[str, Any]:
-    return {
-        "error": {
-            "code": "INTERNAL_SERVER_ERROR", 
-            "message": "内部サーバーエラーが発生しました",
-            "details": str(exc)
+async def internal_error_handler(request: Request, exc: Exception) -> JSONResponse:
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": {
+                "code": "INTERNAL_SERVER_ERROR", 
+                "message": "内部サーバーエラーが発生しました",
+                "details": str(exc)
+            }
         }
-    }
+    )
 
 
 if __name__ == "__main__":

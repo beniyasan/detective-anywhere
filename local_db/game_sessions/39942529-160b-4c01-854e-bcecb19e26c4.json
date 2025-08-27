@@ -1,0 +1,150 @@
+{
+  "game_id": "39942529-160b-4c01-854e-bcecb19e26c4",
+  "player_id": "test_normal_400_600",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "消えた彫刻家",
+    "description": "静かな郊外の街、緑豊かな公園に囲まれたアトリエで、彫刻家・霧島蓮が忽然と姿を消した。蓮は3日後に、自宅近くのランドマークである古い時計台の影で、息絶えているのが発見された。死因は後頭部への打撲。警察は殺人事件として捜査を開始した。\n\n蓮は地元で有名な彫刻家で、特に人物像を得意としていた。彼の作品は繊細さと力強さを兼ね備え、高い評価を得ていたが、その一方で、厳格な性格と完璧主義から、周囲との摩擦も少なくなかった。\n\n容疑者は4人。蓮の弟子で、最近独立したばかりの若手彫刻家・緑川楓。蓮のアトリエの向かいにあるカフェのオーナーで、蓮と親しかった桐谷葵。蓮の才能に嫉妬していたライバル彫刻家で、近々大きなコンペティションを控えていた黒木柊。そして、蓮のパトロンで、最近資金援助を打ち切られた実業家の白鳥冬馬。\n\n4人はそれぞれ蓮との間に複雑な人間関係を持ち、それぞれに蓮を殺害する動機を持っていた。警察は、公園、カフェ、ランドマークなど、蓮と関係の深い場所を重点的に捜査し、3つの重要な証拠を発見した。果たして、これらの証拠から真犯人を特定できるだろうか？",
+    "victim": {
+      "name": "霧島蓮",
+      "age": 45,
+      "occupation": "彫刻家",
+      "personality": "完璧主義者、厳格",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "地元で有名な彫刻家。繊細かつ力強い作風で高い評価を得ていたが、完璧主義ゆえ周囲との摩擦も多かった。"
+    },
+    "suspects": [
+      {
+        "name": "緑川楓",
+        "age": 28,
+        "occupation": "彫刻家",
+        "personality": "野心的、努力家",
+        "temperament": "nervous",
+        "relationship": "弟子",
+        "alibi": "事件当夜はアトリエで制作をしていた",
+        "motive": "独立後も蓮の影に苦しめられていた",
+        "background": "蓮の弟子だったが、最近独立。才能は認められているものの、蓮の強い影響から抜け出せずにいた。"
+      },
+      {
+        "name": "桐谷葵",
+        "age": 35,
+        "occupation": "カフェオーナー",
+        "personality": "社交的、親切",
+        "temperament": "defensive",
+        "relationship": "友人",
+        "alibi": "事件当夜はカフェで閉店作業をしていた",
+        "motive": "蓮に好意を寄せていたが、拒絶された",
+        "background": "蓮のアトリエ向かいのカフェのオーナー。蓮と親しく、彼に好意を寄せていた。"
+      },
+      {
+        "name": "黒木柊",
+        "age": 42,
+        "occupation": "彫刻家",
+        "personality": "プライドが高い、嫉妬深い",
+        "temperament": "volatile",
+        "relationship": "ライバル",
+        "alibi": "事件当夜は別の公園で制作の構想を練っていた",
+        "motive": "蓮の才能に嫉妬し、コンペティションで勝ちたかった",
+        "background": "蓮のライバル彫刻家。蓮の才能に嫉妬しており、近々開催されるコンペティションで彼に勝ちたがっていた。"
+      },
+      {
+        "name": "白鳥冬馬",
+        "age": 55,
+        "occupation": "実業家",
+        "personality": "冷酷、計算高い",
+        "temperament": "sarcastic",
+        "relationship": "パトロン",
+        "alibi": "事件当夜は出張で街を離れていた",
+        "motive": "蓮への資金援助を打ち切ったことで恨まれていた",
+        "background": "蓮のパトロンだったが、最近資金援助を打ち切った。"
+      }
+    ],
+    "culprit": "黒木柊",
+    "motive": "コンペティションで有利になるよう、蓮を殺害し、彼の最新作を盗作しようとした",
+    "method": "鈍器による後頭部への殴打",
+    "timeline": [
+      "霧島蓮がアトリエから姿を消す",
+      "ランドマークの時計台の影で霧島蓮の遺体が発見される",
+      "警察が捜査を開始し、4人の容疑者が浮上する"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "複雑な人間関係",
+      "偽のアリバイ"
+    ],
+    "red_herrings": [
+      "桐谷葵の片思い",
+      "白鳥冬馬の資金援助打ち切り"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "桐谷葵の勤務記録",
+      "description": "ドッグカフェ「シュシュ・クレール」の勤務記録。桐谷葵が事件当夜、閉店まで勤務していたことが記されている。",
+      "discovery_text": "カフェのマネージャーに尋ねると、桐谷葵の勤務記録を見せてもらえた。閉店まで勤務していた記録がしっかりと残っている。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5454073,
+        "lng": 139.5692155
+      },
+      "poi_name": "ドッグカフェ「シュシュ・クレール」",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "桐谷葵",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "白鳥冬馬の出張記録",
+      "description": "白鳥冬馬の出張を示す新幹線とホテルの領収書。事件当夜は街を離れていたことが証明される。",
+      "discovery_text": "白鳥冬馬のアトリエを捜索すると、出張に関する書類の山の中から新幹線とホテルの領収書が見つかった。日付は事件当夜と一致している。",
+      "importance": "important",
+      "location": {
+        "lat": 35.54480079999999,
+        "lng": 139.5666581
+      },
+      "poi_name": "ギャラリーレイオハナ",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "白鳥冬馬",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "血痕のついたスケッチブック",
+      "description": "荏田東すいせん公園のベンチの下から発見されたスケッチブック。蓮の最新作の構想が描かれており、微量の血痕が付着している。DNA鑑定の結果、血痕は蓮のものと一致した。黒木柊は別の公園で構想を練っていたと主張していたが、このスケッチブックは彼が嘘をついていたことを示している。",
+      "discovery_text": "荏田東すいせん公園を念入りに捜索していると、ベンチの下に隠されたスケッチブックが見つかった。開いてみると、蓮の最新作の構想が描かれており、何やら赤いシミが付着している…",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5425898,
+        "lng": 139.5669068
+      },
+      "poi_name": "荏田東すいせん公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "黒木柊",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:22:33.495940",
+  "updated_at": "2025-08-27T18:22:33.496033",
+  "completed_at": null,
+  "final_score": null
+}

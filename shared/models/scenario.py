@@ -2,7 +2,7 @@
 シナリオ関連のデータモデル
 """
 
-from typing import List, Optional
+from typing import List, Optional, ClassVar
 from pydantic import BaseModel, Field
 
 from .character import Character
@@ -98,8 +98,8 @@ class StoryTheme(BaseModel):
     narrative_focus: str = Field(..., description="物語の焦点")
     
     # テーマ例
-    HUMAN_DRAMA = "human_drama"      # 人間ドラマ重視
-    TIME_COMPLEX = "time_complex"    # 時系列の複雑さ
-    MISDIRECTION = "misdirection"    # ミスリード重視
-    PSYCHOLOGICAL = "psychological"  # 心理戦
-    CLASSIC_WHODUNIT = "classic"     # 古典的推理
+    HUMAN_DRAMA: ClassVar[str] = "human_drama"      # 人間ドラマ重視
+    TIME_COMPLEX: ClassVar[str] = "time_complex"    # 時系列の複雑さ
+    MISDIRECTION: ClassVar[str] = "misdirection"    # ミスリード重視
+    PSYCHOLOGICAL: ClassVar[str] = "psychological"  # 心理戦
+    CLASSIC_WHODUNIT: ClassVar[str] = "classic"     # 古典的推理

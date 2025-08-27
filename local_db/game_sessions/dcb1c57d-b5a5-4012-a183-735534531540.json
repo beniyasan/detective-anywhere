@@ -1,0 +1,151 @@
+{
+  "game_id": "dcb1c57d-b5a5-4012-a183-735534531540",
+  "player_id": "test_500m",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "消えた彫刻家",
+    "description": "霧深い街、アーベントロート。著名な彫刻家、霧島蓮が自宅アトリエから姿を消した。警察は事件性はないと見ているが、蓮の弟子たちは師の失踪に不穏な空気を感じていた。蓮は温和な性格で誰からも慕われていたが、最近、新作のコンペティションを巡り、弟子たちとの間に微妙な緊張感が漂っていたのだ。特に、蓮の才能に嫉妬していたと言われる早瀬京介、蓮の新しい技法に異を唱えていた古賀美咲、そして蓮に多額の借金を抱えていたという桐谷悠真の3名は、警察からも疑いの目を向けられている。さらに、蓮のアトリエの向かいに住む謎の女性、黒木玲奈も、蓮の失踪直前に彼と口論していたという目撃情報があり、捜査線上に浮かび上がってきた。蓮のアトリエには、未完成の彫刻と、蓮が愛用していたスケッチブック、そして謎の暗号が書かれたメモが残されていた。これらの手がかりを元に、あなたは霧に包まれた真実を解き明かすことができるだろうか。蓮の失踪は単なる家出なのか、それとも背後に何か sinister な秘密が隠されているのか？アーベントロートの静寂が、不気味な真実を囁いている…",
+    "victim": {
+      "name": "霧島蓮",
+      "age": 55,
+      "occupation": "彫刻家",
+      "personality": "温和で弟子思い",
+      "temperament": "calm",
+      "relationship": "失踪者",
+      "alibi": null,
+      "motive": null,
+      "background": "国内外で高い評価を受ける彫刻家。最近、新作のコンペティションに挑んでいた。"
+    },
+    "suspects": [
+      {
+        "name": "早瀬京介",
+        "age": 28,
+        "occupation": "彫刻家（霧島蓮の弟子）",
+        "personality": "野心家でプライドが高い",
+        "temperament": "volatile",
+        "relationship": "弟子",
+        "alibi": "事件当夜は、別の場所で制作活動をしていたと主張。しかし、それを証明する人物はいない。",
+        "motive": "霧島蓮の才能に嫉妬し、コンペティションで勝ちたかった。",
+        "background": "才能はあるものの、なかなか認められずに焦っていた。"
+      },
+      {
+        "name": "古賀美咲",
+        "age": 25,
+        "occupation": "彫刻家（霧島蓮の弟子）",
+        "personality": "冷静沈着で批判的",
+        "temperament": "sarcastic",
+        "relationship": "弟子",
+        "alibi": "事件当夜は、自宅で資料の整理をしていたと主張。しかし、具体的な資料名は覚えていない。",
+        "motive": "霧島蓮の新しい技法に反対しており、対立していた。",
+        "background": "伝統的な技法を重んじており、蓮の革新的な手法に反発していた。"
+      },
+      {
+        "name": "桐谷悠真",
+        "age": 32,
+        "occupation": "彫刻家（霧島蓮の弟子）",
+        "personality": "おとなしく内向的",
+        "temperament": "nervous",
+        "relationship": "弟子",
+        "alibi": "事件当夜は、公園でスケッチをしていたと主張。しかし、スケッチブックは見つかっていない。",
+        "motive": "霧島蓮に多額の借金があり、返済を迫られていた。",
+        "background": "ギャンブル癖があり、借金に苦しんでいた。"
+      },
+      {
+        "name": "黒木玲奈",
+        "age": 40,
+        "occupation": "画家",
+        "personality": "謎めいていて感情を表に出さない",
+        "temperament": "defensive",
+        "relationship": "近所の住人",
+        "alibi": "事件当夜は、自宅で絵を描いていたと主張。しかし、完成した絵は見つかっていない。",
+        "motive": "霧島蓮と土地の境界線でトラブルになっていた。",
+        "background": "霧島のアトリエの向かいに住んでいる。寡黙で近所付き合いはほとんどない。"
+      }
+    ],
+    "culprit": "桐谷悠真",
+    "motive": "借金の返済を免れるため、霧島蓮を殺害し、失踪に見せかけた。",
+    "method": "睡眠薬を飲ませた後、窒息死させた。",
+    "timeline": [
+      "霧島蓮が弟子たちとコンペティションについて話し合う。",
+      "桐谷悠真が霧島蓮に睡眠薬入りの飲み物を飲ませる。",
+      "桐谷悠真が霧島蓮を窒息死させ、遺体を隠蔽する。",
+      "霧島蓮の失踪が発覚する。"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "アリバイの矛盾",
+      "複雑な人間関係"
+    ],
+    "red_herrings": [
+      "黒木玲奈との土地トラブル",
+      "早瀬京介の嫉妬"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "早瀬京介のアトリエの領収書",
+      "description": "事件当夜、早瀬京介が画材店で購入した領収書。購入時刻は霧島蓮の死亡推定時刻と重なっていない。",
+      "discovery_text": "ギャラリーレイオハナ近くのごみ箱から、くしゃくしゃになった領収書が見つかった。よく見ると、早瀬京介の名前と事件当夜のタイムスタンプが…",
+      "importance": "important",
+      "location": {
+        "lat": 35.54480079999999,
+        "lng": 139.5666581
+      },
+      "poi_name": "ギャラリーレイオハナ",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "早瀬京介",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "古賀美咲の作業メモ",
+      "description": "古賀美咲が事件当夜に書いていたという資料整理のメモ。日付と、霧島蓮の新技法への反論が殴り書きされている。メモ用紙の裏には、快活CLUBのロゴが入っている。",
+      "discovery_text": "快活CLUB センター南店のゴミ箱から、いくつかのメモ用紙が発見された。その中に、古賀美咲の筆跡で書かれたメモがあった。",
+      "importance": "important",
+      "location": {
+        "lat": 35.54389859999999,
+        "lng": 139.5715708
+      },
+      "poi_name": "快活CLUB センター南店",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "古賀美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "睡眠薬の空瓶",
+      "description": "桐谷悠真が常用していた睡眠薬の空瓶。指紋は拭き取られていたが、瓶の内側に微量の霧島蓮のDNAが検出された。",
+      "discovery_text": "センター南 Natural gardenの植え込みの中に、不自然に隠された小さな紙袋が見つかった。中から出てきたのは、空の薬瓶だった…。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5448963,
+        "lng": 139.5727787
+      },
+      "poi_name": "センター南 Natural garden",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "桐谷悠真",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:37:52.987277",
+  "updated_at": "2025-08-27T18:37:52.987378",
+  "completed_at": null,
+  "final_score": null
+}

@@ -1,0 +1,151 @@
+{
+  "game_id": "7fb36563-6d45-4686-b4d8-e80ef22d7565",
+  "player_id": "test_gemini",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "皇居外苑の影",
+    "description": "初夏の風が心地よく吹き抜ける皇居外苑。ランニングを楽しむ人々、観光客の賑わいの中、静寂に包まれた一角で事件は起きた。大手門近くのベンチで、著名なIT企業社長、五十嵐誠一郎（55歳）が息絶えていた。第一発見者は皇居ランナー。傍らには空になったペットボトルが転がり、一見すると持病による突然死のようにも見えた。しかし、警視庁捜査一課のベテラン刑事、鷹山は現場の微妙な違和感に気づき、捜査を開始。五十嵐の死は、単なる事故ではなかった。容疑者は4人に絞られた。五十嵐の右腕だった若き副社長、長年のビジネスパートナー、大学時代の親友、そして謎めいた秘書。それぞれの証言は真実を隠蔽し、複雑に絡み合う。皇居外苑の緑陰に潜む影、その真相を解き明かすことができるか。",
+    "victim": {
+      "name": "五十嵐 誠一郎",
+      "age": 55,
+      "occupation": "IT企業社長",
+      "personality": "厳格だが部下思い",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "一代でIT企業を築き上げた成功者。近年は健康に気を遣っていた。"
+    },
+    "suspects": [
+      {
+        "name": "高木 健太",
+        "age": 32,
+        "occupation": "副社長",
+        "personality": "野心家",
+        "temperament": "volatile",
+        "relationship": "部下",
+        "alibi": "皇居周辺のカフェで打ち合わせをしていた",
+        "motive": "社長の座を狙っていた",
+        "background": "五十嵐に才能を見出され、副社長に抜擢された。しかし、最近五十嵐との経営方針で対立していた。"
+      },
+      {
+        "name": "鈴木 恵子",
+        "age": 45,
+        "occupation": "秘書",
+        "personality": "冷静沈着",
+        "temperament": "sarcastic",
+        "relationship": "秘書",
+        "alibi": "オフィスで書類整理をしていた",
+        "motive": "五十嵐に個人的な恨みを抱いていた",
+        "background": "長年五十嵐を支えてきたが、冷遇されていると感じていた。"
+      },
+      {
+        "name": "田中 一郎",
+        "age": 55,
+        "occupation": "コンサルタント",
+        "personality": "温厚",
+        "temperament": "defensive",
+        "relationship": "大学時代の親友",
+        "alibi": "東京駅近くのホテルで会議に出席していた",
+        "motive": "過去の金銭トラブル",
+        "background": "大学時代からの親友で、ビジネスパートナーでもあったが、過去に金銭トラブルがあった。"
+      },
+      {
+        "name": "佐藤 美咲",
+        "age": 40,
+        "occupation": "デザイナー",
+        "personality": "社交的",
+        "temperament": "nervous",
+        "relationship": "ビジネスパートナー",
+        "alibi": "国会議事堂前のカフェで顧客と打ち合わせをしていた",
+        "motive": "契約破棄による損失",
+        "background": "五十嵐の会社と重要な契約を結んでいたが、最近契約が破棄された。"
+      }
+    ],
+    "culprit": "鈴木 恵子",
+    "motive": "五十嵐から長年に渡るパワハラを受けていたことへの復讐",
+    "method": "ペットボトル飲料に毒物を混入",
+    "timeline": [
+      "14:00 五十嵐が皇居外苑に到着",
+      "14:30 鈴木が五十嵐に毒入り飲料を渡す",
+      "15:00 五十嵐が倒れる",
+      "15:30 ランナーが五十嵐を発見"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "アリバイの微妙な矛盾",
+      "容疑者間の複雑な人間関係"
+    ],
+    "red_herrings": [
+      "高木と五十嵐の経営方針の対立",
+      "佐藤の契約破棄"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "カフェの領収書",
+      "description": "高木健太の名前と事件時刻を含むカフェの領収書。皇居周辺のカフェのもので、彼の打ち合わせアリバイを裏付けている。",
+      "discovery_text": "鑑識が、被害者のスーツの内ポケットからくしゃくしゃになった領収書を発見した。よく見ると、それは高木健太の名前と事件時刻が印字されたカフェの領収書だった…",
+      "importance": "important",
+      "location": {
+        "lat": 35.68009929999999,
+        "lng": 139.7680666
+      },
+      "poi_name": "グランルーフ ガーデン",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "高木 健太",
+      "clue_text": ""
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "ホテルの会議出席記録",
+      "description": "田中一郎が事件時刻に東京駅近くのホテルで会議に出席していたことを示す記録。会議の参加者リストと、田中一郎の名前が入った出席確認サインが含まれている。",
+      "discovery_text": "警察が田中一郎のアリバイを調査した結果、ホテルから会議の出席記録を入手した。そこには、事件時刻に田中一郎が会議に出席していたことが明確に記されていた…",
+      "importance": "important",
+      "location": {
+        "lat": 35.6824361,
+        "lng": 139.7665257
+      },
+      "poi_name": "東京ステーションギャラリー",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "田中 一郎",
+      "clue_text": ""
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "インターメディアテクの防犯カメラ映像",
+      "description": "インターメディアテクの防犯カメラ映像には、鈴木恵子が事件発生時刻の少し前に、ペットボトル飲料を握りしめ、被害者と接触する様子が映っていた。そのペットボトル飲料は、被害者が飲んでいたものと同一であることが判明した。",
+      "discovery_text": "インターメディアテク近辺の聞き込み調査で、防犯カメラの存在が判明した。映像を確認すると、そこには衝撃的な光景が映っていた。事件発生時刻の少し前、鈴木恵子が被害者に近づき、何かを手渡している様子がはっきりと捉えられていた…",
+      "importance": "critical",
+      "location": {
+        "lat": 35.6800744,
+        "lng": 139.7646866
+      },
+      "poi_name": "インターメディアテク",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "鈴木 恵子",
+      "clue_text": ""
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.6812,
+    "lng": 139.7671
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T17:29:12.855464",
+  "updated_at": "2025-08-27T17:29:12.855686",
+  "completed_at": null,
+  "final_score": null
+}

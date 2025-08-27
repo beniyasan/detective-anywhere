@@ -1,0 +1,134 @@
+{
+  "game_id": "142014ef-df2a-4e06-ac2c-35f76e5db1d2",
+  "player_id": "mobile-player",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "東京駅周辺の謎",
+    "description": "東京駅周辺で発生した不可解な事件を解決しよう",
+    "victim": {
+      "name": "山田一郎",
+      "age": 45,
+      "occupation": "会社員",
+      "personality": "真面目で責任感が強い",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "地元の大手企業に勤務"
+    },
+    "suspects": [
+      {
+        "name": "田中太郎",
+        "age": 35,
+        "occupation": "会社員",
+        "personality": "内向的で神経質",
+        "temperament": "nervous",
+        "relationship": "同僚",
+        "alibi": null,
+        "motive": null,
+        "background": "被害者と同じ部署で働いている"
+      },
+      {
+        "name": "佐藤花子",
+        "age": 28,
+        "occupation": "店員",
+        "personality": "明るく親切",
+        "temperament": "calm",
+        "relationship": "知人",
+        "alibi": null,
+        "motive": null,
+        "background": "近くのカフェで働いている"
+      },
+      {
+        "name": "鈴木次郎",
+        "age": 40,
+        "occupation": "建設作業員",
+        "personality": "無口で頑固",
+        "temperament": "defensive",
+        "relationship": "元同僚",
+        "alibi": null,
+        "motive": null,
+        "background": "以前同じ会社で働いていた"
+      }
+    ],
+    "culprit": "田中太郎",
+    "motive": "昇進をめぐる同僚との対立が激化し、感情的になって事件を起こした",
+    "method": "会議室で口論の末、勢いで手にした文鎮で殴打",
+    "timeline": [
+      "午前9時: 被害者が出社",
+      "午前10時: 容疑者と被害者が会議室で口論",
+      "午前10時30分: 事件発生",
+      "午前11時: 第一発見者が通報"
+    ],
+    "theme": null,
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "血痕の付いた文鎮",
+      "description": "会議室で発見された文鎮。被害者の血液が付着している。",
+      "discovery_text": "あなたは会議室で血痕の付いた文鎮を発見した！これは明らかに凶器として使われたようだ...",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5333144,
+        "lng": 139.5575128
+      },
+      "poi_name": "ゆうばえの道",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "指紋が残っているかもしれません"
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "被害者の手帳",
+      "description": "最近の昇進に関するメモが書かれている。",
+      "discovery_text": "手帳には昇進争いについての心配事が記録されていた...",
+      "importance": "important",
+      "location": {
+        "lat": 35.53156269999999,
+        "lng": 139.560454
+      },
+      "poi_name": "二の丸こぶし公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "山田一郎",
+      "clue_text": "最後のページに不穏な記述があります"
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "防犯カメラの映像",
+      "description": "事件当時の廊下の様子が記録されている。",
+      "discovery_text": "防犯カメラには事件前後の人物の動きが記録されていた...",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5299722,
+        "lng": 139.5585024
+      },
+      "poi_name": "都田公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "10時頃に不審な人影が確認できます"
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T15:27:16.729843",
+  "updated_at": "2025-08-27T15:27:16.729939",
+  "completed_at": null,
+  "final_score": null
+}

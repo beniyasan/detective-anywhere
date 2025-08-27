@@ -1,0 +1,133 @@
+{
+  "game_id": "da28b0a2-387b-4c27-8d50-ae8f399c7429",
+  "player_id": "test_easy_200_400",
+  "status": "active",
+  "difficulty": "easy",
+  "scenario": {
+    "title": "公園のベンチでの悲劇",
+    "description": "穏やかな日曜日の午後、公園のベンチで男性が死亡しているのが発見された。被害者は地元で人気のパン屋店主、五十嵐健太。死因は毒物によるものとみられる。第一発見者は近所の主婦、山田花子。彼女は午後3時頃にベンチで休んでいた五十嵐氏に挨拶をしたが、30分後に戻ると既に息がなかったという。警察は五十嵐氏と関係のあった3人を容疑者として捜査を開始した。事件の真相は、公園に残されたわずかな手がかりが解き明かす。",
+    "victim": {
+      "name": "五十嵐 健太",
+      "age": 45,
+      "occupation": "パン屋店主",
+      "personality": "温厚で親切",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "地域に愛されるパン屋を経営していた。"
+    },
+    "suspects": [
+      {
+        "name": "山田 花子",
+        "age": 38,
+        "occupation": "主婦",
+        "personality": "世話好きで少しおせっかい",
+        "temperament": "nervous",
+        "relationship": "近所の住民",
+        "alibi": "午後3時半に自宅に戻っていたと主張。",
+        "motive": "五十嵐氏のパン屋が人気で、自分の手作りお菓子を配る機会が減ったことに不満を持っていた。",
+        "background": "趣味でお菓子作りをしている。"
+      },
+      {
+        "name": "佐藤 健一",
+        "age": 50,
+        "occupation": "不動産業者",
+        "personality": "強引で自信家",
+        "temperament": "volatile",
+        "relationship": "五十嵐氏の店の土地を狙っていた",
+        "alibi": "公園近くのカフェで商談をしていたと主張。",
+        "motive": "五十嵐氏に立ち退きを迫っていたが、拒否されていた。",
+        "background": "再開発計画を進めていた。"
+      },
+      {
+        "name": "田中 美咲",
+        "age": 25,
+        "occupation": "パン屋の元従業員",
+        "personality": "無口で真面目",
+        "temperament": "defensive",
+        "relationship": "元従業員",
+        "alibi": "別の公園でジョギングをしていたと主張。",
+        "motive": "解雇されたことに恨みを持っていた。",
+        "background": "勤務態度が悪く、1ヶ月前に解雇された。"
+      }
+    ],
+    "culprit": "田中 美咲",
+    "motive": "解雇された恨み",
+    "method": "毒入りの紅茶を飲ませた",
+    "timeline": [
+      "午後3時：山田花子が五十嵐氏に挨拶。",
+      "午後3時15分：田中美咲が五十嵐氏に毒入りの紅茶を渡す。",
+      "午後3時30分：山田花子が戻ると五十嵐氏は死亡していた。"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "カフェのレシート",
+      "description": "佐藤健一の名前と事件時刻である午後2時過ぎの時間帯が印字されたカフェのレシート。カフェの店員も佐藤健一が商談をしていたことを証言している。",
+      "discovery_text": "公園近くのカフェで聞き込みをしたところ、店員がレジ横のゴミ箱から偶然レシートを発見した。",
+      "importance": "important",
+      "location": {
+        "lat": 35.54480079999999,
+        "lng": 139.5666581
+      },
+      "poi_name": "ギャラリーレイオハナ",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "佐藤健一",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "防犯カメラ映像",
+      "description": "山田花子が午後3時半頃に自宅マンションに入る様子が記録された防犯カメラ映像。",
+      "discovery_text": "山田花子の自宅マンションの管理人から提供された防犯カメラ映像を解析した結果、アリバイを裏付ける証拠が発見された。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5434558,
+        "lng": 139.5732446
+      },
+      "poi_name": "砂の広場",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "山田花子",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "ジョギングウェアの繊維",
+      "description": "被害者の服に付着していたジョギングウェアの繊維片。この繊維は田中美咲が普段着ているジョギングウェアと一致した。また、繊維片からは微量の毒物が検出され、紅茶に混入されていた毒物と同一成分であることが判明した。",
+      "discovery_text": "被害者の衣服を精密に調べた結果、微細な繊維片が付着しているのを発見。科学捜査によって、その繊維片から驚くべき事実が明らかになった。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5477896,
+        "lng": 139.5727224
+      },
+      "poi_name": "都筑中央公園 円形広場",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中美咲",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:21:44.703772",
+  "updated_at": "2025-08-27T18:21:44.703856",
+  "completed_at": null,
+  "final_score": null
+}

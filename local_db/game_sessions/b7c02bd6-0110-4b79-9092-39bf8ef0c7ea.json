@@ -1,0 +1,150 @@
+{
+  "game_id": "b7c02bd6-0110-4b79-9092-39bf8ef0c7ea",
+  "player_id": "test_2km",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "公園の秘密",
+    "description": "静かな郊外の街、緑豊かな公園が点在するこの街で、有名な彫刻家、加納健吾が遺体で発見された。事件現場は、街の中心部にある「希望公園」。穏やかな日曜日の午後、ジョギング中の男性が茂みの中で倒れている加納を発見した。死因は後頭部への強打による脳挫傷。凶器は見つかっていない。加納は前日、新作発表の記念パーティーを開いており、深夜まで友人や関係者と過ごしていた。警察は、パーティーの参加者を中心に捜査を開始した。\n\n加納は、その独特な作風で近年注目を集めていたが、同時に激しい批評も受けていた。成功の裏で、彼は多くの嫉妬と敵意に晒されていたようだ。容疑者は4名。加納の弟子で、最近独立したばかりの若手彫刻家、藤堂美咲。加納のアートディーラーで、金銭トラブルを抱えていた葛西浩二。加納の親友であり、ライバルでもあった彫刻家、三上修司。そして、加納の元妻で、最近多額の慰謝料を請求していた小野寺綾子。それぞれに動機があり、アリバイにも不審な点がある。公園の静寂の中に隠された、複雑な人間関係と秘密。あなたは、散りばめられた証拠から真相を解き明かすことができるだろうか。事件の鍵を握るのは、近隣の「平和公園」「緑地公園」「中央公園」「旧市街地時計塔」、そして再び「希望公園」だ。それぞれの場所で発見される証拠が、あなたを真実に導く。",
+    "victim": {
+      "name": "加納健吾",
+      "age": 55,
+      "occupation": "彫刻家",
+      "personality": "気難しい完璧主義者",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "近年注目を集める彫刻家。独特の作風で高い評価を得ていたが、批判も多く、敵も多かった。"
+    },
+    "suspects": [
+      {
+        "name": "藤堂美咲",
+        "age": 28,
+        "occupation": "彫刻家",
+        "personality": "野心家で負けず嫌い",
+        "temperament": "volatile",
+        "relationship": "加納の弟子",
+        "alibi": "自宅で制作活動をしていた",
+        "motive": "独立後も加納の影に苦しめられていた",
+        "background": "才能あふれる若手彫刻家。加納に師事していたが、最近独立した。"
+      },
+      {
+        "name": "葛西浩二",
+        "age": 42,
+        "occupation": "アートディーラー",
+        "personality": "社交的で口が上手い",
+        "temperament": "sarcastic",
+        "relationship": "加納のアートディーラー",
+        "alibi": "別の顧客と会っていた",
+        "motive": "加納との金銭トラブル",
+        "background": "加納の作品を販売していたが、多額の負債を抱えていた。"
+      },
+      {
+        "name": "三上修司",
+        "age": 58,
+        "occupation": "彫刻家",
+        "personality": "温厚で控えめ",
+        "temperament": "defensive",
+        "relationship": "加納の親友でありライバル",
+        "alibi": "個展の準備をしていた",
+        "motive": "加納への嫉妬",
+        "background": "加納とは学生時代からの友人であり、ライバル関係にあった。"
+      },
+      {
+        "name": "小野寺綾子",
+        "age": 50,
+        "occupation": "無職",
+        "personality": "冷静で計算高い",
+        "temperament": "nervous",
+        "relationship": "加納の元妻",
+        "alibi": "友人と食事をしていた",
+        "motive": "慰謝料請求",
+        "background": "最近加納と離婚し、多額の慰謝料を請求していた。"
+      }
+    ],
+    "culprit": "藤堂美咲",
+    "motive": "加納に才能を認められず、独立後も彼の影に苦しめられていたことへの復讐。また、加納の次の作品が自分のアイデアを盗用したものだと確信し、激しい怒りを感じていた。",
+    "method": "鈍器で後頭部を強打",
+    "timeline": [
+      "加納がパーティー後、希望公園で藤堂と会う",
+      "口論の末、藤堂が加納を殺害",
+      "藤堂が現場を離れる"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "複雑な人間関係",
+      "偽のアリバイ"
+    ],
+    "red_herrings": [
+      "葛西の金銭トラブル",
+      "小野寺の慰謝料請求"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "葛西の領収書",
+      "description": "事件発生時刻に葛西浩二が、都筑中央公園から離れた飲食店で会食していたことを示す領収書。店名、日時、金額、葛西のサインが記載されている。",
+      "discovery_text": "センター南 Natural gardenのベンチの下で、風に飛ばされかけた領収書を見つけた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5448963,
+        "lng": 139.5727787
+      },
+      "poi_name": "センター南 Natural garden",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "葛西浩二",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "三上の個展準備リスト",
+      "description": "ギャラリーレイオハナでの個展準備のために、三上修司が作成した詳細なリスト。事件発生時刻を含む時間帯の作業内容が細かく記されており、アリバイを裏付けている。リストにはギャラリーレイオハナのロゴが入っている。",
+      "discovery_text": "ギャラリーレイオハナの受付で、忘れ物として届けられていた封筒を見つけた。中には、几帳面に書かれたリストが入っていた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.54480079999999,
+        "lng": 139.5666581
+      },
+      "poi_name": "ギャラリーレイオハナ",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "三上修司",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "血痕のついたスケッチブック",
+      "description": "都筑中央公園 円形広場の植え込みで見つかったスケッチブック。中には、加納の次の作品と酷似したデザイン画が描かれており、数滴の血痕が付着している。血痕はDNA鑑定の結果、被害者・加納のものと一致した。スケッチブックには藤堂美咲のサインが小さく記されている。",
+      "discovery_text": "都筑中央公園 円形広場の植え込みで、不自然に隠されているスケッチブックを見つけた。ページをめくると、血痕と見覚えのあるデザインが目に飛び込んできた。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5477896,
+        "lng": 139.5727224
+      },
+      "poi_name": "都筑中央公園 円形広場",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "藤堂美咲",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:38:32.423785",
+  "updated_at": "2025-08-27T18:38:32.423901",
+  "completed_at": null,
+  "final_score": null
+}

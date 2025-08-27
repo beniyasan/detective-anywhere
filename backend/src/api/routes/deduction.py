@@ -7,8 +7,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from ...services.game_service import game_service
-from ....shared.models.game import DeductionRequest, DeductionResult, GameScore
-from ....shared.models.character import CharacterReaction
+from shared.models.game import DeductionRequest, DeductionResult, GameScore
+from shared.models.character import CharacterReaction
 from ..errors import APIError, GameAPIError
 
 

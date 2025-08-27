@@ -1,0 +1,133 @@
+{
+  "game_id": "4b6de793-1405-4699-811e-b0b465e532b2",
+  "player_id": "player_1756286646263_se8sqhzad",
+  "status": "active",
+  "difficulty": "easy",
+  "scenario": {
+    "title": "公園の落書き事件",
+    "description": "穏やかな日曜日の朝、平和な公園に不穏な空気が漂っていた。公園のシンボルである大きな時計台に、赤いスプレーで落書きがされていたのだ。被害者は町内会の会長、山田一郎。彼はこの時計台の維持管理に尽力しており、落書きを発見した際にはひどく落胆していたという。警察はすぐに捜査を開始し、3人の容疑者を特定した。第一発見者である近所の主婦、佐藤花子。時計台の改修に反対していた町内会役員、田中太郎。そして、最近公園でスケートボードの練習を始めた高校生、木村健太。一見無関係に見える3人だが、それぞれの証言には微妙な食い違いがある。果たして、時計台に落書きをした真犯人は誰なのか？公園に残されたわずかな手がかりを元に、事件の真相を解き明かしましょう。落書きは単なるイタズラなのか、それとも何か深い意味が隠されているのか？",
+    "victim": {
+      "name": "山田一郎",
+      "age": 65,
+      "occupation": "町内会長",
+      "personality": "真面目",
+      "temperament": "calm",
+      "relationship": "時計台の管理責任者",
+      "alibi": null,
+      "motive": null,
+      "background": "長年、町内会の発展に貢献してきた人物。特に公園の美化活動に力を入れていた。"
+    },
+    "suspects": [
+      {
+        "name": "佐藤花子",
+        "age": 42,
+        "occupation": "主婦",
+        "personality": "世話好き",
+        "temperament": "nervous",
+        "relationship": "近所の住民",
+        "alibi": "朝、犬の散歩中に落書きを発見した。",
+        "motive": "特に無し",
+        "background": "毎朝公園で犬の散歩をしている。"
+      },
+      {
+        "name": "田中太郎",
+        "age": 55,
+        "occupation": "会社員",
+        "personality": "頑固",
+        "temperament": "defensive",
+        "relationship": "町内会役員",
+        "alibi": "自宅で庭いじりをしていた。",
+        "motive": "時計台の改修に反対していた。",
+        "background": "時計台の改修費用が高額であることから反対していた。"
+      },
+      {
+        "name": "木村健太",
+        "age": 17,
+        "occupation": "高校生",
+        "personality": "活発",
+        "temperament": "volatile",
+        "relationship": "公園利用者",
+        "alibi": "別の公園でスケートボードの練習をしていた。",
+        "motive": "公園でのスケートボード禁止に反発していた。",
+        "background": "最近、公園でスケートボードをすることを禁止され、不満を抱いていた。"
+      }
+    ],
+    "culprit": "木村健太",
+    "motive": "公園でのスケートボード禁止への腹いせ",
+    "method": "赤いスプレーによる落書き",
+    "timeline": [
+      "午前7時：佐藤花子が落書きを発見",
+      "午前8時：警察に通報",
+      "午前9時：容疑者3名に聞き込み開始"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "犬の散歩コース",
+      "description": "佐藤花子の犬の散歩コースを記した手帳。二の丸こぶし公園を通らないルートが詳細に書かれており、朝はいつもこのルートで散歩していることがわかる。",
+      "discovery_text": "佐藤花子宅の玄関で、飼い犬のリードに絡まった手帳を発見した。",
+      "importance": "important",
+      "location": {
+        "lat": 35.53156269999999,
+        "lng": 139.560454
+      },
+      "poi_name": "二の丸こぶし公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "佐藤花子",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "ガーデニング用品のレシート",
+      "description": "田中太郎が午前中に園芸用品店で購入したレシート。購入時刻は落書きが行われた時間帯と重なっており、自宅の庭で作業していたというアリバイを裏付けている。",
+      "discovery_text": "田中太郎宅の庭に散らばる植木鉢の間から、レシートを見つけた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5333144,
+        "lng": 139.5575128
+      },
+      "poi_name": "ゆうばえの道",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "別の公園で何かが見つかるかもしれない…"
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "赤いスプレー缶",
+      "description": "高山くすのき公園のゴミ箱に捨てられていた赤いスプレー缶。木村健太の指紋が検出された。落書きに使われたものと同一の塗料であることが判明。",
+      "discovery_text": "高山くすのき公園を捜索中、ゴミ箱から異臭がすることに気づき、中を調べると赤いスプレー缶を発見した。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.536904,
+        "lng": 139.5595391
+      },
+      "poi_name": "高山くすのき公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "木村健太",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:24:29.612393",
+  "updated_at": "2025-08-27T18:24:29.612475",
+  "completed_at": null,
+  "final_score": null
+}

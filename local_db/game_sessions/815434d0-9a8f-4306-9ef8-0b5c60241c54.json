@@ -1,0 +1,140 @@
+{
+  "game_id": "815434d0-9a8f-4306-9ef8-0b5c60241c54",
+  "player_id": "test_player_verification",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "皇居外苑の密約",
+    "description": "秋の夕暮れ、皇居外苑の静寂を破る悲鳴が響き渡った。被害者はIT企業社長の五十嵐誠。ベンチに倒れた彼の胸には、一本の鋭利なナイフが突き刺さっていた。駆けつけた警官たちの目に映ったのは、血に染まった現場と、呆然と立ち尽くす3人の男女。五十嵐と仕事で関わりのあったコンサルタントの北条彩、ライバル企業社長の西園寺隆、そして五十嵐の秘書の桜井美咲。3人はそれぞれ異なるアリバイを主張するが、彼らの証言にはどこか不自然な点が…。真相を解き明かし、五十嵐を殺害した真犯人を突き止めろ。黄金色のイチョウ並木が、静かに事件の真相を見守っている。",
+    "victim": {
+      "name": "五十嵐誠",
+      "age": 45,
+      "occupation": "IT企業社長",
+      "personality": "野心家で、目的のためには手段を選ばない",
+      "temperament": "calm",
+      "relationship": "殺害された",
+      "alibi": null,
+      "motive": null,
+      "background": "新技術開発で成功を収めたが、敵も多い"
+    },
+    "suspects": [
+      {
+        "name": "北条彩",
+        "age": 32,
+        "occupation": "コンサルタント",
+        "personality": "冷静沈着で分析力に長ける",
+        "temperament": "sarcastic",
+        "relationship": "ビジネスパートナー",
+        "alibi": "皇居周辺をジョギングしていた",
+        "motive": "五十嵐の経営方針に反発していた",
+        "background": "五十嵐の会社にコンサルティング業務を提供"
+      },
+      {
+        "name": "西園寺隆",
+        "age": 50,
+        "occupation": "ライバル企業社長",
+        "personality": "傲慢で競争心が強い",
+        "temperament": "volatile",
+        "relationship": "ビジネスライバル",
+        "alibi": "国会議事堂前で政治家と会食していた",
+        "motive": "新技術開発で市場シェアを奪われた",
+        "background": "五十嵐の会社と熾烈な競争関係にある"
+      },
+      {
+        "name": "桜井美咲",
+        "age": 28,
+        "occupation": "秘書",
+        "personality": "几帳面で忠実",
+        "temperament": "nervous",
+        "relationship": "秘書",
+        "alibi": "東京駅で出張の準備をしていた",
+        "motive": "多額の借金を抱えていた",
+        "background": "五十嵐の信頼が厚い秘書"
+      }
+    ],
+    "culprit": "桜井美咲",
+    "motive": "五十嵐から横領していた資金が発覚しそうになり、口封じのために殺害",
+    "method": "ナイフによる刺殺",
+    "timeline": [
+      "17:00 五十嵐、皇居外苑で桜井と密会",
+      "17:30 口論の末、桜井が五十嵐を刺殺",
+      "17:40 北条がジョギング中に現場を発見",
+      "17:45 警察に通報"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "アリバイの矛盾",
+      "偽装工作"
+    ],
+    "red_herrings": [
+      "西園寺と五十嵐の確執",
+      "北条の不自然な証言"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "北条のランニングアプリ記録",
+      "description": "北条彩のスマートフォンから抽出されたランニングアプリの記録。事件発生時刻に皇居外苑を周回していたことがGPSデータから確認できる。アプリには走行ルート、ペース、時間などが詳細に記録されており、アリバイを裏付けている。",
+      "discovery_text": "鑑識が北条彩のスマートフォンを解析した結果、ランニングアプリの記録を発見した。GPSデータは彼女の主張を裏付けていた…",
+      "importance": "important",
+      "location": {
+        "lat": 35.68009929999999,
+        "lng": 139.7680666
+      },
+      "poi_name": "グランルーフ ガーデン",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "北条彩",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "西園寺と政治家の会食写真",
+      "description": "国会議事堂前レストランの防犯カメラ映像から抽出された写真。事件発生時刻に西園寺隆が政治家と会食していたことが確認できる。写真には日付と時刻が記録されており、アリバイを裏付けている。",
+      "discovery_text": "捜査員が近隣の防犯カメラ映像をくまなくチェックした結果、国会議事堂前レストランで西園寺の姿を発見した。彼のアリバイは確かなものだった…",
+      "importance": "important",
+      "location": {
+        "lat": 35.6800744,
+        "lng": 139.7646866
+      },
+      "poi_name": "インターメディアテク",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "西園寺隆",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "血痕のついたチケットの半券",
+      "description": "東京ステーションギャラリーのチケットの半券。微量の血痕が付着しており、DNA鑑定の結果、被害者・五十嵐のものと一致した。桜井美咲は東京駅で出張の準備をしていたとアリバイを主張していたが、ギャラリーを訪れていたことが判明した。チケットの購入時刻は五十嵐が殺害される直前である。",
+      "discovery_text": "捜査員が東京駅周辺を徹底的に捜索した結果、ゴミ箱から一枚のチケットの半券を発見した。微かに血痕が付着していた…",
+      "importance": "critical",
+      "location": {
+        "lat": 35.6824361,
+        "lng": 139.7665257
+      },
+      "poi_name": "東京ステーションギャラリー",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "桜井美咲",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.6812,
+    "lng": 139.7671
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T17:33:52.592828",
+  "updated_at": "2025-08-27T17:33:52.592967",
+  "completed_at": null,
+  "final_score": null
+}

@@ -2,15 +2,15 @@
 ゲーム関連APIルーター
 """
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Query, Path
 from pydantic import BaseModel
 
 from ...services.game_service import game_service
-from ....shared.models.game import GameSession, GameStatus, Difficulty
-from ....shared.models.location import Location
-from ....shared.models.scenario import Scenario
-from ....shared.models.evidence import Evidence
+from shared.models.game import GameSession, GameStatus, Difficulty
+from shared.models.location import Location
+from shared.models.scenario import Scenario
+from shared.models.evidence import Evidence
 
 
 router = APIRouter()
@@ -22,13 +22,14 @@ class GameStartRequest(BaseModel):
     player_id: str
     location: Location
     difficulty: Difficulty
+    radius: Optional[int] = 1000  # 証拠検索半径（メートル）、デフォルト1km
 
 
 class GameStartResponse(BaseModel):
     """ゲーム開始レスポンス"""
     game_id: str
     scenario: Scenario
-    evidence: List[Evidence]
+    evidence: List[Dict[str, Any]]  # 段階的表示のため辞書形式に変更
     game_rules: dict
     
     class Config:
@@ -64,32 +65,25 @@ async def start_game(request: GameStartRequest):
     from ..errors import APIError, GameAPIError
     
     try:
-        # 新しいゲームセッション開始
+        # 新しいゲームセッション開始（半径パラメータを追加）
         game_session = await game_service.start_new_game(
             player_id=request.player_id,
             player_location=request.location,
-            difficulty=request.difficulty
+            difficulty=request.difficulty,
+            radius=request.radius
         )
         
         return GameStartResponse(
             game_id=game_session.game_id,
             scenario=game_session.scenario,
             evidence=[
-                Evidence(
-                    evidence_id=ev.evidence_id,
-                    name=ev.name,
-                    description="発見してください",  # 詳細は発見時まで隠す
-                    discovery_text="",
-                    importance=ev.importance,
-                    location=ev.location,
-                    poi_name=ev.poi_name,
-                    poi_type=ev.poi_type
-                ) for ev in game_session.evidence_list
+                ev.to_display_dict() for ev in game_session.evidence_list
             ],
             game_rules={
                 "discovery_radius": game_session.game_rules.discovery_radius,
                 "time_limit": game_session.game_rules.time_limit,
-                "max_evidence": game_session.game_rules.max_evidence
+                "max_evidence": game_session.game_rules.max_evidence,
+                "search_radius": request.radius  # 検索半径情報を追加
             }
         )
         

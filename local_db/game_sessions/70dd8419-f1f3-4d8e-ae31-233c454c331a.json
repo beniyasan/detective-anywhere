@@ -1,0 +1,150 @@
+{
+  "game_id": "70dd8419-f1f3-4d8e-ae31-233c454c331a",
+  "player_id": "test_player_final",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "皇居外苑の影",
+    "description": "初夏の風が優しく吹き抜ける皇居外苑。緑豊かな木々の間を縫うように伸びる遊歩道で、大手門近くのベンチに男性が倒れているのが発見された。駆けつけた警察官はすぐに異変に気づく。男性の胸には深々と突き刺さったナイフ。周囲には人影はなく、静寂だけが辺りを包んでいた。被害者は大手町で働く会社員、五十木 健太。捜査一課の刑事、鷹野は現場の緊迫感に息を呑んだ。都心の真ん中、人通りの多い場所で起きた大胆な犯行。一体誰が、何のために… 鷹野の脳裏に浮かんだのは、五十木と関わりのあった4人の人物。それぞれの証言は真実を語っているのか？それとも巧妙に隠された嘘なのか？事件の真相は、皇居外苑の影に深く潜んでいた。",
+    "victim": {
+      "name": "五十木 健太",
+      "age": 35,
+      "occupation": "会社員（大手町勤務）",
+      "personality": "温厚で真面目、几帳面な性格",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "大手町にあるIT企業に勤務。仕事熱心で、同僚からの信頼も厚かった。"
+    },
+    "suspects": [
+      {
+        "name": "藤堂 美咲",
+        "age": 32,
+        "occupation": "カフェ店員（皇居外苑近くのカフェ）",
+        "personality": "明るく社交的",
+        "temperament": "sarcastic",
+        "relationship": "五十木健太の元恋人",
+        "alibi": "事件発生時刻にはカフェで働いていたと主張。同僚もそれを証言している。",
+        "motive": "別れた五十木に未練があり、復縁を迫っていたが拒否された。",
+        "background": "皇居外苑近くのカフェで働いている。五十木とは1年前に別れたが、今でも彼のことを想っている。"
+      },
+      {
+        "name": "西園寺 浩",
+        "age": 40,
+        "occupation": "五十木健太の同僚",
+        "personality": "野心家で傲慢",
+        "temperament": "volatile",
+        "relationship": "同僚",
+        "alibi": "事件発生時刻には東京駅周辺で顧客と打ち合わせをしていたと主張。しかし、顧客は打ち合わせ時間を曖昧に記憶している。",
+        "motive": "社内での昇進競争で五十木に敗れたことを恨んでいた。",
+        "background": "五十木と同じ会社に勤務。出世欲が強く、ライバルである五十木を邪魔に思っていた。"
+      },
+      {
+        "name": "北条 楓",
+        "age": 28,
+        "occupation": "フリーランスのデザイナー",
+        "personality": "冷静沈着",
+        "temperament": "defensive",
+        "relationship": "五十木健太の友人",
+        "alibi": "事件発生時刻には国会議事堂近くの公園でスケッチをしていたと主張。しかし、目撃者はいない。",
+        "motive": "五十木に多額の借金があり、返済を迫っていた。",
+        "background": "五十木の大学時代の友人。金銭感覚がルーズで、五十木に借金をしている。"
+      },
+      {
+        "name": "南雲 翔太",
+        "age": 30,
+        "occupation": "無職",
+        "personality": "陰気で寡黙",
+        "temperament": "nervous",
+        "relationship": "五十木健太とは面識がない",
+        "alibi": "事件発生時刻には皇居ランニングをしていたと主張。しかし、ランニングウェアやGPS記録などは提示できない。",
+        "motive": "五十木と間違えて刺したと主張。",
+        "background": "定職に就かず、公園などで時間を過ごしている。精神的に不安定な様子が見られる。"
+      }
+    ],
+    "culprit": "西園寺 浩",
+    "motive": "昇進を巡る恨み。五十木が昇進することで自分の立場が危うくなると考え、殺害を決意。",
+    "method": "ナイフによる刺殺",
+    "timeline": [
+      "17:00 五十木健太、皇居外苑で西園寺浩と会う。",
+      "17:30 口論の末、西園寺浩が五十木健太を刺殺。",
+      "18:00 通行人が五十木健太の遺体を発見。"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "アリバイの信憑性",
+      "容疑者間の関係性"
+    ],
+    "red_herrings": [
+      "藤堂美咲の未練",
+      "北条楓の借金"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "藤堂美咲の勤務記録",
+      "description": "カフェのタイムカードと監視カメラ映像。藤堂美咲が事件発生時刻にはカフェで勤務していたことが明確に記録されている。",
+      "discovery_text": "聞き込み捜査の中で、藤堂美咲が勤務していたカフェの店長から提供された。タイムカードと監視カメラ映像は完璧に彼女の無実を証明していた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.68009929999999,
+        "lng": 139.7680666
+      },
+      "poi_name": "グランルーフ ガーデン",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "藤堂 美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "北条楓のスケッチブック",
+      "description": "国会議事堂近くの公園でスケッチをしていたという北条楓のスケッチブック。事件発生時刻に描かれたとされる国会議事堂のスケッチには、不自然な空白部分があった。詳細な分析の結果、その空白部分には元々皇居外苑が描かれていたが、何らかの理由で消されたことが判明した。",
+      "discovery_text": "北条楓のアトリエを家宅捜索した際に発見された。一見何の変哲もないスケッチブックだったが、鑑識の執念深い調査によって隠された真実が白日の下に晒された。",
+      "importance": "important",
+      "location": {
+        "lat": 35.6800744,
+        "lng": 139.7646866
+      },
+      "poi_name": "インターメディアテク",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "北条 楓",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "血痕のついたハンカチ",
+      "description": "東京ステーションギャラリーのゴミ箱から発見された血痕のついたハンカチ。DNA鑑定の結果、被害者・五十木の血液と一致。ハンカチには、西園寺 浩が愛用している高級ブランドのロゴが刺繍されていた。",
+      "discovery_text": "ギャラリーの清掃員が不審なゴミ箱を発見し、通報したことで証拠が確保された。一見ただのゴミにしか見えなかったハンカチが、事件を解き明かす重要な鍵となった。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.6824361,
+        "lng": 139.7665257
+      },
+      "poi_name": "東京ステーションギャラリー",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "西園寺 浩",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.6812,
+    "lng": 139.7671
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T17:34:47.147918",
+  "updated_at": "2025-08-27T17:34:47.147999",
+  "completed_at": null,
+  "final_score": null
+}

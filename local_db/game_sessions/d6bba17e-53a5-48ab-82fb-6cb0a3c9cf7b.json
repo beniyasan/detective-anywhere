@@ -1,0 +1,173 @@
+{
+  "game_id": "d6bba17e-53a5-48ab-82fb-6cb0a3c9cf7b",
+  "player_id": "test_hard_diff",
+  "status": "active",
+  "difficulty": "hard",
+  "scenario": {
+    "title": "消えた彫刻家",
+    "description": "霧深い港町、ポート・ミスト。有名な彫刻家、雨宮蒼（あめみや あおい）が自宅アトリエから姿を消した。残されたのは、未完成の彫刻と微かに漂う潮の香り。蒼は、次回の国際彫刻展への出品を控えており、新作へのプレッシャーに悩まされていたという。彼の失踪は、創作に行き詰まった末の逃避か、それとも別の理由が…？\n\n蒼の失踪から3日後、警察は6人の関係者を重要参考人として事情聴取を行った。蒼の弟子である野村緑（のむら みどり）は、師の才能に嫉妬心を抱いていた。蒼の妻、雨宮紅（あめみや べに）は、夫の多忙な生活に不満を募らせていた。蒼のパトロンである大河原金次（おおがわら きんじ）は、蒼の才能に投資していたが、最近資金繰りに苦しんでいた。蒼の友人であるカフェのオーナー、黒木翔（くろき しょう）は、蒼と金銭トラブルを抱えていた。蒼のライバルである彫刻家、白井銀二（しらい ぎんじ）は、蒼の成功を妬んでいた。そして、蒼のアトリエの近所に住む謎の老人、灰原鉄男（はいばら てつお）は、蒼と些細なことで口論していた。\n\n複雑に絡み合う人間関係、それぞれの思惑、そして霧に包まれた港町。あなたは、この謎を解き明かし、蒼の行方を探ることができるだろうか。手がかりは、街に点在するカフェ、公園、ランドマークに隠されている。",
+    "victim": {
+      "name": "雨宮蒼",
+      "age": 45,
+      "occupation": "彫刻家",
+      "personality": "繊細で神経質、完璧主義者",
+      "temperament": "nervous",
+      "relationship": "失踪者",
+      "alibi": null,
+      "motive": null,
+      "background": "国際的に評価される彫刻家。次回の国際彫刻展への出品を控えてプレッシャーを感じていた。"
+    },
+    "suspects": [
+      {
+        "name": "野村緑",
+        "age": 28,
+        "occupation": "彫刻家（蒼の弟子）",
+        "personality": "野心家で負けず嫌い",
+        "temperament": "volatile",
+        "relationship": "弟子",
+        "alibi": "アトリエで制作をしていた",
+        "motive": "師の才能への嫉妬",
+        "background": "蒼の才能に憧れる一方で、追い抜きたいという野心を抱いている。"
+      },
+      {
+        "name": "雨宮紅",
+        "age": 42,
+        "occupation": "主婦",
+        "personality": "冷静で現実的",
+        "temperament": "calm",
+        "relationship": "妻",
+        "alibi": "家で家事をしていた",
+        "motive": "夫の多忙な生活への不満",
+        "background": "夫の芸術家気質に理解を示しつつも、孤独を感じていた。"
+      },
+      {
+        "name": "大河原金次",
+        "age": 55,
+        "occupation": "実業家（蒼のパトロン）",
+        "personality": "傲慢で自信家",
+        "temperament": "sarcastic",
+        "relationship": "パトロン",
+        "alibi": "出張で町を離れていた",
+        "motive": "蒼への投資の失敗",
+        "background": "蒼の才能に投資していたが、最近は資金繰りに苦しんでいた。"
+      },
+      {
+        "name": "黒木翔",
+        "age": 40,
+        "occupation": "カフェオーナー",
+        "personality": "温厚で社交的",
+        "temperament": "defensive",
+        "relationship": "友人",
+        "alibi": "カフェで営業をしていた",
+        "motive": "金銭トラブル",
+        "background": "蒼と金銭トラブルを抱えていたが、友情は壊したくないと思っていた。"
+      },
+      {
+        "name": "白井銀二",
+        "age": 48,
+        "occupation": "彫刻家",
+        "personality": "プライドが高く嫉妬深い",
+        "temperament": "sarcastic",
+        "relationship": "ライバル",
+        "alibi": "別の町で個展の準備をしていた",
+        "motive": "蒼の成功への嫉妬",
+        "background": "蒼の成功を妬み、常にライバル視していた。"
+      },
+      {
+        "name": "灰原鉄男",
+        "age": 70,
+        "occupation": "無職",
+        "personality": "偏屈で頑固",
+        "temperament": "volatile",
+        "relationship": "近隣住民",
+        "alibi": "自宅にいた",
+        "motive": "些細な口論",
+        "background": "蒼のアトリエの近所に住む老人。蒼と些細なことで口論していた。"
+      }
+    ],
+    "culprit": "野村緑",
+    "motive": "師の才能への嫉妬と、自分が国際彫刻展に出品したかったため。蒼の作品を壊し、自作と偽って出品しようと企んでいた。",
+    "method": "睡眠薬を飲ませた後、アトリエから運び出し、港から船で逃亡させた。",
+    "timeline": [
+      "蒼が新作の制作に苦しむ",
+      "野村が蒼に睡眠薬を盛る",
+      "野村が蒼を船で運び出す",
+      "蒼の失踪が発覚"
+    ],
+    "theme": "psychological",
+    "difficulty_factors": [
+      "複雑な人間関係",
+      "偽のアリバイ"
+    ],
+    "red_herrings": [
+      "妻の不倫疑惑",
+      "パトロンの破産"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "大河原の領収書",
+      "description": "大河原金次が事件当日に別の町のホテルに宿泊していたことを示す領収書。ホテル名は『グランドホテル山水荘』。",
+      "discovery_text": "大河原のアリバイを調査するため、彼の事務所を捜索したところ、デスクの引き出しから領収書が見つかった。",
+      "importance": "important",
+      "location": {
+        "lat": 35.54389859999999,
+        "lng": 139.5715708
+      },
+      "poi_name": "快活CLUB センター南店",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "大河原金次",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "黒木のシフト表",
+      "description": "黒木翔が事件当日にカフェで勤務していたことを示すシフト表。カフェの店長も黒木が勤務していたことを証言している。",
+      "discovery_text": "黒木のアリバイを確かめるため、彼が働くカフェを訪ねたところ、店長からシフト表を見せてもらった。",
+      "importance": "important",
+      "location": {
+        "lat": 35.546641,
+        "lng": 139.5699607
+      },
+      "poi_name": "タリーズコーヒー 昭和医科大学横浜市北部病院",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "黒木翔",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "空の睡眠薬の瓶",
+      "description": "野村緑のアトリエのごみ箱から、空の睡眠薬の瓶が見つかった。瓶には「強力睡眠薬 ドリームスリープ」と書かれており、被害者が飲まされていたものと同じ種類である。また、瓶には野村緑の指紋が付着していた。",
+      "discovery_text": "野村のアトリエを改めて徹底的に捜索した。ごみ箱の中を調べると、底に隠すように丸められた紙くずが見つかった。それを広げると、空の睡眠薬の瓶が現れた。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.54480079999999,
+        "lng": 139.5666581
+      },
+      "poi_name": "ギャラリーレイオハナ",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "野村緑",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:17:50.655038",
+  "updated_at": "2025-08-27T18:17:50.655131",
+  "completed_at": null,
+  "final_score": null
+}

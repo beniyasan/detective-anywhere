@@ -12,7 +12,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from ....shared.models.location import Location
+from shared.models.location import Location
 
 
 class GPSAccuracy(BaseModel):

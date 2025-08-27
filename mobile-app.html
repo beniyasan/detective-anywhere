@@ -15,6 +15,20 @@
     <!-- iOS用アイコン -->
     <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
     
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <!-- Leaflet Routing Machine for real road routing -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -229,8 +243,8 @@
         
         <!-- ヘッダー -->
         <header class="app-header">
-            <h1>🕵️ AIミステリー散歩</h1>
-            <p style="font-size: 0.9em; opacity: 0.9;">リアルワールド推理ゲーム</p>
+            <h1>🕵️ Walking Mystery</h1>
+            <p style="font-size: 0.9em; opacity: 0.9;">お散歩推理ゲーム</p>
         </header>
         
         <!-- メインコンテンツ -->
@@ -252,6 +266,19 @@
                         <option value="normal" selected>普通（4-5名の容疑者）</option>
                         <option value="hard">難しい（6名以上の容疑者）</option>
                     </select>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label>証拠の検索範囲:</label>
+                    <select id="radius" style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px;">
+                        <option value="200">200m（徒歩3分圏内）</option>
+                        <option value="500">500m（徒歩7分圏内）</option>
+                        <option value="1000" selected>1km（徒歩15分圏内）</option>
+                        <option value="2000">2km（徒歩30分圏内）</option>
+                    </select>
+                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">
+                        狭いほど集中的、広いほど広範囲の探索になります
+                    </small>
                 </div>
                 
                 <button class="btn success" onclick="startNewGame()">
@@ -284,6 +311,12 @@
                 <div class="card">
                     <button class="btn" onclick="checkNearbyEvidence()">
                         📍 近くの証拠をチェック
+                    </button>
+                    <button class="btn" onclick="toggleRecommendedRoute()" style="margin-top: 10px; background: linear-gradient(45deg, #667eea, #764ba2);">
+                        🗺️ 循環ルート表示切替
+                    </button>
+                    <button class="btn" onclick="toggleWalkingDirections()" style="margin-top: 10px; background: linear-gradient(45deg, #27AE60, #229954);">
+                        🚶 詳細ナビゲーション
                     </button>
                 </div>
             </div>
@@ -361,6 +394,14 @@
         let currentPosition = null;
         let gameData = null;
         
+        // 地図関連
+        let gameMap = null;
+        let playerMarker = null;
+        let evidenceMarkers = [];
+        let routeLines = [];
+        let recommendedRoute = null;
+        let routingControl = null;
+        
         function startGPSTracking() {
             if (!navigator.geolocation) {
                 updateGPSStatus('GPS非対応のデバイスです', true);
@@ -384,6 +425,7 @@
                     if (gameData) {
                         checkEvidenceProximity(position);
                         updateDistanceDisplay(position);
+                        updatePlayerLocationOnMap(position);
                     }
                 },
                 error => {
@@ -402,37 +444,56 @@
         
         // ゲーム関連
         async function startNewGame() {
+            // GPS情報がない場合は東京駅をデフォルト位置として使用
             if (!currentPosition) {
-                alert('GPS情報を取得中です。少々お待ちください。');
-                return;
+                currentPosition = {
+                    coords: {
+                        latitude: 35.6812,
+                        longitude: 139.7671,
+                        accuracy: 100
+                    }
+                };
+                updateGPSStatus('📍 デフォルト位置（東京駅）を使用中', false);
             }
             
             const difficulty = document.getElementById('difficulty').value;
+            const radius = parseInt(document.getElementById('radius').value);
             
             // ローディング表示
             document.getElementById('start-screen').innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
                     <p>ミステリーを生成中...</p>
+                    <small style="color: #666; margin-top: 10px; display: block;">
+                        検索範囲: ${radius}m / 難易度: ${difficulty}
+                    </small>
                 </div>
             `;
             
             try {
-                const response = await fetch('http://localhost:8080/api/v1/game/start', {
+                // まずAPI接続をテスト
+                console.log('Testing API connection...');
+                
+                // ユニークなプレイヤーIDを生成
+                const playerId = 'player_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                
+                const response = await fetch('http://localhost:8000/api/v1/game/start', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        player_id: 'mobile-player',
+                        player_id: playerId,
                         location: {
                             lat: currentPosition.coords.latitude,
                             lng: currentPosition.coords.longitude
                         },
-                        difficulty: difficulty
+                        difficulty: difficulty,
+                        radius: radius
                     })
                 });
                 
                 if (response.ok) {
                     gameData = await response.json();
+                    gameData.player_id = playerId; // プレイヤーIDを保存
                     localStorage.setItem('currentGame', JSON.stringify(gameData));
                     showGameScreen();
                 } else {
@@ -440,7 +501,19 @@
                 }
             } catch (error) {
                 console.error('Game start error:', error);
-                alert('ゲーム開始に失敗しました。オフラインの場合は、保存済みゲームをロードします。');
+                
+                // より詳細なエラー情報を表示
+                let errorMessage = 'ゲーム開始に失敗しました。\n';
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMessage += 'サーバーに接続できません。サーバーが起動しているか確認してください。';
+                } else if (error.message === 'ゲーム開始失敗') {
+                    errorMessage += 'サーバーエラーが発生しました。';
+                } else {
+                    errorMessage += `エラー詳細: ${error.message}`;
+                }
+                errorMessage += '\n\nオフラインの場合は、保存済みゲームをロードします。';
+                
+                alert(errorMessage);
                 loadOfflineGame();
             }
         }
@@ -532,18 +605,310 @@
         }
         
         function initMap() {
-            // 実際にはGoogle Maps APIやLeafletを使用
-            const mapDiv = document.getElementById('map');
-            mapDiv.innerHTML = `
-                <div style="padding: 20px; text-align: center; background: #E3F2FD;">
-                    <h3>🗺️ マップ</h3>
-                    <p>現在地と証拠の位置を表示</p>
-                    <p style="margin-top: 10px;">
-                        緯度: ${currentPosition.coords.latitude.toFixed(4)}<br>
-                        経度: ${currentPosition.coords.longitude.toFixed(4)}
-                    </p>
+            if (!currentPosition || !gameData) return;
+            
+            const centerLat = currentPosition.coords.latitude;
+            const centerLng = currentPosition.coords.longitude;
+            
+            // 地図を初期化
+            gameMap = L.map('map').setView([centerLat, centerLng], 16);
+            
+            // OpenStreetMapタイルを追加
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18
+            }).addTo(gameMap);
+            
+            // プレイヤーの現在位置マーカーを追加
+            const playerIcon = L.divIcon({
+                html: '📍',
+                iconSize: [30, 30],
+                className: 'player-marker'
+            });
+            
+            playerMarker = L.marker([centerLat, centerLng], {icon: playerIcon})
+                .addTo(gameMap)
+                .bindPopup('あなたの現在位置');
+            
+            // 証拠の位置マーカーを追加
+            addEvidenceMarkers();
+            
+            // 推奨ルートを作成
+            createRecommendedRoute();
+            
+            // OSRMデモサーバーの制限について注意表示
+            setTimeout(() => {
+                showOSRMNotice();
+            }, 2000);
+            
+            // マップサイズを調整
+            setTimeout(() => {
+                gameMap.invalidateSize();
+            }, 100);
+        }
+        
+        function addEvidenceMarkers() {
+            if (!gameData || !gameData.evidence) return;
+            
+            // 既存の証拠マーカーとルート線をクリア
+            evidenceMarkers.forEach(marker => gameMap.removeLayer(marker));
+            evidenceMarkers = [];
+            clearRouteLines();
+            
+            gameData.evidence.forEach(evidence => {
+                const isDiscovered = document.getElementById(`evidence-${evidence.evidence_id}`)?.classList.contains('discovered') || false;
+                
+                // 証拠の状態に応じてアイコンを変更
+                const evidenceIcon = L.divIcon({
+                    html: isDiscovered ? '✅' : '❓',
+                    iconSize: [25, 25],
+                    className: isDiscovered ? 'evidence-marker discovered' : 'evidence-marker'
+                });
+                
+                const marker = L.marker([evidence.location.lat, evidence.location.lng], {icon: evidenceIcon})
+                    .addTo(gameMap)
+                    .bindPopup(`
+                        <strong>${evidence.poi_name}</strong><br>
+                        ${isDiscovered ? evidence.name : '未発見の証拠'}<br>
+                        <small>距離: ${calculateDistance(
+                            currentPosition.coords.latitude,
+                            currentPosition.coords.longitude,
+                            evidence.location.lat,
+                            evidence.location.lng
+                        ).toFixed(0)}m</small>
+                    `);
+                
+                evidenceMarkers.push(marker);
+                
+                // 未発見の証拠への方向線を追加（近距離のみ、推奨ルートと区別）
+                if (!isDiscovered) {
+                    const distance = calculateDistance(
+                        currentPosition.coords.latitude,
+                        currentPosition.coords.longitude,
+                        evidence.location.lat,
+                        evidence.location.lng
+                    );
+                    
+                    if (distance <= 75) { // 75m以内なら直接方向線を表示
+                        const routeLine = L.polyline([
+                            [currentPosition.coords.latitude, currentPosition.coords.longitude],
+                            [evidence.location.lat, evidence.location.lng]
+                        ], {
+                            color: distance <= 50 ? 'green' : 'orange',
+                            weight: 3,
+                            opacity: 0.7,
+                            dashArray: '5, 5'
+                        }).addTo(gameMap);
+                        
+                        routeLines.push(routeLine);
+                    }
+                }
+            });
+        }
+        
+        function clearRouteLines() {
+            routeLines.forEach(line => gameMap.removeLayer(line));
+            routeLines = [];
+        }
+        
+        async function createRecommendedRoute() {
+            if (!gameData || !gameData.evidence || !currentPosition) return;
+            
+            // 既存のルートをクリア
+            if (routingControl) {
+                gameMap.removeControl(routingControl);
+            }
+            if (recommendedRoute) {
+                gameMap.removeLayer(recommendedRoute);
+            }
+            
+            // スタート地点
+            const startPoint = L.latLng(currentPosition.coords.latitude, currentPosition.coords.longitude);
+            
+            // 証拠の位置を距離順にソート（最適なルート順序）
+            const evidenceLocations = gameData.evidence
+                .map(evidence => ({
+                    location: L.latLng(evidence.location.lat, evidence.location.lng),
+                    distance: calculateDistance(
+                        currentPosition.coords.latitude,
+                        currentPosition.coords.longitude,
+                        evidence.location.lat,
+                        evidence.location.lng
+                    ),
+                    evidence: evidence
+                }))
+                .sort((a, b) => a.distance - b.distance);
+            
+            // 循環ルートポイントを作成：スタート地点 → 証拠1 → 証拠2 → 証拠3 → スタート地点
+            const waypoints = [startPoint];
+            evidenceLocations.forEach(item => {
+                waypoints.push(item.location);
+            });
+            waypoints.push(startPoint); // 最後にスタート地点に戻る
+            
+            // 実際の道路に沿ったルーティングを作成
+            routingControl = L.Routing.control({
+                waypoints: waypoints,
+                routeWhileDragging: false,
+                addWaypoints: false,
+                createMarker: function() { return null; }, // 既存のマーカーを使用するためルートマーカーは非表示
+                lineOptions: {
+                    styles: [{
+                        color: '#667eea',
+                        weight: 4,
+                        opacity: 0.8
+                    }]
+                },
+                router: L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1',
+                    profile: 'foot' // 徒歩ルート
+                }),
+                // 日本語ローカライゼーションはサポートされていないため英語を使用
+                formatter: new L.Routing.Formatter({
+                    language: 'en'
+                })
+            }).on('routesfound', function(e) {
+                const routes = e.routes;
+                const summary = routes[0].summary;
+                
+                // 総距離と時間を表示
+                const totalDistance = Math.round(summary.totalDistance);
+                const totalTime = Math.round(summary.totalTime / 60); // 分に変換
+                
+                console.log(`循環ルート作成完了 - 総距離: ${totalDistance}m, 予想時間: ${totalTime}分`);
+                
+                // 地図上にルート情報を表示
+                const routeInfoDiv = document.createElement('div');
+                routeInfoDiv.innerHTML = `
+                    <div style="position: absolute; top: 10px; right: 10px; background: rgba(102, 126, 234, 0.9); 
+                                color: white; padding: 10px; border-radius: 5px; z-index: 1000; font-size: 12px;">
+                        🔄 循環ルート<br>
+                        🚶 総距離: ${totalDistance}m<br>
+                        ⏱️ 予想時間: ${totalTime}分<br>
+                        📊 証拠: ${evidenceLocations.length}箇所<br>
+                        <small>実際の歩行路使用</small>
+                    </div>
+                `;
+                
+                // 既存の情報パネルを削除
+                const existingPanel = document.querySelector('.route-info-panel');
+                if (existingPanel) existingPanel.remove();
+                
+                routeInfoDiv.className = 'route-info-panel';
+                document.getElementById('map').appendChild(routeInfoDiv);
+                
+            }).on('routingerror', function(e) {
+                console.warn('ルーティングエラー:', e.error);
+                // フォールバック：直線ルートを表示
+                createSimpleFallbackRoute(waypoints);
+            }).addTo(gameMap);
+            
+            // ルーティングコントロールのパネルを非表示にする
+            setTimeout(() => {
+                const routingContainer = document.querySelector('.leaflet-routing-container');
+                if (routingContainer) {
+                    routingContainer.style.display = 'none';
+                }
+            }, 100);
+        }
+        
+        function createSimpleFallbackRoute(waypoints) {
+            console.log('OSRMサーバーが利用できません。簡易ルートを表示します。');
+            
+            // 直線ルートを作成
+            const routeCoordinates = waypoints.map(wp => [wp.lat, wp.lng]);
+            
+            recommendedRoute = L.polyline(routeCoordinates, {
+                color: '#FF6B6B',
+                weight: 4,
+                opacity: 0.8,
+                dashArray: '10, 5'
+            }).addTo(gameMap);
+            
+            // 簡易距離計算
+            let totalDistance = 0;
+            for (let i = 0; i < routeCoordinates.length - 1; i++) {
+                const [lat1, lng1] = routeCoordinates[i];
+                const [lat2, lng2] = routeCoordinates[i + 1];
+                totalDistance += calculateDistance(lat1, lng1, lat2, lng2);
+            }
+            
+            // 簡易情報パネル表示
+            const routeInfoDiv = document.createElement('div');
+            routeInfoDiv.innerHTML = `
+                <div style="position: absolute; top: 10px; right: 10px; background: rgba(255, 107, 107, 0.9); 
+                            color: white; padding: 10px; border-radius: 5px; z-index: 1000; font-size: 12px;">
+                    ⚠️ 簡易ルート<br>
+                    🚶 概算距離: ${Math.round(totalDistance)}m<br>
+                    📊 証拠: ${waypoints.length - 1}箇所<br>
+                    <small>直線距離（参考）</small>
                 </div>
             `;
+            
+            const existingPanel = document.querySelector('.route-info-panel');
+            if (existingPanel) existingPanel.remove();
+            
+            routeInfoDiv.className = 'route-info-panel';
+            document.getElementById('map').appendChild(routeInfoDiv);
+        }
+        
+        function showOSRMNotice() {
+            // 一度だけ表示
+            if (localStorage.getItem('osrm-notice-shown')) return;
+            
+            const notice = `
+🗺️ ルーティング機能について
+
+現在、デモ用のルーティングサーバーを使用しています。
+以下の点にご注意ください：
+
+• 時々利用できない場合があります
+• レスポンス速度が制限される場合があります
+• プロダクション使用には適していません
+
+ルーティングに失敗した場合は、
+簡易的な直線ルートが表示されます。
+
+このメッセージは今回のみ表示されます。
+            `;
+            
+            if (confirm(notice + '\n\n了解しましたか？')) {
+                localStorage.setItem('osrm-notice-shown', 'true');
+            }
+        }
+        
+        let routeVisible = true;
+        
+        function toggleRecommendedRoute() {
+            if (!gameMap) return;
+            
+            if (routeVisible) {
+                // ルートを非表示
+                if (routingControl) {
+                    gameMap.removeControl(routingControl);
+                }
+                if (recommendedRoute) {
+                    gameMap.removeLayer(recommendedRoute);
+                }
+                document.querySelector('.route-info-panel')?.remove();
+                
+                routeVisible = false;
+            } else {
+                // ルートを再表示
+                createRecommendedRoute();
+                routeVisible = true;
+            }
+        }
+        
+        function toggleWalkingDirections() {
+            const routingContainer = document.querySelector('.leaflet-routing-container');
+            if (routingContainer) {
+                if (routingContainer.style.display === 'none') {
+                    routingContainer.style.display = 'block';
+                } else {
+                    routingContainer.style.display = 'none';
+                }
+            }
         }
         
         async function checkNearbyEvidence() {
@@ -615,14 +980,19 @@ ${evidence.hint || 'この証拠の意味を考えてみましょう。'}
             alert(evidenceDetails);
             evidenceItem.classList.add('discovered');
             
+            // 地図上の証拠マーカーも更新
+            if (gameMap) {
+                addEvidenceMarkers();
+            }
+            
             // サーバーに発見を報告
             try {
-                await fetch('http://localhost:8080/api/v1/evidence/discover', {
+                await fetch('http://localhost:8000/api/v1/evidence/discover', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         game_id: gameData.game_id,
-                        player_id: 'mobile-player',
+                        player_id: gameData.player_id || 'mobile-player',
                         current_location: {
                             lat: currentPosition.coords.latitude,
                             lng: currentPosition.coords.longitude
@@ -764,6 +1134,16 @@ ${evidence.hint || 'この証拠の意味を考えてみましょう。'}
             localStorage.setItem('discoveries', JSON.stringify(discoveries));
         }
         
+        function updatePlayerLocationOnMap(position) {
+            if (gameMap && playerMarker) {
+                const newLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
+                playerMarker.setLatLng(newLatLng);
+                
+                // 証拠マーカーの距離情報も更新
+                addEvidenceMarkers();
+            }
+        }
+        
         function checkEvidenceProximity(position) {
             // 自動的に近くの証拠をチェック
             if (gameData && gameData.evidence) {
@@ -867,7 +1247,7 @@ ${evidence.hint || 'この証拠の意味を考えてみましょう。'}
             const questionType = document.getElementById('question-type').value;
             
             try {
-                const response = await fetch('http://localhost:8080/api/v1/deduction/question', {
+                const response = await fetch('http://localhost:8000/api/v1/deduction/question', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({

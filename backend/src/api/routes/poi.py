@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from ...services.poi_service import poi_service
-from ....shared.models.location import Location, POI, POIType
+from shared.models.location import Location, POI, POIType
 from ..errors import APIError, POIAPIError
 
 

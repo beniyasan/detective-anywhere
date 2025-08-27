@@ -9,6 +9,10 @@ import aiohttp
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass
 
+from ..core.logging import get_logger, LogCategory
+
+logger = get_logger(__name__, LogCategory.POI_SERVICE)
+
 
 @dataclass
 class POI:
@@ -198,3 +202,108 @@ class POIService:
             })
         
         return evidence_locations
+    
+    async def validate_location(self, location) -> bool:
+        """位置情報の有効性をチェック"""
+        try:
+            # 基本的な緯度経度の範囲チェック
+            lat = float(location.lat) if hasattr(location, 'lat') else float(location['lat'])
+            lng = float(location.lng) if hasattr(location, 'lng') else float(location['lng'])
+            
+            # 緯度は-90から90の範囲
+            if not (-90 <= lat <= 90):
+                return False
+                
+            # 経度は-180から180の範囲
+            if not (-180 <= lng <= 180):
+                return False
+                
+            return True
+        except (ValueError, TypeError, KeyError, AttributeError):
+            return False
+    
+    async def get_location_context(self, location):
+        """指定された位置の地域コンテキスト情報を取得"""
+        try:
+            # 基本的な位置情報を取得
+            lat = float(location.lat) if hasattr(location, 'lat') else float(location['lat'])
+            lng = float(location.lng) if hasattr(location, 'lng') else float(location['lng'])
+            
+            # Google Maps APIを使用して実際の住所を取得
+            if self.gmaps_client:
+                try:
+                    reverse_geocode_result = self.gmaps_client.reverse_geocode((lat, lng))
+                    if reverse_geocode_result:
+                        # 住所コンポーネントから詳細情報を抽出
+                        address_components = reverse_geocode_result[0]['address_components']
+                        formatted_address = reverse_geocode_result[0]['formatted_address']
+                        
+                        # 都道府県、市区町村、地域名を取得
+                        prefecture = ""
+                        city = ""
+                        ward = ""
+                        
+                        for component in address_components:
+                            types = component['types']
+                            if 'administrative_area_level_1' in types:
+                                prefecture = component['long_name']
+                            elif 'locality' in types or 'administrative_area_level_2' in types:
+                                city = component['long_name']
+                            elif 'sublocality_level_1' in types or 'ward' in types:
+                                ward = component['long_name']
+                        
+                        # 地域の特徴を判定
+                        location_name = f"{prefecture}{city}{ward}".replace("日本", "")
+                        
+                        # 地域別のランドマークや特徴を設定
+                        if "横浜" in location_name:
+                            if "都筑" in location_name:
+                                landmarks = "港北ニュータウン、センター北、センター南駅周辺の住宅地・商業地域"
+                                atmosphere = "計画都市の新興住宅地"
+                            else:
+                                landmarks = "みなとみらい、赤レンガ倉庫、中華街、横浜駅周辺"
+                                atmosphere = "港湾都市の商業・観光地"
+                        elif "東京" in location_name:
+                            if any(area in location_name for area in ["千代田", "中央", "港"]):
+                                landmarks = "東京駅、皇居、国会議事堂、東京タワー、六本木周辺"
+                                atmosphere = "都心部のビジネス・官庁街"
+                            elif any(area in location_name for area in ["新宿", "渋谷", "池袋"]):
+                                landmarks = f"{ward}駅周辺の繁華街・商業地域"
+                                atmosphere = "都市部の商業・エンターテイメント地区"
+                            else:
+                                landmarks = "東京都内の住宅地・商業地域"
+                                atmosphere = "東京都内の市街地"
+                        elif "神奈川" in location_name:
+                            if "川崎" in location_name:
+                                landmarks = "川崎駅、武蔵小杉、工業地帯周辺"
+                                atmosphere = "工業都市の市街地"
+                            else:
+                                landmarks = "神奈川県内の住宅地・商業地域"
+                                atmosphere = "関東地方の郊外都市"
+                        else:
+                            landmarks = f"{location_name}周辺の地域"
+                            atmosphere = "日本国内の地方都市"
+                        
+                        return f"{location_name}の{atmosphere}。{landmarks}の周辺エリア。"
+                        
+                except Exception as e:
+                    logger.warning(f"Google Maps API error in get_location_context: {e}")
+            
+            # APIが利用できない場合のフォールバック処理
+            # 座標による大まかな地域判定
+            if (35.5 <= lat <= 35.9) and (139.3 <= lng <= 139.9):
+                # 東京都・神奈川県エリア
+                if lat >= 35.65:  # 東京都心部寄り
+                    return "東京都内の都市部。東京駅、皇居、国会議事堂付近の周辺エリア。"
+                else:  # 神奈川県寄り
+                    return "神奈川県内の住宅地・商業地域。横浜・川崎周辺エリア。"
+            else:
+                return "日本国内の地方都市。地域の住宅地・商業地域。"
+                
+        except (ValueError, TypeError, KeyError, AttributeError) as e:
+            logger.error(f"Error in get_location_context: {e}")
+            return "不明な地域の情報です。"
+
+
+# グローバルサービスインスタンス
+poi_service = POIService()

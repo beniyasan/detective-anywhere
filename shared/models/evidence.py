@@ -68,6 +68,51 @@ class Evidence(BaseModel):
             EvidenceImportance.BACKGROUND: "事件の背景を知る手がかりです"
         }
         return descriptions.get(self.importance, "")
+    
+    def to_hidden_dict(self) -> dict:
+        """未発見時用の限定的な情報を返却（場所のみ表示）"""
+        return {
+            "evidence_id": self.evidence_id,
+            "name": "？？？",  # 証拠名は隠す
+            "description": "発見してください",  # 詳細は隠す
+            "discovery_text": "",  # 発見テキストは空
+            "importance": self.importance.value,  # 重要度のみ表示
+            "location": {
+                "lat": self.location.lat,
+                "lng": self.location.lng
+            },
+            "poi_name": self.poi_name,  # 場所名は表示
+            "poi_type": self.poi_type,  # POIタイプは表示
+            "discovered_at": None,  # 未発見状態
+            "related_character": None,  # 関連キャラクターは隠す
+            "clue_text": None  # ヒントは隠す
+        }
+    
+    def to_discovered_dict(self) -> dict:
+        """発見時用の完全な情報を返却"""
+        return {
+            "evidence_id": self.evidence_id,
+            "name": self.name,
+            "description": self.description,
+            "discovery_text": self.discovery_text,
+            "importance": self.importance.value,
+            "location": {
+                "lat": self.location.lat,
+                "lng": self.location.lng
+            },
+            "poi_name": self.poi_name,
+            "poi_type": self.poi_type,
+            "discovered_at": self.discovered_at.isoformat() if self.discovered_at else None,
+            "related_character": self.related_character,
+            "clue_text": self.clue_text
+        }
+    
+    def to_display_dict(self) -> dict:
+        """表示用の辞書を返却（発見状態に応じて情報を制限）"""
+        if self.is_discovered:
+            return self.to_discovered_dict()
+        else:
+            return self.to_hidden_dict()
 
 
 class EvidenceDiscoveryResult(BaseModel):

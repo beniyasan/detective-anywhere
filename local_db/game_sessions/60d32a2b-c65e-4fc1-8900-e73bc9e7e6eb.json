@@ -1,0 +1,142 @@
+{
+  "game_id": "60d32a2b-c65e-4fc1-8900-e73bc9e7e6eb",
+  "player_id": "evidence_example_test",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "消えた彫刻家",
+    "description": "静かな郊外の街、緑豊かな公園に囲まれたアトリエで、彫刻家・桐生蒼一郎(52歳)が息絶えて発見された。死因は後頭部への強打。第一発見者は蒼一郎の弟子である三島悠人(28歳)。彼は蒼一郎のアトリエを訪ねた際に遺体を発見したと証言している。蒼一郎は地元で有名な彫刻家で、数々の賞を受賞するほどの才能の持ち主だった。しかし、その温和な人柄とは裏腹に、近年は創作に行き詰まり、苛立ちを募らせていたという。今回の事件は、単なる強盗殺人なのか、それとも蒼一郎の複雑な人間関係が絡む怨恨による犯行なのか？捜査線上に浮かび上がったのは、以下の3名。蒼一郎の弟子である三島悠人、蒼一郎の妻・桐生美咲(48歳)、そして蒼一郎と長年確執があったという美術評論家・黒木信也(55歳)。それぞれの証言は食い違い、事件の真相は深い霧に包まれている。近隣のカフェやランドマーク、そして複数の公園を巡り、散りばめられた手がかりを集め、真犯人を突き止めろ。",
+    "victim": {
+      "name": "桐生蒼一郎",
+      "age": 52,
+      "occupation": "彫刻家",
+      "personality": "温和だが、頑固な一面も持つ",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "数々の賞を受賞した有名彫刻家。近年はスランプに陥っていた。"
+    },
+    "suspects": [
+      {
+        "name": "三島悠人",
+        "age": 28,
+        "occupation": "彫刻家(弟子)",
+        "personality": "真面目だが、やや内気",
+        "temperament": "nervous",
+        "relationship": "弟子",
+        "alibi": "事件発生時刻には、近くのカフェでコーヒーを飲んでいたと主張。しかし、レシートなどの物的証拠はない。",
+        "motive": "蒼一郎の才能に嫉妬していた。",
+        "background": "蒼一郎に師事して5年。蒼一郎の才能を尊敬する一方で、自身の才能の限界を感じて焦っていた。"
+      },
+      {
+        "name": "桐生美咲",
+        "age": 48,
+        "occupation": "主婦",
+        "personality": "社交的で明るい",
+        "temperament": "defensive",
+        "relationship": "妻",
+        "alibi": "事件発生時刻には、自宅で家事をしていたと主張。しかし、それを裏付ける証言はない。",
+        "motive": "蒼一郎の創作活動への没頭ぶりに不満を抱いていた。",
+        "background": "蒼一郎を支えてきたが、近年は蒼一郎の創作活動への没頭ぶりに不満を募らせていた。"
+      },
+      {
+        "name": "黒木信也",
+        "age": 55,
+        "occupation": "美術評論家",
+        "personality": "辛辣で傲慢",
+        "temperament": "sarcastic",
+        "relationship": "蒼一郎と確執のある美術評論家",
+        "alibi": "事件発生時刻には、ランドマーク近くの公園で散歩をしていたと主張。しかし、目撃者はいない。",
+        "motive": "蒼一郎の作品を酷評し、対立していた。",
+        "background": "蒼一郎の作品を酷評し、公私ともに敵対関係にあった。"
+      }
+    ],
+    "culprit": "三島悠人",
+    "motive": "蒼一郎に認められたい一心で、新作を盗作したことがバレそうになり、口論の末に殺害。",
+    "method": "鈍器で後頭部を強打",
+    "timeline": [
+      "14:00 蒼一郎がアトリエで作業中",
+      "15:00 三島悠人がアトリエを訪れる",
+      "15:30 近所のカフェで目撃情報のない三島悠人がコーヒーを飲んでいたと主張",
+      "16:00 桐生美咲が帰宅",
+      "17:00 三島悠人が蒼一郎の遺体を発見",
+      "17:30 警察に通報"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "アリバイの矛盾",
+      "複雑な人間関係"
+    ],
+    "red_herrings": [
+      "黒木信也との確執",
+      "美咲の不満"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "桐生美咲の目撃証言",
+      "description": "桐生美咲は事件発生時刻、荏田東すいせん公園でジョギングをしていた男性に挨拶を交わしたと証言。その男性も桐生美咲の姿を覚えている。",
+      "discovery_text": "聞き込み捜査の中で、荏田東すいせん公園でジョギングをしていた男性から桐生美咲を目撃したという証言が得られた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5425898,
+        "lng": 139.5669068
+      },
+      "poi_name": "荏田東すいせん公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "桐生美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "黒木信也のスケッチブック",
+      "description": "都筑中央公園 展望広場からランドマークタワーを描いたスケッチブックが発見された。日付と時刻が記載されており、事件発生時刻と一致する。",
+      "discovery_text": "都筑中央公園 展望広場のベンチで、黒木信也の名前が書かれたスケッチブックが見つかった。中にはランドマークタワーのスケッチと、事件発生時刻と一致する日付と時刻が記されていた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5481705,
+        "lng": 139.5698947
+      },
+      "poi_name": "都筑中央公園 展望広場",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "黒木信也",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "血痕のついたコーヒーカップ",
+      "description": "ドッグカフェ「シュシュ・クレール」のゴミ箱から、蒼一郎の血痕が付着したコーヒーカップが発見された。指紋鑑定の結果、三島悠人の指紋と一致した。",
+      "discovery_text": "ドッグカフェ「シュシュ・クレール」の裏にあるゴミ箱を捜索したところ、血痕のついたコーヒーカップが見つかった。科学捜査の結果、血痕は蒼一郎のものと判明し、カップには三島悠人の指紋が残されていた。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5454073,
+        "lng": 139.5692155
+      },
+      "poi_name": "ドッグカフェ「シュシュ・クレール」",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "三島悠人",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:55:12.981858",
+  "updated_at": "2025-08-27T18:55:12.982036",
+  "completed_at": null,
+  "final_score": null
+}

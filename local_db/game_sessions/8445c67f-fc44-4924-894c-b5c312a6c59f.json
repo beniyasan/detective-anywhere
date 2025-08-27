@@ -1,0 +1,150 @@
+{
+  "game_id": "8445c67f-fc44-4924-894c-b5c312a6c59f",
+  "player_id": "test_debug_radius",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "消えたバリスタの秘密",
+    "description": "穏やかな午後の日差しが差し込む、閑静な住宅街。人気のカフェ「カフェ・ド・ソレイユ」のオーナー兼バリスタ、五十嵐光一（50歳）が忽然と姿を消した。五十嵐は温厚な性格で地域住民から愛されており、失踪の理由は誰にも分からなかった。警察は事件性がないと判断したが、五十嵐の妹、彩乃（45歳）は兄の失踪に不審を抱き、独自に調査を開始した。彩乃は兄のカフェに頻繁に出入りしていた4人の常連客に疑いの目を向ける。\n\n一人目は、フリーライターの北川翔太（28歳）。飄々とした性格で、カフェで執筆活動をする傍ら、五十嵐に取材を持ちかけていた。\n\n二人目は、主婦の佐々木恵子（35歳）。社交的で明るい性格だが、最近夫との関係が悪化しており、五十嵐に相談をしていたという噂がある。\n\n三人目は、元警察官の田島勇作（60歳）。寡黙で厳格な性格で、毎日決まった時間にカフェを訪れ、ブラックコーヒーを飲んでいた。\n\n四人目は、大学生の花村美咲（20歳）。明るく活発な性格で、カフェでアルバイトをしており、五十嵐を慕っていた。\n\n彩乃は、兄の失踪の真相を明らかにするために、近隣のカフェや公園を巡り、手がかりを探し始める。果たして、五十嵐はどこへ消えたのか？そして、4人の常連客の中に犯人はいるのか？",
+    "victim": {
+      "name": "五十嵐 光一",
+      "age": 50,
+      "occupation": "カフェオーナー兼バリスタ",
+      "personality": "温厚、誠実",
+      "temperament": "calm",
+      "relationship": "失踪者",
+      "alibi": null,
+      "motive": null,
+      "background": "地域住民から愛されるカフェを経営。コーヒーへの情熱は人一倍強い。"
+    },
+    "suspects": [
+      {
+        "name": "北川 翔太",
+        "age": 28,
+        "occupation": "フリーライター",
+        "personality": "飄々としている、好奇心旺盛",
+        "temperament": "sarcastic",
+        "relationship": "カフェの常連客",
+        "alibi": "別のカフェで取材をしていた",
+        "motive": "五十嵐のカフェの成功談を取材し、話題の記事を書きたかった",
+        "background": "スクープを狙う野心的なライター。金銭的に困窮している。"
+      },
+      {
+        "name": "佐々木 恵子",
+        "age": 35,
+        "occupation": "主婦",
+        "personality": "社交的、明るい",
+        "temperament": "nervous",
+        "relationship": "カフェの常連客",
+        "alibi": "公園で子供と遊んでいた",
+        "motive": "夫との関係に悩んでおり、五十嵐に相談していたが、親身になってくれないことに不満を抱いていた",
+        "background": "夫との関係が悪化し、精神的に不安定な状態。"
+      },
+      {
+        "name": "田島 勇作",
+        "age": 60,
+        "occupation": "元警察官",
+        "personality": "寡黙、厳格",
+        "temperament": "defensive",
+        "relationship": "カフェの常連客",
+        "alibi": "自宅で読書をしていた",
+        "motive": "五十嵐のカフェの前の道路で交通違反の取り締まりをした際に、五十嵐に文句を言われたことを根に持っていた",
+        "background": "正義感が強く、融通が利かない性格。"
+      },
+      {
+        "name": "花村 美咲",
+        "age": 20,
+        "occupation": "大学生",
+        "personality": "明るく活発",
+        "temperament": "volatile",
+        "relationship": "カフェのアルバイト店員",
+        "alibi": "別のカフェで勉強をしていた",
+        "motive": "五十嵐にアルバイトのシフトを減らされたことに腹を立てていた",
+        "background": "金遣いが荒く、アルバイト代が足りないことに悩んでいた。"
+      }
+    ],
+    "culprit": "北川 翔太",
+    "motive": "五十嵐が隠していた闇の商売を暴き、特ダネにしようと企んでいた",
+    "method": "睡眠薬を飲ませた後、拉致監禁",
+    "timeline": [
+      "五十嵐が最後に目撃されたのはカフェ閉店後の午後10時",
+      "北川がカフェを出たのは午後11時頃",
+      "翌朝、五十嵐の姿はなかった"
+    ],
+    "theme": "misdirection",
+    "difficulty_factors": [
+      "複数の容疑者",
+      "偽のアリバイ"
+    ],
+    "red_herrings": [
+      "佐々木恵子の夫との不仲",
+      "田島の交通違反の取り締まり"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "佐々木恵子の目撃情報",
+      "description": "センター南 Natural gardenの遊具付近で、佐々木恵子と子供が遊んでいる様子を撮影した複数の写真。時刻は事件発生時刻と重なっている。撮影者は公園を訪れていた別の親子で、佐々木恵子と子供に挨拶を交わしたことを証言している。",
+      "discovery_text": "聞き込み捜査の中で、公園で遊んでいた親子が偶然撮影していた写真から発見された。子供たちの無邪気な笑顔とは対照的に、事件解明のカギを握る重要な証拠となった。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5448963,
+        "lng": 139.5727787
+      },
+      "poi_name": "センター南 Natural garden",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "佐々木 恵子",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "花村美咲の学習記録",
+      "description": "サンマルクカフェ 港北東急SC店の防犯カメラ映像。花村美咲が事件発生時刻にカフェで勉強している様子が記録されている。レジのレシートや、カフェの店員の証言も、花村美咲のアリバイを裏付けている。",
+      "discovery_text": "花村美咲の証言に基づき、サンマルクカフェの防犯カメラ映像を解析した結果、発見された。一見平凡な学習風景が、真犯人を絞り込むための重要な手がかりとなった。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5437982,
+        "lng": 139.572607
+      },
+      "poi_name": "サンマルクカフェ 港北東急SC店",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "花村 美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "北川翔太の取材メモ",
+      "description": "グレインコーヒーロースター オリンピック港北ニュータウン店で発見された北川翔太の取材メモ。メモには、五十嵐の闇商売の詳細や、拉致監禁計画が記されていた。さらに、メモ用紙には微量の睡眠薬の成分が付着していた。",
+      "discovery_text": "北川翔太がアリバイとして主張していた「別のカフェで取材をしていた」という証言を検証するため、近隣のカフェを捜査した結果、グレインコーヒーロースターで発見された。一見普通の取材メモと思われたが、その内容は恐るべき真実を暴くものだった。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5437749,
+        "lng": 139.5691396
+      },
+      "poi_name": "グレインコーヒーロースター オリンピック港北ニュータウン店",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "北川 翔太",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:36:54.539083",
+  "updated_at": "2025-08-27T18:36:54.539174",
+  "completed_at": null,
+  "final_score": null
+}

@@ -1,0 +1,137 @@
+{
+  "game_id": "e43862a1-dc47-43b9-b69c-ce533218e74f",
+  "player_id": "test_evidence_logic",
+  "status": "active",
+  "difficulty": "easy",
+  "scenario": {
+    "title": "皇居ランナーの謎",
+    "description": "初夏の爽やかな風が吹き抜ける皇居外苑。ランニングコースで人気ブロガーの星野光が倒れているのが発見された。死因は心不全と当初診断されたが、司法解剖の結果、微量の毒物が検出された。一見健康的な生活を送っていた星野だが、華やかなSNSの裏には複雑な人間関係が隠されていたようだ。容疑者は3人。星野のランニング仲間であるフリーライターの山田一郎、星野のビジネスパートナーであるIT企業社長の佐藤美咲、そして星野の熱狂的なファンである大学生、田中花子。それぞれの証言は食い違い、事件は混迷を深めていく。皇居の緑陰に隠された真実を、あなたは解き明かすことができるだろうか。",
+    "victim": {
+      "name": "星野光",
+      "age": 35,
+      "occupation": "人気ブロガー／インフルエンサー",
+      "personality": "社交的で明るい",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "健康志向で皇居ランニングを日課としていた。最近、サプリメント事業への進出を計画していた。"
+    },
+    "suspects": [
+      {
+        "name": "山田一郎",
+        "age": 40,
+        "occupation": "フリーライター",
+        "personality": "冷静沈着",
+        "temperament": "sarcastic",
+        "relationship": "ランニング仲間",
+        "alibi": "事件発生時刻は別の場所で取材をしていたと主張。しかし、明確な証拠はない。",
+        "motive": "星野のブログ記事の内容に不満があり、何度か口論になっていた。",
+        "background": "かつては有名雑誌の編集者だったが、現在はフリーランス。仕事が減り、経済的に困窮している。"
+      },
+      {
+        "name": "佐藤美咲",
+        "age": 32,
+        "occupation": "IT企業社長",
+        "personality": "野心的で行動力がある",
+        "temperament": "volatile",
+        "relationship": "ビジネスパートナー",
+        "alibi": "事件発生時刻は会社で重要な会議をしていたと主張。しかし、会議の参加者全員が美咲のアリバイを証明できるわけではない。",
+        "motive": "サプリメント事業の主導権争いで星野と対立していた。",
+        "background": "若くして成功を収めた実業家。星野と共にサプリメント事業を計画していたが、意見の相違が生じていた。"
+      },
+      {
+        "name": "田中花子",
+        "age": 20,
+        "occupation": "大学生",
+        "personality": "内向的で控えめ",
+        "temperament": "nervous",
+        "relationship": "熱狂的なファン",
+        "alibi": "事件発生時刻は図書館で勉強していたと主張。図書館の防犯カメラには、花子が出入りする様子は記録されているが、事件発生時刻付近の記録はシステムエラーで消えてしまっている。",
+        "motive": "星野に個人的なメッセージを送っていたが、無視されていた。",
+        "background": "星野のブログの大ファンで、毎日欠かさずチェックしていた。星野に憧れを抱いていた。"
+      }
+    ],
+    "culprit": "田中花子",
+    "motive": "星野に無視されたことに激怒し、衝動的に犯行に及んだ。",
+    "method": "星野の水筒に毒物を混入",
+    "timeline": [
+      "午前10時：星野が皇居でランニング開始",
+      "午前10時30分：田中花子が星野に接触し、水筒に毒物を混入",
+      "午前11時：星野が倒れる",
+      "午後1時：星野の死亡確認"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [],
+    "red_herrings": [
+      "山田と星野の口論",
+      "佐藤と星野の事業対立"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "山田の取材ノート",
+      "description": "東京ステーションギャラリーで開催されていた鉄道写真展の取材ノート。事件発生時刻に山田が実際に取材を行っていたことを示す詳細なメモと、撮影した写真データが含まれている。",
+      "discovery_text": "東京ステーションギャラリーの休憩スペースで、忘れ物として発見された。ノートの表紙には山田一郎の名前が記されていた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.6824361,
+        "lng": 139.7665257
+      },
+      "poi_name": "東京ステーションギャラリー",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "山田一郎",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "佐藤の会議資料",
+      "description": "グランルーフ ガーデン内のカフェで発見された、佐藤が参加していた会議の資料。資料には会議の議事録と、佐藤が作成したと見られるプレゼンテーション資料が含まれている。資料の日付と時刻は事件発生時刻と一致しており、会議が実際に開催されていたことを裏付けている。また、資料にはカフェのWi-Fi接続ログ情報も残っており、佐藤がその時間にカフェに近接していたことがわかる。",
+      "discovery_text": "グランルーフ ガーデンのカフェのテーブルの下から、風で飛ばされたと思われる資料が発見された。",
+      "importance": "important",
+      "location": {
+        "lat": 35.68009929999999,
+        "lng": 139.7680666
+      },
+      "poi_name": "グランルーフ ガーデン",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "佐藤美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "星野への未送信メッセージ",
+      "description": "田中花子のスマートフォンから、星野宛の未送信メッセージが発見された。内容は星野を強く非難するもので、無視されたことへの激しい怒りが綴られていた。送信時刻は事件発生時刻の直前。また、東京キャラクターストリートで購入した限定ストラップの写真が添付されており、花子が事件発生時刻近くにこの場所にいたことが証明される。",
+      "discovery_text": "田中花子の自宅を捜索した結果、スマートフォンが押収された。データ復元により、削除されていた未送信メッセージが発見された。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.6820335,
+        "lng": 139.7686549
+      },
+      "poi_name": "東京キャラクターストリート",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "田中花子",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.6812,
+    "lng": 139.7671
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T17:30:59.798609",
+  "updated_at": "2025-08-27T17:30:59.798694",
+  "completed_at": null,
+  "final_score": null
+}

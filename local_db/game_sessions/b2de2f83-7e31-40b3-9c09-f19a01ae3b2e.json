@@ -1,0 +1,151 @@
+{
+  "game_id": "b2de2f83-7e31-40b3-9c09-f19a01ae3b2e",
+  "player_id": "test_yokohama_tsuzuki",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "公園に消えたメロディー",
+    "description": "夕暮れの公園に響き渡るはずだったバイオリンの調べは、突如として途絶えた。著名なバイオリニスト、霧島響子氏が、野外コンサートのリハーサル中に姿を消したのだ。彼女の愛器であるストラディバリウスもまた、忽然と消え失せている。静寂に包まれた公園には、不穏な空気が漂い始めていた。響子氏の失踪は、単なる事故なのか、それとも…。残された楽譜と、沈黙だけが真実を知っている。あなたは、散りばめられた手がかりを拾い集め、事件の真相を解き明かすことができるだろうか。公園のベンチ、人気のない遊歩道、象徴的な噴水…それぞれの場所に隠された秘密が、あなたを真実に導くかもしれない。しかし、注意深く真実を見極めなければ、迷宮入りは避けられないだろう。",
+    "victim": {
+      "name": "霧島響子",
+      "age": 45,
+      "occupation": "バイオリニスト",
+      "personality": "完璧主義者で、やや神経質な一面も持つ。音楽に対しては非常に情熱的。",
+      "temperament": "nervous",
+      "relationship": "野外コンサートのリハーサル中に行方不明",
+      "alibi": null,
+      "motive": null,
+      "background": "世界的に有名なバイオリニスト。最近、スランプに陥っていたという噂もある。"
+    },
+    "suspects": [
+      {
+        "name": "五十嵐健太",
+        "age": 28,
+        "occupation": "響子氏の弟子",
+        "personality": "野心家で、師である響子氏に強いライバル心を抱いている。",
+        "temperament": "volatile",
+        "relationship": "弟子",
+        "alibi": "別の公園で練習していたと主張。しかし、具体的な場所を明かさない。",
+        "motive": "響子氏を追い抜いて、自分が世界的なバイオリニストになるため。",
+        "background": "才能はあるが、焦りが先行している。響子氏に厳しく指導されており、不満を抱いている。"
+      },
+      {
+        "name": "高木美咲",
+        "age": 35,
+        "occupation": "コンサート主催者",
+        "personality": "冷静沈着で、仕事に厳しい。",
+        "temperament": "calm",
+        "relationship": "仕事仲間",
+        "alibi": "コンサートの準備で忙しかったと主張。しかし、具体的な作業内容は曖昧。",
+        "motive": "響子氏の演奏がスランプでコンサートが失敗するのを恐れ、失踪を企てた。",
+        "background": "今回のコンサートに多額の投資をしており、失敗は許されない状況。"
+      },
+      {
+        "name": "桜井翔",
+        "age": 50,
+        "occupation": "響子氏のマネージャー",
+        "personality": "温厚で、響子氏を献身的にサポートしている。",
+        "temperament": "defensive",
+        "relationship": "マネージャー",
+        "alibi": "響子氏の失踪直前まで一緒にいたが、その後、電話を受けたと主張。電話の相手は不明。",
+        "motive": "響子氏の多額の借金を肩代わりしており、生命保険金で返済しようとした。",
+        "background": "響子氏とは長年の付き合い。響子氏を深く尊敬している。"
+      },
+      {
+        "name": "田中一郎",
+        "age": 60,
+        "occupation": "公園管理人",
+        "personality": "寡黙で、周囲との交流は少ない。",
+        "temperament": "sarcastic",
+        "relationship": "面識なし",
+        "alibi": "事件発生時刻には、別の公園のパトロールをしていたと主張。",
+        "motive": "公園の静寂を乱す音楽を嫌っていた。",
+        "background": "元々は音楽教師だったが、ある事件をきっかけに職を失った。"
+      }
+    ],
+    "culprit": "桜井翔",
+    "motive": "響子氏の多額の借金を肩代わりしており、生命保険金で返済しようとした。",
+    "method": "睡眠薬入りの飲み物を飲ませて、人気のない公園に連れ去り、事故に見せかけて殺害。ストラディバリウスは売却目的で隠した。",
+    "timeline": [
+      "16:00 リハーサル開始",
+      "17:00 響子氏、休憩中にマネージャーの桜井から渡された飲み物を飲む",
+      "17:30 響子氏、姿を消す",
+      "18:00 警察に通報"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "複数の公園が登場する",
+      "アリバイが曖昧"
+    ],
+    "red_herrings": [
+      "高木美咲の焦り",
+      "五十嵐健太の野心"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "五十嵐の練習ノート",
+      "description": "五十嵐健太の練習ノート。事件当日の時刻に、別の公園「砂の広場」で練習していたスケジュールの記述と、実際にその公園で購入したと思われる軽食のレシートが挟まっていた。",
+      "discovery_text": "砂の広場のベンチの下から、風で飛ばされたと思われる練習ノートを発見した。ページをめくると、事件当日の日付と練習スケジュールの記述が目に入った。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5434558,
+        "lng": 139.5732446
+      },
+      "poi_name": "砂の広場",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "五十嵐健太",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "高木のアシスタントの証言記録",
+      "description": "高木美咲のアシスタントの証言記録。事件当日、高木は「ギャラリーレイオハナ」でコンサートの準備に追われていたことが確認された。アシスタントは、高木が終日会場にいたと証言している。",
+      "discovery_text": "ギャラリーレイオハナの受付で、事件当日の来場者リストを確認したところ、高木美咲の名前を発見。さらに、彼女のコンサート準備を手伝っていたアシスタントに話を聞くことができた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.54480079999999,
+        "lng": 139.5666581
+      },
+      "poi_name": "ギャラリーレイオハナ",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "高木美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "空の睡眠薬の瓶",
+      "description": "響子氏が普段服用していたものと同じ種類の睡眠薬の空瓶。桜井翔の指紋が付着していた。桜井は響子氏の健康状態を気遣い、薬を管理していたと主張していたが、瓶は都筑中央公園 展望広場のごみ箱に捨てられていた。",
+      "discovery_text": "都筑中央公園 展望広場のゴミ箱を調べると、不自然に空になった睡眠薬の瓶が見つかった。鑑識の結果、瓶からは桜井翔の指紋が検出された。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5481705,
+        "lng": 139.5698947
+      },
+      "poi_name": "都筑中央公園 展望広場",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "桜井翔",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T17:54:01.303949",
+  "updated_at": "2025-08-27T17:54:01.304088",
+  "completed_at": null,
+  "final_score": null
+}

@@ -1,0 +1,150 @@
+{
+  "game_id": "f8fc3f11-9741-45d8-a764-3aa95b4b2337",
+  "player_id": "test_normal_diff",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "消えた彫刻家",
+    "description": "静かな郊外の町、緑豊かな公園に囲まれたアトリエで、著名な彫刻家、五十嵐光太郎（58歳）が忽然と姿を消した。アトリエの扉は内側から施錠され、争った形跡もない。五十嵐は新作発表を目前に控えており、失踪は関係者に大きな衝撃を与えた。警察は事件性も視野に入れ捜査を開始。近隣の公園を重点的に捜索する中、五十嵐の弟子3名と、近所に住む画商が容疑者として浮上した。五十嵐は温厚な人柄で知られていたが、新作の著作権をめぐり弟子たちと小さな諍いを起こしていたという。また、画商とは金銭トラブルの噂もあった。果たして五十嵐の失踪の真相は？公園に残された手がかりを辿り、事件の謎を解き明かせ！",
+    "victim": {
+      "name": "五十嵐 光太郎",
+      "age": 58,
+      "occupation": "彫刻家",
+      "personality": "温厚だが頑固な一面も",
+      "temperament": "calm",
+      "relationship": "失踪者",
+      "alibi": null,
+      "motive": null,
+      "background": "著名な彫刻家で、新作発表を控えていた"
+    },
+    "suspects": [
+      {
+        "name": "田中 健太",
+        "age": 28,
+        "occupation": "彫刻家（五十嵐の弟子）",
+        "personality": "野心家で短気",
+        "temperament": "volatile",
+        "relationship": "弟子",
+        "alibi": "事件当日は別の公園で制作活動をしていた",
+        "motive": "新作の著作権をめぐり師匠と対立していた",
+        "background": "五十嵐の一番弟子で、才能はあるが認められていないと感じていた"
+      },
+      {
+        "name": "佐藤 美咲",
+        "age": 25,
+        "occupation": "彫刻家（五十嵐の弟子）",
+        "personality": "冷静沈着",
+        "temperament": "calm",
+        "relationship": "弟子",
+        "alibi": "事件当日はアトリエで作業をしていたが、途中で材料を買いに出かけた",
+        "motive": "五十嵐に才能を認められており、他の弟子から嫉妬されていた",
+        "background": "五十嵐の弟子の中で最も才能があり、師匠からの信頼も厚かった"
+      },
+      {
+        "name": "加藤 裕子",
+        "age": 30,
+        "occupation": "彫刻家（五十嵐の弟子）",
+        "personality": "おとなしいが内向的",
+        "temperament": "nervous",
+        "relationship": "弟子",
+        "alibi": "事件当日は体調不良で自宅にいた",
+        "motive": "五十嵐に厳しく指導されており、不満を抱いていた",
+        "background": "努力家だが、なかなか成果が出ず、師匠からのプレッシャーを感じていた"
+      },
+      {
+        "name": "山本 誠",
+        "age": 45,
+        "occupation": "画商",
+        "personality": "社交的で口がうまい",
+        "temperament": "sarcastic",
+        "relationship": "取引相手",
+        "alibi": "事件当日は別の顧客と商談をしていた",
+        "motive": "五十嵐に多額の借金があり、返済を迫られていた",
+        "background": "五十嵐の作品を高く評価していたが、金銭的な問題を抱えていた"
+      }
+    ],
+    "culprit": "田中 健太",
+    "motive": "新作の著作権を奪い、自分の作品として発表するため",
+    "method": "五十嵐を気絶させ、アトリエの床下に隠した",
+    "timeline": [
+      "五十嵐がアトリエで作業中、田中が訪れる",
+      "新作の著作権をめぐり口論となり、田中が五十嵐を襲う",
+      "田中は五十嵐をアトリエの床下に隠し、失踪を偽装する"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "アリバイの矛盾",
+      "複雑な人間関係"
+    ],
+    "red_herrings": [
+      "画商の金銭トラブル",
+      "加藤の体調不良"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "佐藤美咲の領収書",
+      "description": "事件発生時刻付近に、アトリエ近くの画材店で発行された領収書。購入品は五十嵐が愛用していた特殊な絵の具と筆。",
+      "discovery_text": "ギャラリーレイオハナ近くのゴミ箱から、くしゃくしゃになった領収書が見つかった。よく見ると、佐藤美咲の名前と事件発生時刻に近いタイムスタンプが印字されていた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.54480079999999,
+        "lng": 139.5666581
+      },
+      "poi_name": "ギャラリーレイオハナ",
+      "poi_type": "landmark",
+      "discovered_at": null,
+      "related_character": "佐藤 美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "山本誠の商談記録",
+      "description": "事件発生時刻に、山本誠が別の顧客と商談をしていたことを示すメールのやり取り。顧客からの返信時刻も確認できる。",
+      "discovery_text": "山本誠の事務所のパソコンから、事件当日のメールのやり取りが復元された。詳細な商談内容と時刻が記録されており、アリバイを裏付けている。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5483208,
+        "lng": 139.5687883
+      },
+      "poi_name": "ばじょうじ谷戸窯",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "山本 誠",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "土のついた絵の具チューブ",
+      "description": "荏田東すいせん公園の土と成分が一致する土が付着した、五十嵐が愛用していた特殊な絵の具チューブ。この絵の具は田中健太も使用していることが判明。",
+      "discovery_text": "荏田東すいせん公園のベンチの下から、土のついた絵の具チューブが見つかった。鑑定の結果、土は公園のものと一致し、絵の具は五十嵐と田中健太が使用している特殊なものだった。田中健太は公園で制作活動をしていたとアリバイを主張していたが、この絵の具はアトリエに置いてあるものだった。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5425898,
+        "lng": 139.5669068
+      },
+      "poi_name": "荏田東すいせん公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中 健太",
+      "clue_text": "田中健太のアリバイに矛盾が生じている。"
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5447,
+    "lng": 139.5707
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:16:03.251139",
+  "updated_at": "2025-08-27T18:16:03.251225",
+  "completed_at": null,
+  "final_score": null
+}

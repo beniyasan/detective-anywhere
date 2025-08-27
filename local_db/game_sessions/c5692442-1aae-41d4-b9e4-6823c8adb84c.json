@@ -1,0 +1,134 @@
+{
+  "game_id": "c5692442-1aae-41d4-b9e4-6823c8adb84c",
+  "player_id": "mobile-player",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "東京駅丸の内の密室殺人事件",
+    "description": "東京駅丸の内のオフィスビル内で発生した密室殺人事件。被害者は大手商事会社の部長。限られた証拠と3人の容疑者から真犯人を見つけ出せ。",
+    "victim": {
+      "name": "山田一郎",
+      "age": 45,
+      "occupation": "商事会社部長",
+      "personality": "厳格で完璧主義、部下に厳しい",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "大手商事会社の営業部長。最近、大型契約を獲得し昇進が決まっていた"
+    },
+    "suspects": [
+      {
+        "name": "田中太郎",
+        "age": 35,
+        "occupation": "営業課長",
+        "personality": "野心的だが短気、プレッシャーに弱い",
+        "temperament": "nervous",
+        "relationship": "部下",
+        "alibi": "事件時間は会議室で資料作成をしていたと主張",
+        "motive": "昇進を山田に阻まれ続け、今回も昇進候補から外された恨み",
+        "background": "山田の直属の部下。優秀だが昇進を何度も見送られている"
+      },
+      {
+        "name": "佐藤花子",
+        "age": 28,
+        "occupation": "秘書",
+        "personality": "表面上は穏やかだが、実は計算高い",
+        "temperament": "calm",
+        "relationship": "秘書",
+        "alibi": "コピー機の前で書類整理をしていたと証言",
+        "motive": "山田にセクハラを受けており、人事に相談したが握りつぶされた",
+        "background": "山田の個人秘書。最近、転職を検討していた"
+      },
+      {
+        "name": "鈴木次郎",
+        "age": 40,
+        "occupation": "清掃員",
+        "personality": "口数が少なく、人を避ける傾向がある",
+        "temperament": "defensive",
+        "relationship": "ビル清掃員",
+        "alibi": "別のフロアの掃除をしていたが、目撃者はいない",
+        "motive": "息子の治療費のため山田に借金を申し込んだが冷たく断られた",
+        "background": "このビルの夜間清掃を担当。重病の息子を抱えて経済的に困窮"
+      }
+    ],
+    "culprit": "田中太郎",
+    "motive": "昇進への執念と山田への恨みが限界に達し、衝動的に犯行に及んだ",
+    "method": "会議室で口論となり、机上の文鎮で殴打後、密室工作を行った",
+    "timeline": [
+      "午前9時30分: 被害者が出社、各容疑者もオフィスにいることを確認",
+      "午前10時15分: 田中が山田を会議室に呼び出し",
+      "午前10時45分: 事件発生（口論の末、田中が文鎮で殴打）",
+      "午前11時30分: 秘書の佐藤が密室状態の会議室で遺体を発見、通報"
+    ],
+    "theme": null,
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "血痕の付いた文鎮",
+      "description": "会議室の机上にあった真鍮製の文鎮。被害者の血液と指紋が付着している。",
+      "discovery_text": "会議室で血痕の付いた文鎮を発見した。重量感があり、明らかに凶器として使用されている。表面には複数の指紋が確認できる...",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5333144,
+        "lng": 139.5575128
+      },
+      "poi_name": "ゆうばえの道",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "田中の指紋が検出される決定的証拠"
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "破れた昇進辞令書",
+      "description": "ゴミ箱から発見された、田中宛ての昇進辞令書の破片。山田部長のサインがある。",
+      "discovery_text": "ゴミ箱の中から破り捨てられた昇進辞令書を発見した。田中の名前が記載されているが、山田部長により却下された痕跡がある...",
+      "importance": "important",
+      "location": {
+        "lat": 35.53156269999999,
+        "lng": 139.560454
+      },
+      "poi_name": "二の丸こぶし公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "昇進を阻まれた動機を示す重要な手がかり"
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "防犯カメラの映像",
+      "description": "10時15分頃、田中が会議室に向かう姿と、11時頃に慌てて出てくる様子が記録されている。",
+      "discovery_text": "防犯カメラの映像を確認すると、田中が事件前後に会議室を出入りしている決定的な瞬間が記録されていた...",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5299722,
+        "lng": 139.5585024
+      },
+      "poi_name": "都田公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中太郎",
+      "clue_text": "犯行時間帯の田中の行動を裏付ける映像証拠"
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T15:34:15.033926",
+  "updated_at": "2025-08-27T15:34:15.034034",
+  "completed_at": null,
+  "final_score": null
+}

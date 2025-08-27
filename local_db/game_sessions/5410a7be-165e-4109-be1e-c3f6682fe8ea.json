@@ -1,0 +1,151 @@
+{
+  "game_id": "5410a7be-165e-4109-be1e-c3f6682fe8ea",
+  "player_id": "player_1756285735010_t5smc8x0b",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "五つの公園と消えた彫刻家",
+    "description": "静寂に包まれた街に、不穏な空気が漂い始めた。著名な彫刻家、霧島啓吾が自宅で死亡しているのが発見されたのだ。第一発見者は彼のマネージャー、黒木翔子。彼女は震える声で警察に通報し、静かな街は騒然となった。霧島はアトリエを兼ねた自宅で、新作の発表を目前に控えていた。彼の死は芸術界に衝撃を与え、様々な憶測が飛び交う。警察は捜査を開始し、容疑者は4人に絞られた。全員、霧島と何らかの関わりを持つ人物たちだ。事件の鍵を握るのは、街に点在する五つの公園。それぞれの公園には、霧島の作品が設置されており、そこには彼の魂が込められているという。果たして、霧島の死の真相は？五つの公園を巡り、隠された真実を解き明かせ。",
+    "victim": {
+      "name": "霧島啓吾",
+      "age": 55,
+      "occupation": "彫刻家",
+      "personality": "寡黙で頑固、芸術至上主義",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "数々の賞を受賞した著名な彫刻家。新作発表を控えていた。"
+    },
+    "suspects": [
+      {
+        "name": "黒木翔子",
+        "age": 32,
+        "occupation": "マネージャー",
+        "personality": "几帳面で仕事熱心",
+        "temperament": "nervous",
+        "relationship": "被害者のマネージャー",
+        "alibi": "事件時刻は自宅にいたと主張。しかし、確証はない。",
+        "motive": "霧島に過剰な労働を強いられていた。",
+        "background": "霧島のマネージャーとして5年間、献身的に支えてきた。"
+      },
+      {
+        "name": "緑川雄大",
+        "age": 28,
+        "occupation": "弟子",
+        "personality": "野心家で傲慢",
+        "temperament": "volatile",
+        "relationship": "被害者の弟子",
+        "alibi": "事件時刻は別の公園で制作活動をしていたと主張。しかし、目撃者はない。",
+        "motive": "霧島の才能に嫉妬し、自分の作品を認めてもらいたかった。",
+        "background": "霧島の弟子として3年間、技術を学んでいた。"
+      },
+      {
+        "name": "青柳美咲",
+        "age": 40,
+        "occupation": "美術評論家",
+        "personality": "冷静沈着で鋭い観察眼を持つ",
+        "temperament": "sarcastic",
+        "relationship": "被害者の批評家",
+        "alibi": "事件時刻は海外の美術館にいたと主張。しかし、帰国便の記録がない。",
+        "motive": "霧島の最新作を酷評し、対立していた。",
+        "background": "著名な美術評論家。霧島の作品を長年批評してきた。"
+      },
+      {
+        "name": "赤井健太",
+        "age": 45,
+        "occupation": "画商",
+        "personality": "社交的で口がうまい",
+        "temperament": "defensive",
+        "relationship": "被害者の取引相手",
+        "alibi": "事件時刻は別の顧客と会っていたと主張。しかし、その顧客は証言を拒否している。",
+        "motive": "霧島との金銭トラブルを抱えていた。",
+        "background": "霧島の作品を扱う画商。多額の負債を抱えている。"
+      }
+    ],
+    "culprit": "赤井健太",
+    "motive": "霧島に多額の借金があり、返済を迫られていたが、新作の売却益を当てにしていた。しかし、新作が酷評されたため、売却益が見込めなくなり、殺害に及んだ。",
+    "method": "鈍器による殴打",
+    "timeline": [
+      "18:00 霧島が自宅で作業中",
+      "20:00 赤井が霧島宅を訪問",
+      "21:00 近隣住民が叫び声を聞く",
+      "22:00 黒木が霧島宅を訪れ、遺体を発見"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "アリバイの曖昧性",
+      "複雑な人間関係"
+    ],
+    "red_herrings": [
+      "緑川の嫉妬心",
+      "青柳の酷評"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "緑川雄大のスケッチブック",
+      "description": "高山あかしあ公園で風景画を描いていた際に使用したスケッチブック。日付と時刻が記されており、事件時刻には確かにこの公園にいたことが証明される。",
+      "discovery_text": "高山あかしあ公園のベンチの下から、風で飛ばされたと思われるスケッチブックが見つかった。ページをめくると、事件発生時刻と一致する日付と時刻が記されていた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.53526840000001,
+        "lng": 139.5612376
+      },
+      "poi_name": "高山あかしあ公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "緑川雄大",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "青柳美咲の美術館チケット",
+      "description": "海外美術館のチケット。日付と美術館のスタンプが押されており、事件時刻には海外にいたことが証明される。帰国便の記録がないのは、プライベートジェットを利用したためであった。",
+      "discovery_text": "見花山かりん公園のゴミ箱から、くしゃくしゃになった美術館のチケットが見つかった。よく見ると、青柳美咲の名前と事件当日の日付、そして美術館のスタンプが確認できた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5374194,
+        "lng": 139.5542174
+      },
+      "poi_name": "見花山かりん公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "青柳美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "借用書",
+      "description": "赤井健太が霧島に多額の借金をしていることを示す借用書。霧島の署名と赤井健太の指紋が付着している。また、返済期限が事件の数日前であり、赤井健太が返済を迫られていたことがわかる。",
+      "discovery_text": "都田公園の植え込みの中に、丁寧に折りたたまれた借用書が落ちていた。震える手でそれを広げると、霧島と赤井健太の名前が記された借用書だった。借金の額と返済期限を見て、捜査員は息を呑んだ。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5299722,
+        "lng": 139.5585024
+      },
+      "poi_name": "都田公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "赤井健太",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:09:26.349855",
+  "updated_at": "2025-08-27T18:09:26.350206",
+  "completed_at": null,
+  "final_score": null
+}

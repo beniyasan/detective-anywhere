@@ -1,0 +1,151 @@
+{
+  "game_id": "ced71598-9fc2-44e5-94e4-c99e831eeef5",
+  "player_id": "player_1756288044992_61i3aexey",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "消えたアンティーク時計",
+    "description": "古びた商店街に佇む時計店「時の雫」。店主の古賀時夫は、希少なアンティーク時計のコレクターとして知られていた。ある雨の夜、店のシャッターは固く閉ざされ、店内は静まり返っていた。しかし、翌朝、時夫の姿はなく、代わりに店内には荒らされた形跡と、空になったショーケースが残っていた。盗まれたのは、18世紀に作られたとされる「時の旅人」と呼ばれる懐中時計。時価数千万円の名品だ。警察は、時夫の失踪と時計の盗難を関連づけて捜査を開始。容疑者として浮かび上がったのは、時夫の弟で店を手伝っていた古賀光彦、常連客の骨董品コレクター・黒木玲子、商店街のライバル時計店の店主・田辺修、そして、最近時夫と金銭トラブルを抱えていた不動産業者・西村健太の4人。彼らはそれぞれアリバイを主張するが、その言葉には微妙な綻びがあった。商店街の人々は、時夫の無事を祈りつつ、事件の真相に思いを巡らせている。古賀兄弟は幼い頃に両親を亡くし、時夫が光彦を育ててきた。玲子は時夫に片思いしており、「時の旅人」を手に入れることを夢見ていた。田辺は長年、時夫の商売敵として競い合ってきた。西村は商店街の再開発計画を進めており、時夫の土地を買収しようとしていたが、時夫は頑なに拒否していた。それぞれの思惑が複雑に絡み合い、事件は混迷を深めていく。",
+    "victim": {
+      "name": "古賀時夫",
+      "age": 62,
+      "occupation": "時計店主",
+      "personality": "頑固だが、弟思い",
+      "temperament": "calm",
+      "relationship": "時計店の店主",
+      "alibi": null,
+      "motive": null,
+      "background": "アンティーク時計のコレクター"
+    },
+    "suspects": [
+      {
+        "name": "古賀光彦",
+        "age": 55,
+        "occupation": "時計店店員",
+        "personality": "おとなしい、兄に依存",
+        "temperament": "nervous",
+        "relationship": "被害者の弟",
+        "alibi": "閉店後、すぐに帰宅した",
+        "motive": "兄からの独立を望んでいた",
+        "background": "兄に育てられた"
+      },
+      {
+        "name": "黒木玲子",
+        "age": 48,
+        "occupation": "骨董品コレクター",
+        "personality": "上品だが、執着心が強い",
+        "temperament": "volatile",
+        "relationship": "常連客",
+        "alibi": "自宅で過ごしていた",
+        "motive": "「時の旅人」を強く欲していた",
+        "background": "裕福な家庭で育つ"
+      },
+      {
+        "name": "田辺修",
+        "age": 58,
+        "occupation": "時計店主",
+        "personality": "負けず嫌い",
+        "temperament": "sarcastic",
+        "relationship": "ライバル店の店主",
+        "alibi": "店で帳簿をつけていた",
+        "motive": "商売敵",
+        "background": "古くから商店街で店を営む"
+      },
+      {
+        "name": "西村健太",
+        "age": 42,
+        "occupation": "不動産業者",
+        "personality": "強引で目的のためには手段を選ばない",
+        "temperament": "defensive",
+        "relationship": "土地買収の交渉相手",
+        "alibi": "取引先と会食していた",
+        "motive": "土地買収を拒否された",
+        "background": "再開発計画の担当者"
+      }
+    ],
+    "culprit": "黒木玲子",
+    "motive": "「時の旅人」を手に入れるため、時夫を脅迫したが、抵抗されたため殺害し時計を奪った。",
+    "method": "撲殺",
+    "timeline": [
+      "19:00 閉店",
+      "20:00 黒木玲子が店に侵入",
+      "21:00 事件発生",
+      "8:00 翌日、事件発覚"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "複雑な人間関係",
+      "巧妙なアリバイ"
+    ],
+    "red_herrings": [
+      "西村の金銭トラブル",
+      "田辺との商売上の対立"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "西村の領収書",
+      "description": "西村健太が事件当夜、取引先との会食で利用したレストランの領収書。日付と時刻が明確に記載されており、アリバイを証明する。",
+      "discovery_text": "西村健太のジャケットの内ポケットから、くしゃくしゃになった領収書が見つかった。日付は事件当日、時刻は午後7時から9時まで。取引先の名前と金額、そして店名も明記されていた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5393545,
+        "lng": 139.559142
+      },
+      "poi_name": "ローソン 都筑大丸店",
+      "poi_type": "shop",
+      "discovered_at": null,
+      "related_character": "西村健太",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "田辺の帳簿",
+      "description": "田辺修が事件当夜、店に残って帳簿をつけていたことを証明する詳細な記録。時刻ごとの作業内容が細かく記されている。",
+      "discovery_text": "店の奥、田辺修の机の上から、几帳面に記された帳簿が見つかった。事件当夜の時刻の欄には、売上集計や仕入れ記録など、詳細な作業内容がびっしりと書き込まれていた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5404098,
+        "lng": 139.5577661
+      },
+      "poi_name": "ピアノ・ヴァイオリン教室 Chanté",
+      "poi_type": "shop",
+      "discovered_at": null,
+      "related_character": "田辺修",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "黒木の血痕付きハンカチ",
+      "description": "鴨池のゴミ箱から発見された、黒木玲子のイニシャルが刺繍されたハンカチ。血痕が付着しており、DNA鑑定の結果、被害者・時夫のものと一致した。",
+      "discovery_text": "鴨池のゴミ箱から、白いハンカチが発見された。一見何の変哲もないハンカチだったが、よく見ると小さな血痕が付着していた。そして、ハンカチの隅には「K.K」というイニシャルが刺繍されていた。警察のデータベースと照合した結果、イニシャルは黒木玲子のものと一致。さらに、血痕はDNA鑑定により被害者・時夫のものと断定された。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5423707,
+        "lng": 139.5594288
+      },
+      "poi_name": "鴨池",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "黒木玲子",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.54070740630965,
+    "lng": 139.55877531319857
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T18:47:58.705961",
+  "updated_at": "2025-08-27T18:47:58.706049",
+  "completed_at": null,
+  "final_score": null
+}

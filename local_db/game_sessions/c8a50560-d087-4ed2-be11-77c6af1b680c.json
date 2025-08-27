@@ -1,0 +1,150 @@
+{
+  "game_id": "c8a50560-d087-4ed2-be11-77c6af1b680c",
+  "player_id": "player_1756283935722_45y7odygx",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "皇居外苑の秘密",
+    "description": "秋の夕暮れ、皇居外苑に沈む夕日は、事件現場を不気味に照らしていた。被害者は著名な庭園デザイナー、五十嵐 誠。彼は皇居外苑再整備計画の中心人物だった。五十嵐は北の丸公園のベンチで、胸にナイフが突き刺さった状態で発見された。周囲には人通りもあったが、犯行時刻は夕暮れ時で、目撃者はいない。警視庁はすぐに捜査を開始し、4人の容疑者が浮上した。五十嵐の仕事仲間、ライバル会社のデザイナー、再整備計画に反対する活動家、そして謎めいた過去を持つ旧友。それぞれの証言は食い違い、複雑に絡み合う人間関係と隠された思惑が事件を深い霧で包み込む。あなたは真相を解き明かし、犯人を突き止めることができるだろうか？公園に散らばる手がかりを集め、この難事件の謎を解き明かせ！",
+    "victim": {
+      "name": "五十嵐 誠",
+      "age": 55,
+      "occupation": "庭園デザイナー",
+      "personality": "温厚で几帳面",
+      "temperament": "calm",
+      "relationship": "皇居外苑再整備計画の中心人物",
+      "alibi": null,
+      "motive": null,
+      "background": "数々の賞を受賞した著名な庭園デザイナー。皇居外苑再整備計画に情熱を注いでいた。"
+    },
+    "suspects": [
+      {
+        "name": "加藤 健太",
+        "age": 32,
+        "occupation": "庭園デザイナー（五十嵐の助手）",
+        "personality": "野心家で短気",
+        "temperament": "volatile",
+        "relationship": "五十嵐の助手",
+        "alibi": "日比谷公園で打ち合わせをしていた",
+        "motive": "五十嵐の地位を奪いたかった",
+        "background": "五十嵐の才能に嫉妬し、自分のデザイン案が採用されなかったことに不満を抱いていた。"
+      },
+      {
+        "name": "佐藤 美咲",
+        "age": 48,
+        "occupation": "ライバル会社の庭園デザイナー",
+        "personality": "冷淡で計算高い",
+        "temperament": "sarcastic",
+        "relationship": "仕事上のライバル",
+        "alibi": "新宿御苑で現場視察をしていた",
+        "motive": "競合するプロジェクトで五十嵐に負けた",
+        "background": "過去に五十嵐にコンペで敗北した経験があり、強い敵対心を抱いていた。"
+      },
+      {
+        "name": "田中 一郎",
+        "age": 60,
+        "occupation": "地域活動家",
+        "personality": "頑固で正義感が強い",
+        "temperament": "defensive",
+        "relationship": "再整備計画に反対",
+        "alibi": "代々木公園で抗議活動をしていた",
+        "motive": "再整備計画に反対していた",
+        "background": "皇居外苑の自然を守るため、再整備計画に強く反対していた。"
+      },
+      {
+        "name": "山本 健一",
+        "age": 55,
+        "occupation": "会社員",
+        "personality": "寡黙で謎が多い",
+        "temperament": "nervous",
+        "relationship": "五十嵐の旧友",
+        "alibi": "上野公園でジョギングをしていた",
+        "motive": "過去の出来事による恨み",
+        "background": "五十嵐とは大学時代の友人だったが、過去に金銭トラブルがあった。"
+      }
+    ],
+    "culprit": "山本 健一",
+    "motive": "多額の借金があり、五十嵐に返済を迫っていたが拒否されたため",
+    "method": "ナイフによる刺殺",
+    "timeline": [
+      "17:00 五十嵐が北の丸公園で山本と会う",
+      "17:30 五十嵐が刺殺される",
+      "18:00 五十嵐の遺体が発見される"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "複雑な人間関係",
+      "偽のアリバイ"
+    ],
+    "red_herrings": [
+      "加藤の野心的な性格",
+      "佐藤の敵対心"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "加藤の打ち合わせ記録",
+      "description": "日比谷公園のカフェの店員が、加藤健太が事件時刻に打ち合わせをしていたことを証言する記録。レシートも添付されている。",
+      "discovery_text": "聞き込み捜査で、日比谷公園周辺のカフェを虱潰しに調べた結果、店員の証言とレシートを発見した。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5333144,
+        "lng": 139.5575128
+      },
+      "poi_name": "ゆうばえの道",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "加藤 健太",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "佐藤の現場視察記録",
+      "description": "新宿御苑の管理事務所に提出された佐藤美咲の現場視察申請書と、彼女が撮影した写真データ。時刻情報も記録されている。",
+      "discovery_text": "新宿御苑の管理事務所に問い合わせたところ、佐藤美咲の現場視察記録が見つかった。",
+      "importance": "important",
+      "location": {
+        "lat": 35.53156269999999,
+        "lng": 139.560454
+      },
+      "poi_name": "二の丸こぶし公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "佐藤 美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "血痕のついたナイフと借用書",
+      "description": "上野公園のゴミ箱から、被害者の血液が付着したナイフと、山本健一が五十嵐から多額の借金をしていることを示す借用書が発見された。ナイフの柄には山本の指紋も検出された。",
+      "discovery_text": "山本健一のアリバイを不審に思い、上野公園を重点的に捜索した結果、ゴミ箱からナイフと借用書を発見した。血痕と指紋が決め手となった。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5299722,
+        "lng": 139.5585024
+      },
+      "poi_name": "都田公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "山本 健一",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T17:39:27.364768",
+  "updated_at": "2025-08-27T17:39:27.364957",
+  "completed_at": null,
+  "final_score": null
+}

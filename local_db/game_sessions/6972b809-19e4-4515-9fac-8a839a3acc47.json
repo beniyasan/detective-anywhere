@@ -1,0 +1,133 @@
+{
+  "game_id": "6972b809-19e4-4515-9fac-8a839a3acc47",
+  "player_id": "player_1756295595001_lseg06lnp",
+  "status": "active",
+  "difficulty": "easy",
+  "scenario": {
+    "title": "消えたパン屋の秘密",
+    "description": "日曜日の朝、公園で人気のパン屋「ハッピーベーカリー」の店主、山田一郎さん（50歳）が倒れているのが発見されました。死因は後頭部への強打。現場には凶器は見つからず、目撃者もいません。山田さんは毎朝、公園のベンチで焼きたてのパンを食べるのが日課でした。第一発見者はジョギング中の女性で、午前7時頃に山田さんを発見したと証言しています。警察はすぐに捜査を開始し、3人の容疑者を特定しました。パン屋のライバル店の店主、佐藤健二。山田さんに多額の借金をしている元従業員、田中美咲。そして、山田さんと些細なトラブルを起こしていた近所の住人、加藤浩一。果たして犯人は誰なのか？公園、店、そして再び公園。3つの場所に隠された証拠を見つけ、事件の真相を解き明かしましょう。",
+    "victim": {
+      "name": "山田一郎",
+      "age": 50,
+      "occupation": "パン屋の店主",
+      "personality": "温厚で親切",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "地域で愛されるパン屋の店主。最近、ライバル店の出現で悩んでいた。"
+    },
+    "suspects": [
+      {
+        "name": "佐藤健二",
+        "age": 45,
+        "occupation": "ライバル店のパン屋の店主",
+        "personality": "野心家で負けず嫌い",
+        "temperament": "volatile",
+        "relationship": "ビジネスライバル",
+        "alibi": "午前7時は店を開ける準備をしていた",
+        "motive": "山田さんの店の客を奪うため",
+        "background": "最近開店したパン屋の店主。山田さんの店を強く意識している。"
+      },
+      {
+        "name": "田中美咲",
+        "age": 28,
+        "occupation": "無職",
+        "personality": "おとなしいが内向的",
+        "temperament": "nervous",
+        "relationship": "元従業員",
+        "alibi": "家で寝ていた",
+        "motive": "借金の返済を迫られていた",
+        "background": "山田さんの店で働いていたが、1年前に退職。多額の借金を抱えている。"
+      },
+      {
+        "name": "加藤浩一",
+        "age": 35,
+        "occupation": "会社員",
+        "personality": "短気",
+        "temperament": "defensive",
+        "relationship": "近所の住人",
+        "alibi": "公園でジョギングをしていた",
+        "motive": "山田さんと騒音トラブルを起こしていた",
+        "background": "山田さんの店の近所に住んでいる。以前、騒音でトラブルになったことがある。"
+      }
+    ],
+    "culprit": "加藤浩一",
+    "motive": "騒音トラブルを恨んでいた",
+    "method": "鈍器で後頭部を殴打",
+    "timeline": [
+      "午前6時: 山田さんが自宅を出る",
+      "午前6時半: 加藤浩一が公園でジョギング",
+      "午前7時: 山田さんが発見される"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "佐藤健二の店の開店準備記録",
+      "description": "佐藤健二のパン屋の開店準備を記録した監視カメラ映像。午前7時ちょうどに彼が店に入り、開店準備を始める様子が映っている。映像には時刻が表示されている。",
+      "discovery_text": "佐藤の店の近隣住民への聞き込みから、店の防犯カメラの存在を突き止めた。映像を確認すると、佐藤のアリバイを裏付ける証拠が記録されていた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5339073,
+        "lng": 139.5563476
+      },
+      "poi_name": "atelier de eplucher",
+      "poi_type": "shop",
+      "discovered_at": null,
+      "related_character": "佐藤健二",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "田中美咲の目撃証言",
+      "description": "田中美咲の母親が、事件発生時刻に美咲が家で寝ていたことを証言した。母親は娘の寝顔を確認したと話しており、詳細な時間まで覚えている。",
+      "discovery_text": "田中美咲の自宅周辺の聞き込み調査で、母親の証言を得た。母親は娘のアリバイを明確に証言した。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5330664,
+        "lng": 139.5566558
+      },
+      "poi_name": "川和富士公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "血痕のついたランニングシューズ",
+      "description": "ゆうばえの道のゴミ箱から、血痕のついたランニングシューズが発見された。血液型は被害者と一致。シューズのサイズは加藤浩一の足のサイズと一致し、内部には彼の名前が記されていた。",
+      "discovery_text": "加藤浩一がジョギングをしていたとされる『ゆうばえの道』を徹底的に捜索。不自然に置かれたゴミ箱の中を調べると、血痕のついたランニングシューズを発見した。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5333144,
+        "lng": 139.5575128
+      },
+      "poi_name": "ゆうばえの道",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "加藤浩一",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T20:53:39.109156",
+  "updated_at": "2025-08-27T20:53:39.109284",
+  "completed_at": null,
+  "final_score": null
+}

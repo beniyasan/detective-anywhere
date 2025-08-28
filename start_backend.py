@@ -10,6 +10,7 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
 # 環境変数読み込み
@@ -28,11 +29,24 @@ app = FastAPI(
 # CORS設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://detective-anywhere-hosting.web.app",
+        "https://detective-anywhere-hosting.firebaseapp.com", 
+        "http://localhost:8000",
+        "http://localhost:5000",  # Firebase serve
+        "http://127.0.0.1:8000",
+        "*"  # 開発用（本番では削除推奨）
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# 静的ファイルディレクトリのマウント
+base_dir = os.path.dirname(os.path.abspath(__file__))
+static_dir = os.path.join(base_dir, "static")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 @app.get("/")
 async def root():
@@ -73,22 +87,39 @@ async def health_check():
 @app.get("/web-demo.html")
 async def serve_web_demo():
     """Web Demo HTMLファイル提供"""
-    return FileResponse("/mnt/c/docker/detective-anywhere/web-demo.html")
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_path, "web-demo.html")
+    return FileResponse(file_path, media_type="text/html")
 
 @app.get("/mobile-app.html")
 async def serve_mobile_app():
     """Mobile App HTMLファイル提供"""
-    return FileResponse("/mnt/c/docker/detective-anywhere/mobile-app.html")
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_path, "mobile-app.html")
+    return FileResponse(file_path, media_type="text/html")
 
 @app.get("/manifest.json")
 async def serve_manifest():
     """PWA Manifestファイル提供"""
-    return FileResponse("/mnt/c/docker/detective-anywhere/manifest.json")
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_path, "manifest.json")
+    return FileResponse(file_path, media_type="application/json")
 
 @app.get("/service-worker.js")
 async def serve_service_worker():
     """Service Workerファイル提供"""
-    return FileResponse("/mnt/c/docker/detective-anywhere/service-worker.js")
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_path, "service-worker.js")
+    return FileResponse(file_path, media_type="application/javascript")
+
+@app.get("/favicon.ico")
+async def serve_favicon():
+    """Faviconファイル提供"""
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_path, "favicon.ico")
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="image/x-icon")
+    return {"message": "No favicon"}
 
 @app.post("/api/v1/game/start")
 async def start_game_demo(request: Request):
@@ -99,10 +130,12 @@ async def start_game_demo(request: Request):
     import sys
     import os
     
-    # POIサービスのインポートパスを追加
-    sys.path.append('/mnt/c/docker/detective-anywhere/backend/src')
+    # POIサービスのインポートパスを追加（Cloud Run対応）
+    backend_src_path = os.path.join(os.path.dirname(__file__), 'backend', 'src')
+    if backend_src_path not in sys.path:
+        sys.path.append(backend_src_path)
     from services.poi_service import POIService
-    from backend.src.config.secrets import get_api_key
+    from config.secrets import get_api_key
     
     try:
         # リクエストデータを取得

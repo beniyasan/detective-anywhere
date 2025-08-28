@@ -3,6 +3,7 @@ AIミステリー散歩 - メインアプリケーション
 """
 
 from typing import Dict, Any
+from datetime import datetime
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -28,52 +29,84 @@ async def lifespan(app: FastAPI):
     # ログ設定の初期化
     setup_logging()
     logger = get_logger(__name__, LogCategory.SYSTEM)
-    logger.info("Starting AI Mystery Walk API server")
     
     # 統一設定管理を使用
     settings = get_settings()
     
-    # 設定情報をログ出力
-    logger.info(
-        "Application startup",
-        environment=settings.environment.value,
-        database_project=settings.database.project_id,
-        use_emulator=settings.database.use_emulator,
-        structured_logging=settings.logging.enable_structured_logging
-    )
+    # 遅延初期化が有効かチェック
+    if settings.api.lazy_init_enabled:
+        logger.info("Starting AI Mystery Walk API server (Lazy Initialization Mode)")
+        
+        # 設定情報をログ出力
+        logger.info(
+            "Application startup",
+            environment=settings.environment.value,
+            database_project=settings.database.project_id,
+            use_emulator=settings.database.use_emulator,
+            structured_logging=settings.logging.enable_structured_logging,
+            lazy_init_enabled=True
+        )
+        
+        # LazyServiceManagerのインスタンスを作成（サービスはまだ初期化しない）
+        from .services.lazy_service_manager import lazy_service_manager
+        logger.info("LazyServiceManager initialized (services will be loaded on demand)")
+        
+        # バックグラウンドでクリティカルサービスのウォームアップを開始（非ブロッキング）
+        async def warmup_services():
+            """バックグラウンドでサービスをウォームアップ"""
+            try:
+                await asyncio.sleep(5)  # ヘルスチェック通過を待つ
+                logger.info("Starting background service warmup...")
+                await lazy_service_manager.warmup_critical_services()
+                logger.info("Background service warmup completed")
+            except Exception as e:
+                logger.warning(f"Background warmup failed: {e}")
+        
+        # ウォームアップタスクを非ブロッキングで開始
+        import asyncio
+        asyncio.create_task(warmup_services())
+        
+        print("✅ 初期化完了（遅延初期化モード）")
+    
+    else:
+        # 従来の初期化方式（開発環境など）
+        logger.info("Starting AI Mystery Walk API server (Traditional Initialization Mode)")
+        
+        logger.info(
+            "Application startup",
+            environment=settings.environment.value,
+            database_project=settings.database.project_id,
+            use_emulator=settings.database.use_emulator,
+            structured_logging=settings.logging.enable_structured_logging,
+            lazy_init_enabled=False
+        )
+        
+        # Firestoreの初期化
+        try:
+            await initialize_firestore()
+            logger.info("Firestore initialized successfully")
+        except Exception as e:
+            logger.warning(f"Firestore initialization failed, using local database: {e}")
+        
+        # AI、POI、ルートサービスの初期化
+        from .services.ai_service import ai_service
+        from .services.poi_service import poi_service
+        from .services.route_generation_service import route_generation_service
+        
+        await ai_service.initialize()
+        await route_generation_service.initialize()
+        
+        print("✅ 初期化完了（従来モード）")
     
     if settings.is_production:
         logger.info("Production environment configuration validated")
     elif settings.is_development:
         logger.info("Running in development environment")
     
-    # Firestoreの初期化
-    try:
-        await initialize_firestore()
-        logger.info("Firestore initialized successfully")
-    except Exception as e:
-        logger.warning(f"Firestore initialization failed, using local database: {e}")
-        # ローカルデータベースにフォールバック
-    
-    # AIサービスの初期化
-    from .services.ai_service import ai_service
-    await ai_service.initialize()
-    
-    # POIサービスの初期化
-    from .services.poi_service import poi_service
-    
-    # ルート生成サービスの初期化
-    from .services.route_generation_service import route_generation_service
-    await route_generation_service.initialize()
-    
-    print("✅ 初期化完了")
-    
     yield
     
     # シャットダウン
     print("🛑 サーバーをシャットダウンしています...")
-
-
 # FastAPIアプリケーションの作成
 app = FastAPI(
     title="AIミステリー散歩 API",
@@ -81,6 +114,54 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Firebase Hostingからのアクセスのみ許可するミドルウェア
+@app.middleware("http")
+async def firebase_only_middleware(request: Request, call_next):
+    """Firebase Hostingからのアクセスのみ許可"""
+    
+    # ヘルスチェックとルートエンドポイントは除外
+    if request.url.path in ["/", "/health", "/warmup"]:
+        response = await call_next(request)
+        return response
+    
+    # 許可されたOriginをチェック
+    origin = request.headers.get("origin")
+    referer = request.headers.get("referer")
+    
+    allowed_domains = [
+        "detective-anywhere-hosting.web.app",
+        "detective-anywhere-hosting.firebaseapp.com",
+        "localhost",
+        "127.0.0.1"
+    ]
+    
+    is_allowed = False
+    if origin:
+        for domain in allowed_domains:
+            if domain in origin:
+                is_allowed = True
+                break
+    elif referer:
+        for domain in allowed_domains:
+            if domain in referer:
+                is_allowed = True
+                break
+    
+    if not is_allowed:
+        return JSONResponse(
+            status_code=403,
+            content={
+                "error": {
+                    "code": "ACCESS_FORBIDDEN",
+                    "message": "Firebase Hosting経由でのみアクセス可能です",
+                    "redirect": "https://detective-anywhere-hosting.web.app"
+                }
+            }
+        )
+    
+    response = await call_next(request)
+    return response
 
 # 統一設定から CORS 設定を取得
 settings = get_settings()
@@ -138,35 +219,45 @@ async def root() -> Dict[str, str]:
 
 @app.get("/health")
 async def health_check() -> Dict[str, Any]:
-    """ヘルスチェック"""
+    """ヘルスチェック（軽量化版）"""
     settings = get_settings()
     
-    # サービス状態を統一設定から取得
-    services_status = {
-        "api": "running",
-        "environment": settings.environment.value
-    }
+    # LazyServiceManagerから状態を取得
+    from .services.lazy_service_manager import lazy_service_manager
+    service_status = lazy_service_manager.get_service_status()
     
-    if settings.is_production:
-        # 本番環境でのAPIキー検証
-        services_status.update({
-            "gemini_api": "available" if settings.api.gemini_api_key else "unavailable",
-            "google_maps_api": "available" if settings.api.google_maps_api_key else "unavailable",
-            "firestore": "connected",
-            "secret_manager": "enabled" if settings.security.use_secret_manager else "disabled"
-        })
-    else:
-        services_status.update({
-            "firestore": "emulator" if settings.database.use_emulator else "production",
-            "gemini": "available" if settings.api.gemini_api_key else "unavailable",
-            "google_maps": "available" if settings.api.google_maps_api_key else "unavailable"
-        })
-    
+    # 基本的な応答のみ返す（実際のサービス接続チェックは行わない）
     return {
         "status": "healthy",
-        "services": services_status,
-        "configuration": settings.to_dict() if settings.is_development else None
+        "environment": settings.environment.value,
+        "services": service_status,
+        "startup_mode": "lazy_initialization",
+        "timestamp": datetime.utcnow().isoformat()
     }
+
+
+@app.post("/warmup")
+async def warmup_services():
+    """サービスのウォームアップ（事前初期化）"""
+    from .services.lazy_service_manager import lazy_service_manager
+    
+    try:
+        # バックグラウンドでクリティカルサービスをウォームアップ
+        await lazy_service_manager.warmup_critical_services()
+        
+        service_status = lazy_service_manager.get_service_status()
+        return {
+            "status": "warmup_completed",
+            "services": service_status,
+            "message": "Critical services warmed up successfully"
+        }
+    except Exception as e:
+        logger.error(f"Warmup failed: {e}")
+        return {
+            "status": "warmup_partial", 
+            "services": lazy_service_manager.get_service_status(),
+            "message": f"Warmup partially failed: {str(e)}"
+        }
 
 
 # 静的ファイルマウント
@@ -176,22 +267,22 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/web-demo.html")
 async def serve_web_demo():
     """Web Demo HTMLファイル提供"""
-    return FileResponse("/mnt/c/docker/detective-anywhere/web-demo.html")
+    return FileResponse("/app/web-demo.html")
 
 @app.get("/mobile-app.html")
 async def serve_mobile_app():
     """Mobile App HTMLファイル提供"""
-    return FileResponse("/mnt/c/docker/detective-anywhere/mobile-app.html")
+    return FileResponse("/app/mobile-app.html")
 
 @app.get("/manifest.json")
 async def serve_manifest():
     """PWA Manifestファイル提供"""
-    return FileResponse("/mnt/c/docker/detective-anywhere/manifest.json")
+    return FileResponse("/app/manifest.json")
 
 @app.get("/service-worker.js")
 async def serve_service_worker():
     """Service Workerファイル提供"""
-    return FileResponse("/mnt/c/docker/detective-anywhere/service-worker.js")
+    return FileResponse("/app/service-worker.js")
 
 
 # エラーハンドラー

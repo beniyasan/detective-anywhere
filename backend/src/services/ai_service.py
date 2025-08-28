@@ -26,6 +26,14 @@ class AIService:
     def __init__(self):
         self.model = None
         self.gemini_api_key = get_api_key("gemini")
+        
+        # Gemini API初期化
+        if self.gemini_api_key:
+            genai.configure(api_key=self.gemini_api_key)
+            logger.info("Gemini API configured successfully")
+        else:
+            logger.warning("Gemini API key not found - using fallback mode")
+        
         self.model_name = get_settings().api.gemini_model if hasattr(get_settings().api, 'gemini_model') else 'gemini-1.5-pro'
         self.generation_config = {
             "temperature": 0.8,
@@ -56,22 +64,37 @@ class AIService:
         self.last_request_time = 0
         self.min_request_interval = 1.0  # 1秒間隔
         self.max_retries = get_settings().api.max_scenario_generation_retries if hasattr(get_settings().api, 'max_scenario_generation_retries') else 3
-        self.retry_delay = 2.0  # 2秒
+        self.retry_delay = 2.0  # 2秒  # 2秒
     
     async def initialize(self) -> None:
         """AIサービスの初期化"""
-        gemini_api_key = get_api_key('gemini')
-        if not gemini_api_key:
-            raise RuntimeError("Gemini API keyが設定されていません")
+        try:
+            gemini_api_key = get_api_key('gemini')
+            if not gemini_api_key:
+                logger.error("Gemini API key取得失敗 - Secret ManagerまたはCloud Run環境変数を確認してください")
+                raise RuntimeError("Gemini API keyが設定されていません")
             
-        genai.configure(api_key=gemini_api_key)
-        settings = get_settings()
-        model_name = getattr(settings.api, 'gemini_model', 'gemini-1.5-flash')
-        self.model = genai.GenerativeModel(
-            model_name=model_name,
-            generation_config=self.generation_config,
-            safety_settings=self.safety_settings
-        )
+            logger.info(f"Gemini API key取得成功 (長さ: {len(gemini_api_key)})")
+            genai.configure(api_key=gemini_api_key)
+            
+            settings = get_settings()
+            model_name = getattr(settings.api, 'gemini_model', 'gemini-1.5-flash')
+            logger.info(f"Gemini model設定: {model_name}")
+            
+            self.model = genai.GenerativeModel(
+                model_name=model_name,
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings
+            )
+            
+            # APIキーをインスタンス変数にも設定（重複初期化の解決）
+            self.gemini_api_key = gemini_api_key
+            
+            logger.info("AI Service初期化完了")
+            
+        except Exception as e:
+            logger.error(f"AI Service初期化エラー: {e}")
+            raise RuntimeError(f"AI Service初期化に失敗しました: {str(e)}")
     
     async def _call_gemini_api(self, prompt: str) -> str:
         """Gemini APIを呼び出してレスポンスを取得"""
@@ -128,7 +151,8 @@ class AIService:
                 if self.gemini_api_key:
                     logger.info("Using Gemini API for scenario generation")
                     response = await self._call_gemini_api(prompt)
-                    scenario_data = json.loads(response)
+                    json_str = self._clean_json_response(response)
+                    scenario_data = json.loads(json_str)
                 else:
                     # APIキーがない場合はランダムモックを使用
                     logger.info("No API key, using randomized mock scenario")
@@ -164,6 +188,112 @@ class AIService:
                     raise RuntimeError(f"シナリオ生成に失敗しました: {str(e)}")
         
         raise RuntimeError("最大リトライ回数を超えました")
+
+    async def generate_lightweight_scenario(
+        self,
+        request: ScenarioGenerationRequest
+    ) -> Scenario:
+        """
+        軽量シナリオ生成（5-10秒で完了）
+        - 基本骨格のみ生成
+        - 詳細は後から段階的に追加
+        """
+        
+        # 軽量プロンプト作成（文字数・複雑さを大幅削減）
+        lightweight_prompt = self._create_lightweight_scenario_prompt(request)
+        
+        try:
+            logger.info(f"軽量シナリオ生成開始 - 難易度: {request.difficulty}")
+            logger.info(f"APIキー存在確認: {bool(self.gemini_api_key)}")
+            
+            # Gemini Flash（高速モデル）を使用
+            if self.gemini_api_key:
+                logger.info("Gemini API使用してシナリオ生成中...")
+                logger.info(f"プロンプト内容（最初100文字）: {lightweight_prompt[:100]}")
+                
+                try:
+                    response = await self._call_gemini_api_fast(lightweight_prompt)
+                    logger.info(f"Gemini API応答受信 - 文字数: {len(response)}")
+                    logger.info(f"応答内容（最初200文字）: {response[:200]}")
+                    
+                    try:
+                        # マークダウンコードブロックを除去
+                        json_str = self._clean_json_response(response)
+                        scenario_data = json.loads(json_str)
+                        logger.info(f"JSON解析成功 - タイトル: {scenario_data.get('title', '不明')}")
+                        logger.info(f"説明文字数: {len(scenario_data.get('description', ''))}")
+                        logger.info(f"説明内容: {scenario_data.get('description', '')[:100]}...")
+                        
+                        # 基本シナリオオブジェクト作成
+                        scenario = self._parse_lightweight_scenario(scenario_data)
+                        logger.info(f"軽量シナリオ生成完了: {scenario.title} (難易度: {request.difficulty})")
+                        logger.info(f"最終説明文字数: {len(scenario.description)}")
+                        return scenario
+                        
+                    except json.JSONDecodeError as je:
+                        logger.error(f"Gemini API応答のJSON解析失敗: {je}")
+                        logger.error(f"レスポンス内容: {response[:500]}...")
+                        raise
+                        
+                except Exception as gemini_error:
+                    logger.error(f"Gemini API呼び出しエラー: {gemini_error}")
+                    logger.error(f"エラータイプ: {type(gemini_error).__name__}")
+                    logger.error(f"エラー詳細: {repr(gemini_error)}")
+                    raise  # エラーを再発生させてフォールバックへ
+                    
+            else:
+                logger.warning("APIキーなし - モックシナリオ生成")
+                # 高速モック生成
+                scenario_data = self._generate_fast_mock_scenario(request.location_context, request.suspect_count_range)
+                scenario = self._parse_lightweight_scenario(scenario_data)
+                logger.info(f"モックシナリオ生成完了: {scenario.title}")
+                return scenario
+            
+        except Exception as e:
+            logger.error(f"軽量シナリオ生成エラー: {e}")
+            logger.error(f"エラー詳細: {type(e).__name__}: {str(e)}")
+            # フォールバック: 即座シナリオ生成
+            logger.info("フォールバックシナリオ生成中...")
+            fallback_data = self._generate_fast_mock_scenario(request.location_context, request.suspect_count_range)
+            scenario = self._parse_lightweight_scenario(fallback_data)
+            logger.info(f"フォールバックシナリオ生成完了: {scenario.title}")
+            return scenario
+    
+    async def enhance_scenario_background(
+        self,
+        game_id: str,
+        base_scenario: Scenario,
+        request: ScenarioGenerationRequest
+    ):
+        """
+        バックグラウンドでシナリオを詳細化
+        - キャラクター背景強化
+        - 複雑な推理要素追加
+        - 動機・手法の詳細化
+        """
+        
+        try:
+            logger.info(f"シナリオ詳細化開始 game_id: {game_id}")
+            
+            # 詳細化プロンプト作成
+            enhancement_prompt = self._create_enhancement_prompt(base_scenario, request)
+            
+            # バックグラウンドで詳細生成
+            if self.gemini_api_key:
+                enhanced_data = await self._call_gemini_api(enhancement_prompt)
+                enhanced_scenario = self._merge_enhanced_scenario(base_scenario, enhanced_data)
+            else:
+                enhanced_scenario = self._enhance_mock_scenario(base_scenario)
+            
+            # データベースに更新保存
+            from .database_service import database_service
+            await database_service.update_game_scenario(game_id, enhanced_scenario)
+            
+            logger.info(f"シナリオ詳細化完了 game_id: {game_id}")
+            
+        except Exception as e:
+            logger.error(f"シナリオ詳細化エラー game_id: {game_id}, error: {e}")
+            # エラーでも基本ゲームは継続可能
     
     def _create_scenario_prompt(self, request: ScenarioGenerationRequest) -> str:
         """シナリオ生成用プロンプトを作成"""
@@ -271,6 +401,317 @@ class AIService:
 シナリオを生成してください。
 """
         return prompt
+
+    def _create_lightweight_scenario_prompt(self, request: ScenarioGenerationRequest) -> str:
+        """軽量シナリオ生成用プロンプト（高速・最小限）"""
+        import random
+        import time
+        
+        # 難易度による文字数調整
+        difficulty_settings = {
+            "easy": {
+                "description_length": "120-200文字",
+                "complexity": "単純で分かりやすい",
+                "suspects": request.suspect_count_range[1]
+            },
+            "normal": {
+                "description_length": "200-350文字", 
+                "complexity": "適度に複雑な",
+                "suspects": request.suspect_count_range[1]
+            },
+            "hard": {
+                "description_length": "350-500文字",
+                "complexity": "複雑で手の込んだ",
+                "suspects": request.suspect_count_range[1]
+            }
+        }
+        
+        settings = difficulty_settings.get(request.difficulty, difficulty_settings["normal"])
+        
+        # ユニークネス確保
+        random_seed = random.randint(1000, 9999)
+        timestamp = int(time.time())
+        
+        # シンプルなバリエーション
+        themes = ["人間関係", "金銭問題", "秘密", "裏切り"]
+        crimes = ["失踪", "盗難", "詐欺", "恐喝"]
+        
+        selected_theme = random.choice(themes)
+        selected_crime = random.choice(crimes)
+        
+        # location_contextの処理
+        location_info = request.location_context
+        if not location_info or location_info == "不明な地域の情報です。":
+            location_info = "都市部の商業地域"
+        location_clean = location_info.rstrip('。')
+        
+        # 容疑者のJSONテンプレートを動的生成
+        suspects_template = []
+        temperaments = ["nervous", "volatile", "sarcastic", "defensive", "calm"]
+        
+        for i in range(settings["suspects"]):
+            suspect_num = i + 1
+            temperament = temperaments[i % len(temperaments)]
+            suspects_template.append(f'''    {{
+      "name": "容疑者{suspect_num}名",
+      "age": 年齢,
+      "occupation": "職業", 
+      "personality": "性格",
+      "temperament": "{temperament}",
+      "relationship": "{selected_theme}に関連する関係",
+      "alibi": "具体的アリバイ",
+      "motive": null,
+      "background": null
+    }}''')
+        
+        suspects_json = ",\n".join(suspects_template)
+        
+        # よりシンプルなプロンプト
+        prompt = f"""推理ゲーム用のミステリー事件シナリオをJSON形式で作成してください。
+
+場所: {location_clean}
+難易度: {request.difficulty}
+テーマ: {selected_theme}を背景とした{selected_crime}事件
+容疑者数: {settings["suspects"]}人
+
+【厳守事項】:
+- description文字数: 必ず{settings["description_length"]}（最低でも{settings["description_length"].split('-')[0]}文字以上）
+- 短い文章は絶対禁止 - 「○○事件。証拠を集めて推理を進めよう」のような短文は不可
+- 毎回異なるユニークなシナリオ生成
+- 具体的で詳細な事件描写が必要
+- 容疑者は必ず{settings["suspects"]}人生成
+
+JSON出力:
+{{
+  "title": "ユニークな事件タイトル（10-15文字）",
+  "description": "【重要】必ず{settings['description_length']}で記述してください。{location_clean}で起きた{selected_theme}に関連する{selected_crime}事件の詳細な描写。被害者の状況、事件の経緯、現場の様子、不可解な謎、関係者の動き、時系列などを含む魅力的で引き込まれる事件説明。「証拠を集めて推理を進めよう」のような短い文ではなく、具体的で詳細な事件ストーリーを{settings['description_length']}で記述。",
+  "victim": {{
+    "name": "被害者名",
+    "age": 年齢,
+    "occupation": "職業",
+    "personality": "性格",
+    "temperament": "calm",
+    "relationship": "被害者",
+    "alibi": ""
+  }},
+  "suspects": [
+{suspects_json}
+  ],
+  "culprit": "容疑者1名",
+  "motive": "具体的な動機",
+  "method": "手口", 
+  "timeline": ["時系列"],
+  "theme": "human_drama",
+  "difficulty_factors": [],
+  "red_herrings": []
+}}
+
+注意: 
+- temperamentは calm|volatile|sarcastic|defensive|nervous から選択必須
+- ユニーク性のためのID: {random_seed}-{timestamp}
+- 【最重要】description は必ず{settings["description_length"]}で詳細に記述してください
+"""
+        return prompt
+    
+    def _create_enhancement_prompt(self, base_scenario: Scenario, request: ScenarioGenerationRequest) -> str:
+        """シナリオ詳細化用プロンプト"""
+        
+        prompt = f"""
+以下の基本シナリオを詳細化してください。
+
+## 基本シナリオ
+タイトル: {base_scenario.title}
+説明: {base_scenario.description}
+被害者: {base_scenario.victim.name}
+容疑者: {[s.name for s in base_scenario.suspects]}
+真犯人: {base_scenario.culprit}
+
+## 詳細化要求
+- 各キャラクターの背景を詳細化
+- 複雑な人間関係を追加
+- 動機を深掘り
+- ミスリード要素を追加
+- 推理要素を強化
+
+## 出力形式（JSON）
+基本シナリオの全フィールドを含め、以下を詳細化：
+- description: 400-800文字に拡張
+- 各キャラクターのbackground, motive を詳細化
+- difficulty_factors と red_herrings を追加
+- timeline を詳細化
+
+詳細化されたシナリオを生成してください。
+"""
+        return prompt
+
+    def _clean_json_response(self, response: str) -> str:
+        """Gemini APIのレスポンスからマークダウンコードブロックを除去"""
+        if response.startswith("```json"):
+            return response.replace("```json", "").replace("```", "").strip()
+        elif response.startswith("```"):
+            return response.replace("```", "").strip()
+        return response
+    
+    async def _call_gemini_api_fast(self, prompt: str) -> str:
+        """Gemini Flash（高速モデル）でAPI呼び出し"""
+        
+        try:
+            logger.info("Gemini API呼び出し開始")
+            logger.info(f"使用モデル: gemini-1.5-flash")
+            logger.info(f"プロンプト文字数: {len(prompt)}")
+            
+            # より軽量なGemini 1.5 Flash モデルを使用
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            
+            # より軽量な設定（レスポンス速度重視）
+            generation_config = genai.types.GenerationConfig(
+                temperature=0.5,  # より低い温度で安定性向上
+                max_output_tokens=2000,  # 適度に制限
+                top_p=0.8,
+                top_k=20,  # 選択肢を絞って高速化
+                candidate_count=1
+            )
+            
+            logger.info("Gemini API リクエスト送信中...")
+            
+            # タイムアウト60秒
+            response = await asyncio.wait_for(
+                model.generate_content_async(
+                    prompt,
+                    generation_config=generation_config,
+                    safety_settings=[
+                        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+                        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+                        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+                        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE"},
+                    ]
+                ),
+                timeout=60.0  # 60秒に延長
+            )
+            
+            logger.info("Gemini API レスポンス受信成功")
+            logger.info(f"レスポンス文字数: {len(response.text)}")
+            
+            return response.text
+            
+        except asyncio.TimeoutError:
+            logger.error("Gemini API タイムアウト (60秒)")
+            raise TimeoutError("Gemini Flash API call timed out")
+        except Exception as e:
+            logger.error(f"Gemini Flash API エラー: {e}")
+            logger.error(f"エラータイプ: {type(e).__name__}")
+            raise
+
+    def _generate_fast_mock_scenario(self, location_context: str, suspect_count_range: tuple = (3, 3)) -> dict:
+        """高速モックシナリオ生成"""
+        
+        import random
+        
+        titles = ["突然の失踪", "謎の訪問者", "消えた証拠", "偽りの証言"]
+        occupations = ["会社員", "店主", "学生", "主婦", "フリーランサー"]
+        
+        # 容疑者数を動的に決定
+        suspect_count = random.randint(suspect_count_range[0], suspect_count_range[1])
+        
+        # 容疑者名のプール
+        suspect_names = [
+            "佐藤花子", "田中一郎", "鈴木次郎", "高橋美咲", "渡辺健太",
+            "伊藤良子", "山田浩二", "中村真理", "小林隆史", "加藤恵美"
+        ]
+        
+        # 容疑者をランダムに生成
+        suspects = []
+        selected_names = random.sample(suspect_names, suspect_count)
+        temperaments = ["nervous", "volatile", "defensive", "calm"]
+        
+        for i, name in enumerate(selected_names):
+            suspects.append({
+                "name": name,
+                "age": random.randint(25, 60),
+                "occupation": random.choice(occupations),
+                "personality": random.choice(["社交的だが秘密主義", "無口で頑固", "神経質で疑い深い", "明るく積極的"]),
+                "temperament": random.choice(temperaments),
+                "relationship": random.choice(["知人", "同僚", "近隣住民", "関係者"]),
+                "alibi": random.choice(["仕事をしていました", "家にいました", "買い物に出ていました", "友人と会っていました"]),
+                "motive": None,
+                "background": None
+            })
+        
+        return {
+            "title": random.choice(titles),
+            "description": f"{location_context}で起きた不可解な事件。真相を探るため、証拠を集めて推理を進めよう。",
+            "victim": {
+                "name": "山田太郎",
+                "age": random.randint(25, 60),
+                "occupation": random.choice(occupations),
+                "personality": "真面目で責任感が強い",
+                "temperament": "calm",
+                "relationship": "被害者",
+                "alibi": ""
+            },
+            "suspects": suspects,
+            "culprit": suspects[0]["name"],  # 最初の容疑者を犯人に設定
+            "motive": "金銭トラブル",
+            "method": "計画的犯行",
+            "timeline": ["事件発生前の異変"],
+            "theme": "human_drama",
+            "difficulty_factors": [],
+            "red_herrings": []
+        }
+
+    def _parse_lightweight_scenario(self, scenario_data: dict) -> Scenario:
+        """軽量シナリオデータをScenarioオブジェクトに変換"""
+        
+        from shared.models.character import Character
+        from shared.models.scenario import Scenario
+        
+        # 被害者作成
+        victim_data = scenario_data["victim"]
+        victim = Character(
+            name=victim_data["name"],
+            age=victim_data["age"],
+            occupation=victim_data["occupation"],
+            personality=victim_data["personality"],
+            temperament=victim_data["temperament"],
+            relationship=victim_data["relationship"],
+            alibi=victim_data.get("alibi", "")
+        )
+        
+        # 容疑者リスト作成
+        suspects = []
+        for suspect_data in scenario_data["suspects"]:
+            suspect = Character(
+                name=suspect_data["name"],
+                age=suspect_data["age"],
+                occupation=suspect_data["occupation"],
+                personality=suspect_data["personality"],
+                temperament=suspect_data["temperament"],
+                relationship=suspect_data["relationship"],
+                alibi=suspect_data.get("alibi", "")
+            )
+            suspects.append(suspect)
+        
+        # Scenarioオブジェクト作成
+        scenario = Scenario(
+            title=scenario_data["title"],
+            description=scenario_data["description"],
+            victim=victim,
+            suspects=suspects,
+            culprit=scenario_data["culprit"],
+            motive=scenario_data["motive"],
+            method=scenario_data["method"],
+            timeline=scenario_data.get("timeline", []),
+            theme=scenario_data.get("theme"),
+            difficulty_factors=scenario_data.get("difficulty_factors", []),
+            red_herrings=scenario_data.get("red_herrings", [])
+        )
+        
+        return scenario
+
+    def _create_fallback_scenario(self, location_context: str, suspect_count_range: tuple = (3, 3)) -> Scenario:
+        """フォールバック用即座シナリオ"""
+        fallback_data = self._generate_fast_mock_scenario(location_context, suspect_count_range)
+        return self._parse_lightweight_scenario(fallback_data)
     
     def _generate_random_scenario(self, location_context: str) -> Dict[str, Any]:
         """ランダムな要素を含むモックシナリオを生成"""
@@ -503,7 +944,8 @@ class AIService:
                 if self.gemini_api_key:
                     logger.info("Using Gemini API for evidence generation")
                     response = await self._call_gemini_api(prompt)
-                    evidence_data = json.loads(response)
+                    json_str = self._clean_json_response(response)
+                    evidence_data = json.loads(json_str)
                 else:
                     # APIキーがない場合はモックを使用
                     logger.info("No API key, using mock evidence data")
@@ -659,7 +1101,8 @@ class AIService:
                     timeout=get_settings().api.scenario_generation_timeout if hasattr(get_settings().api, 'scenario_generation_timeout') else 30
                 )
                 
-                reaction_data = json.loads(response.text)
+                json_str = self._clean_json_response(response.text)
+                reaction_data = json.loads(json_str)
                 reactions = []
                 
                 for item in reaction_data["reactions"]:

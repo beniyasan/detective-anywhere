@@ -1,0 +1,76 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "backend/**",
+      "scripts/**",
+      "tests/**",
+      "docs/**",
+      "*.py",
+      "*.yaml",
+      "*.yml",
+      "Dockerfile",
+      "requirements*.txt",
+      "*.sh",
+      "local_db/**",
+      "**/*.py",
+      "**/*.exe",
+      "**/*.bin",
+      "**/Dockerfile*",
+      "**/*.pyc",
+      "**/__pycache__/**",
+      "deploy*.sh",
+      "quick-deploy.sh",
+      "start_backend.py",
+      "main.py",
+      ".env*",
+      "cloudbuild.yaml",
+      ".git/**",
+      ".vscode/**",
+      ".pytest_cache/**",
+      ".mypy_cache/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/",
+        "destination": "/mobile-app.html"
+      },
+      {
+        "source": "/index.html",
+        "destination": "/mobile-app.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "service-worker.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "manifest.json",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/manifest+json"
+          }
+        ]
+      }
+    ]
+  }
+}

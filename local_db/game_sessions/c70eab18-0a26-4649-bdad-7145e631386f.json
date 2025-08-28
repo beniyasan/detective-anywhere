@@ -1,0 +1,150 @@
+{
+  "game_id": "c70eab18-0a26-4649-bdad-7145e631386f",
+  "player_id": "player_1756294773012_neptxrmuw",
+  "status": "active",
+  "difficulty": "normal",
+  "scenario": {
+    "title": "公園の秘密",
+    "description": "静かな郊外の街、緑豊かな公園で高齢の男性が倒れているのが発見された。被害者は地元で有名な古書店店主、桜井進（70）。死因は後頭部への鈍器による外傷。事件発生時刻は午後3時頃と推定されている。桜井は人望が厚く、特にトラブルを抱えている様子もなかったため、周囲は驚きを隠せない。\n\n桜井には妻を5年前に亡くしており、一人暮らしだった。趣味は読書と散歩で、毎日のようにこの公園を訪れていたという。\n\n警察はすぐに捜査を開始し、4人の容疑者を特定した。1人目は桜井の甥でフリーターの田中一郎（25）。借金を抱えており、頻繁に桜井に金銭を無心していた。2人目は近所のカフェ店員、佐藤美咲（22）。桜井に好意を寄せており、たびたび店を訪れては長居していた。3人目は公園の常連客である山田健太（65）。元教師で、桜井とは将棋仲間だった。しかし、最近些細なことで口論になったという目撃情報もある。4人目は桜井の古書店でアルバイトをしていた大学生、木村花子（20）。真面目で責任感の強い性格だが、最近桜井と仕事のことで意見が衝突していた。\n\n公園内には、桜井が愛用していた文庫本、カフェの紙コップ、そして将棋の駒が散乱していた。果たして、誰が何の目的で桜井の命を奪ったのか？ 真実を解き明かす鍵は、公園に残された証拠の中にある。",
+    "victim": {
+      "name": "桜井進",
+      "age": 70,
+      "occupation": "古書店店主",
+      "personality": "温厚で親切",
+      "temperament": "calm",
+      "relationship": "被害者",
+      "alibi": null,
+      "motive": null,
+      "background": "妻に先立たれ一人暮らし。趣味は読書と散歩。"
+    },
+    "suspects": [
+      {
+        "name": "田中一郎",
+        "age": 25,
+        "occupation": "フリーター",
+        "personality": "軽薄で無責任",
+        "temperament": "nervous",
+        "relationship": "被害者の甥",
+        "alibi": "公園近くのショッピングモールにいた",
+        "motive": "借金返済のための金銭目的",
+        "background": "多額の借金を抱えている"
+      },
+      {
+        "name": "佐藤美咲",
+        "age": 22,
+        "occupation": "カフェ店員",
+        "personality": "明るく社交的",
+        "temperament": "defensive",
+        "relationship": "被害者に好意を寄せていた",
+        "alibi": "カフェで勤務していた",
+        "motive": "桜井に冷たくされたと思い込み逆恨み",
+        "background": "片思いの末に拒絶されたと思い込んでいる"
+      },
+      {
+        "name": "山田健太",
+        "age": 65,
+        "occupation": "元教師",
+        "personality": "頑固で短気",
+        "temperament": "volatile",
+        "relationship": "被害者の将棋仲間",
+        "alibi": "自宅にいた",
+        "motive": "将棋の対局で負けた腹いせ",
+        "background": "桜井と些細なことで口論していた"
+      },
+      {
+        "name": "木村花子",
+        "age": 20,
+        "occupation": "大学生",
+        "personality": "真面目で責任感がある",
+        "temperament": "sarcastic",
+        "relationship": "被害者の古書店でアルバイト",
+        "alibi": "図書館で勉強していた",
+        "motive": "仕事のことで意見が衝突していた",
+        "background": "桜井に厳しく指導されていた"
+      }
+    ],
+    "culprit": "田中一郎",
+    "motive": "借金返済のための金銭目的",
+    "method": "鈍器で後頭部を殴打",
+    "timeline": [
+      "午後2時: 桜井が公園で散歩",
+      "午後3時: 事件発生",
+      "午後3時半: 桜井が発見される"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "複数の容疑者",
+      "偽のアリバイ"
+    ],
+    "red_herrings": [
+      "佐藤美咲の好意",
+      "山田健太との口論"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "カフェのシフト表",
+      "description": "佐藤美咲が事件発生時刻にカフェで勤務していたことを証明するシフト表。店長と複数の同僚の証言も得られている。",
+      "discovery_text": "聞き込みを進めた結果、佐藤美咲が勤務していたカフェでシフト表を発見。店長は「美咲さんは事件時刻、確かにここで働いていました」と証言した。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5339073,
+        "lng": 139.5563476
+      },
+      "poi_name": "atelier de eplucher",
+      "poi_type": "shop",
+      "discovered_at": null,
+      "related_character": "佐藤美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "図書館の貸出記録と防犯カメラ映像",
+      "description": "木村花子が事件発生時刻に図書館にいたことを証明する貸出記録と防犯カメラ映像。",
+      "discovery_text": "木村花子のアリバイを検証するため図書館を訪れた探偵は、貸出記録と防犯カメラ映像を入手。記録と映像は、彼女が事件時刻に図書館で勉強していた事実を明確に示していた。",
+      "importance": "important",
+      "location": {
+        "lat": 35.53415999999999,
+        "lng": 139.558062
+      },
+      "poi_name": "アイコン（合同会社）",
+      "poi_type": "shop",
+      "discovered_at": null,
+      "related_character": "木村花子",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "血痕のついた財布と借用書",
+      "description": "川和富士公園の植え込みから、被害者の血痕が付着した田中一郎の財布と、多額の借金を証明する借用書が発見された。財布の中には、ショッピングモールのレシート（偽装工作に使用したもの）も入っていた。",
+      "discovery_text": "公園をくまなく捜索していた探偵は、不自然に荒らされた植え込みを発見。中を調べると、血痕のついた財布と借用書が見つかった。財布の中身を確認すると、田中一郎の名前が刻印されたクレジットカードと、事件当日のショッピングモールのレシートが出てきた。しかし、ショッピングモールの防犯カメラ映像には田中一郎の姿は確認できなかった。これはアリバイ工作のための偽装だったのだ。",
+      "importance": "critical",
+      "location": {
+        "lat": 35.5330664,
+        "lng": 139.5566558
+      },
+      "poi_name": "川和富士公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中一郎",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T20:40:03.149436",
+  "updated_at": "2025-08-27T20:40:03.149567",
+  "completed_at": null,
+  "final_score": null
+}

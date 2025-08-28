@@ -284,7 +284,7 @@ class POIService:
                             landmarks = f"{location_name}周辺の地域"
                             atmosphere = "日本国内の地方都市"
                         
-                        return f"{location_name}の{atmosphere}。{landmarks}の周辺エリア。"
+                        return f"{location_name}の{atmosphere}。{landmarks}の周辺エリア"
                         
                 except Exception as e:
                     logger.warning(f"Google Maps API error in get_location_context: {e}")
@@ -294,15 +294,16 @@ class POIService:
             if (35.5 <= lat <= 35.9) and (139.3 <= lng <= 139.9):
                 # 東京都・神奈川県エリア
                 if lat >= 35.65:  # 東京都心部寄り
-                    return "東京都内の都市部。東京駅、皇居、国会議事堂付近の周辺エリア。"
+                    return "東京都内の都市部。東京駅、皇居、国会議事堂付近の周辺エリア"
                 else:  # 神奈川県寄り
-                    return "神奈川県内の住宅地・商業地域。横浜・川崎周辺エリア。"
+                    return "神奈川県内の住宅地・商業地域。横浜・川崎周辺エリア"
             else:
-                return "日本国内の地方都市。地域の住宅地・商業地域。"
+                return "日本国内の地方都市。地域の住宅地・商業地域"
                 
         except (ValueError, TypeError, KeyError, AttributeError) as e:
             logger.error(f"Error in get_location_context: {e}")
-            return "不明な地域の情報です。"
+            # より具体的なフォールバック値を返す
+            return "都市部の住宅地・商業地域"
 
 
 # グローバルサービスインスタンス

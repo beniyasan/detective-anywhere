@@ -2,11 +2,11 @@
 steps:
   # Dockerイメージをビルド
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:$SHORT_SHA', '.']
+    args: ['build', '-t', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:latest', '.']
   
   # Dockerイメージをプッシュ
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:$SHORT_SHA']
+    args: ['push', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:latest']
   
   # Cloud Runにデプロイ
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -14,7 +14,7 @@ steps:
     - 'run'
     - 'deploy'
     - 'detective-anywhere'
-    - '--image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:$SHORT_SHA'
+    - '--image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:latest'
     - '--platform=managed'
     - '--region=asia-northeast1'
     - '--allow-unauthenticated'
@@ -23,9 +23,9 @@ steps:
     - '--cpu=2'
     - '--min-instances=0'
     - '--max-instances=10'
-    - '--set-env-vars=ENV=production,GOOGLE_CLOUD_PROJECT=$PROJECT_ID'
+    - '--set-env-vars=ENVIRONMENT=production,GOOGLE_CLOUD_PROJECT_ID=$PROJECT_ID,USE_SECRET_MANAGER=true,LAZY_INIT_ENABLED=true,USE_FIRESTORE=true,FIRESTORE_COLLECTION_PREFIX=mystery_walk_prod,ENABLE_STRUCTURED_LOGGING=true,GEMINI_MODEL=gemini-1.5-flash'
     - '--set-secrets=GEMINI_API_KEY=gemini-api-key:latest,GOOGLE_MAPS_API_KEY=google-maps-api-key:latest'
 
 # 生成された画像
 images:
-  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:$SHORT_SHA'
+  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/app:latest'

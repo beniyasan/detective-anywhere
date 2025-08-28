@@ -6,7 +6,8 @@ from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
-from ...services.route_generation_service import route_generation_service
+# LazyServiceManagerを使用
+from ...services.lazy_service_manager import lazy_service_manager
 from ...services.game_service import game_service
 from shared.models.route import (
     RouteGenerationRequest, RouteGenerationResult, OptimalRoute
@@ -80,6 +81,9 @@ async def generate_route(request: RouteGenerationRequestModel) -> RouteGeneratio
             user_preferences=request.user_preferences or {},
             difficulty_level=game_session.difficulty.value
         )
+        
+        # ルート生成サービスを取得（遅延初期化）
+        route_generation_service = await lazy_service_manager.get_route_service()
         
         # ルート生成実行
         result = await route_generation_service.generate_optimal_route(route_request)

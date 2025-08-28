@@ -1,0 +1,26 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build', 
+      '-f', 'Dockerfile.debug',
+      '-t', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/debug-app:latest', 
+      '.'
+    ]
+  
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/debug-app:latest']
+  
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      'run', 'deploy', 'detective-debug',
+      '--image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/debug-app:latest',
+      '--platform=managed',
+      '--region=asia-northeast1',
+      '--allow-unauthenticated',
+      '--port=8080',
+      '--memory=1Gi',
+      '--cpu=1'
+    ]
+
+images:
+  - 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/detective-anywhere/debug-app:latest'

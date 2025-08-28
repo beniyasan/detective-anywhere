@@ -44,6 +44,7 @@ class APIConfig:
     google_maps_api_key: Optional[str] = None
     gemini_api_key: Optional[str] = None
     google_cloud_project_id: Optional[str] = None
+    lazy_init_enabled: bool = True  # 遅延初期化を有効化
     
     @classmethod
     def from_env(cls) -> 'APIConfig':
@@ -51,7 +52,8 @@ class APIConfig:
         return cls(
             google_maps_api_key=os.getenv('GOOGLE_MAPS_API_KEY'),
             gemini_api_key=os.getenv('GEMINI_API_KEY'),
-            google_cloud_project_id=os.getenv('GOOGLE_CLOUD_PROJECT_ID')
+            google_cloud_project_id=os.getenv('GOOGLE_CLOUD_PROJECT_ID'),
+            lazy_init_enabled=os.getenv('LAZY_INIT_ENABLED', 'true').lower() == 'true'
         )
 
 

@@ -65,6 +65,62 @@ async def submit_deduction(request: DeductionRequest) -> DeductionSubmitResponse
             details=str(e)
         )
 
+@router.post("/question")
+async def ask_suspect_question(request: dict):
+    """
+    容疑者に質問を行う（フロントエンド互換性のため）
+    
+    - game_id: ゲームID
+    - suspect_name: 質問対象の容疑者名
+    - question_type: 質問タイプ
+    """
+    from ..errors import APIError
+    
+    try:
+        game_id = request.get("game_id")
+        suspect_name = request.get("suspect_name") 
+        question_type = request.get("question_type")
+        
+        if not game_id or not suspect_name or not question_type:
+            raise ValueError("game_id, suspect_name, question_type は必須です")
+        
+        # ゲーム情報を取得
+        game_session = await game_service.get_game_session(game_id)
+        if not game_session:
+            raise ValueError("ゲームが見つかりません")
+        
+        # 容疑者情報を取得
+        suspect = None
+        for s in game_session.scenario.suspects:
+            if s.name == suspect_name:
+                suspect = s
+                break
+                
+        if not suspect:
+            raise ValueError("指定された容疑者が見つかりません")
+        
+        # 質問タイプに応じた回答を生成
+        if question_type == "alibi":
+            response_text = f"{suspect.alibi}について詳しくお話しします。"
+        elif question_type == "relationship":
+            response_text = f"被害者との関係は{suspect.relationship}でした。"
+        elif question_type == "motive":
+            response_text = f"動機については...まあ、それは言いたくありませんね。"
+        else:
+            response_text = f"{suspect.name}として、その質問には答えられません。"
+        
+        return {
+            "suspect_name": suspect_name,
+            "question_type": question_type,
+            "response": response_text,
+            "temperament": suspect.temperament.value
+        }
+        
+    except ValueError as e:
+        raise APIError.bad_request(message=str(e))
+    except Exception as e:
+        raise APIError.internal_server_error(message=f"質問処理に失敗: {str(e)}")
+
 
 @router.get("/{game_id}/suspects", response_model=SuspectListResponse)
 async def get_suspects_list(game_id: str) -> SuspectListResponse:

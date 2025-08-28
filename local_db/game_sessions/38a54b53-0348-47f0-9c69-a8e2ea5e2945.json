@@ -1,0 +1,134 @@
+{
+  "game_id": "38a54b53-0348-47f0-9c69-a8e2ea5e2945",
+  "player_id": "player_1756290957607_ewgf0uj5r",
+  "status": "active",
+  "difficulty": "easy",
+  "scenario": {
+    "title": "公園での盗難事件",
+    "description": "日曜日の午後、平和な公園で事件は起きた。人気のストリートミュージシャン、ケンジのギターケースから高価なギターが盗まれたのだ。ケンジは演奏を終え、屋台のジュースを買っているほんの5分ほどの隙に、ギターは忽然と姿を消していた。公園には他に3人しかいなかった。ケンジの演奏を熱心に聴いていた少女アヤ、スケッチブックを広げて絵を描いていた青年タクミ、そしてベンチで読書をしていた初老の男性サトルだ。3人ともケンジとは面識がなく、それぞれの目的で公園を訪れていたようだが、果たして本当にそうだろうか？盗まれたギターはケンジにとって大切な宝物であり、生活の糧でもあった。警察に通報する前に、あなたは独自に調査を開始することにした。果たしてギターを盗んだ犯人は誰なのか？",
+    "victim": {
+      "name": "ケンジ",
+      "age": 28,
+      "occupation": "ストリートミュージシャン",
+      "personality": "穏やかで人当たりが良い",
+      "temperament": "calm",
+      "relationship": "ギターの持ち主",
+      "alibi": null,
+      "motive": null,
+      "background": "音楽で生計を立てている"
+    },
+    "suspects": [
+      {
+        "name": "アヤ",
+        "age": 10,
+        "occupation": "小学生",
+        "personality": "好奇心旺盛",
+        "temperament": "nervous",
+        "relationship": "なし",
+        "alibi": "ずっとケンジの演奏を聴いていました。",
+        "motive": "ギターに興味があった",
+        "background": "音楽が好き"
+      },
+      {
+        "name": "タクミ",
+        "age": 22,
+        "occupation": "美術大学生",
+        "personality": "寡黙で内向的",
+        "temperament": "calm",
+        "relationship": "なし",
+        "alibi": "風景画を描いていました。",
+        "motive": "高価な画材を買う金が欲しかった",
+        "background": "経済的に困窮している"
+      },
+      {
+        "name": "サトル",
+        "age": 65,
+        "occupation": "無職",
+        "personality": "気難しい",
+        "temperament": "defensive",
+        "relationship": "なし",
+        "alibi": "ベンチで読書をしていました。",
+        "motive": "騒音がうるさかった",
+        "background": "静かな環境を好む"
+      }
+    ],
+    "culprit": "タクミ",
+    "motive": "高価な画材を買う金を得るため",
+    "method": "ケンジがジュースを買っている隙にギターケースから盗んだ",
+    "timeline": [
+      "ケンジが公園で演奏を始める",
+      "アヤ、タクミ、サトルが公園に来る",
+      "ケンジがジュースを買いに行く",
+      "ギターが盗まれる"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "サトルの読書記録",
+      "description": "サトルが読んでいた小説『深紅の夕暮れ』の貸出記録。事件発生時刻とほぼ同時に図書館の自動貸出機で記録されていた。",
+      "discovery_text": "図書館のデータベースを照会したところ、サトルの貸出記録が見つかった。",
+      "importance": "important",
+      "location": {
+        "lat": 35.5339073,
+        "lng": 139.5563476
+      },
+      "poi_name": "atelier de eplucher",
+      "poi_type": "shop",
+      "discovered_at": null,
+      "related_character": "サトル",
+      "clue_text": ""
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "アヤのスケッチブック",
+      "description": "アヤのスケッチブックには、事件発生時間帯にケンジが演奏していた曲の楽譜の一部が書き写されていた。演奏に聞き入っていたため、盗難に及ぶ時間はなかったと考えられる。",
+      "discovery_text": "ゆうばえの道でアヤが落としたスケッチブックを見つけた。中にはケンジの演奏していた曲の楽譜が…",
+      "importance": "important",
+      "location": {
+        "lat": 35.5333144,
+        "lng": 139.5575128
+      },
+      "poi_name": "ゆうばえの道",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "アヤ",
+      "clue_text": ""
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "高価な画材の領収書",
+      "description": "タクミが事件直後に購入した高価な画材の領収書。購入時刻は事件発生直後であり、支払方法は現金。タクミは高価な画材を買う金が欲しかったため、盗難に及んだと考えられる。",
+      "discovery_text": "アイコン（合同会社）のゴミ箱から、くしゃくしゃになった領収書を見つけた。よく見ると、高価な画材の領収書で、購入者はタクミ…",
+      "importance": "critical",
+      "location": {
+        "lat": 35.53415999999999,
+        "lng": 139.558062
+      },
+      "poi_name": "アイコン（合同会社）",
+      "poi_type": "shop",
+      "discovered_at": null,
+      "related_character": "タクミ",
+      "clue_text": ""
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T19:36:20.838272",
+  "updated_at": "2025-08-27T19:36:20.838382",
+  "completed_at": null,
+  "final_score": null
+}

@@ -132,5 +132,10 @@ tmp/
 temp/
 
 # Project specific
+.codex/
 .claude/
 .serena/
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log

@@ -1,0 +1,172 @@
+{
+  "game_id": "da153d61-1b84-4cfa-82f1-ab9f8c5c8470",
+  "player_id": "player_1756290344078_az79jknsr",
+  "status": "active",
+  "difficulty": "hard",
+  "scenario": {
+    "title": "消えたコーヒー鑑定士",
+    "description": "霧深い街角、評判のコーヒー鑑定士、五十嵐馨が姿を消した。最後に目撃されたのは、市内に点在する7つのカフェのいずれか。五十嵐は、完璧な一杯を求めて日々カフェ巡りをしており、失踪当日も複数のカフェを訪れていたという。彼は新しいブレンド開発の最終段階にあり、競合他社との熾烈な争いを繰り広げていた。警察は、ライバル会社の関係者、弟子、そして奇妙なコーヒー愛好家を含む6名を容疑者として捜査を開始した。\n\n五十嵐は、厳格な性格で知られ、弟子たちにも妥協を許さない指導を行っていた。特に首席弟子の黒木は、五十嵐の完璧主義に強いプレッシャーを感じていた。一方、ライバル会社の社員、緑川は、五十嵐の新ブレンドの情報を得ようと躍起になっていたという噂がある。また、謎のコーヒー愛好家、白井は、五十嵐のブレンドを酷評するブログを運営しており、彼との間に確執があったことが判明した。さらに、五十嵐が頻繁に訪れていたカフェのオーナー、赤井は、五十嵐の失踪直後から様子がおかしく、何かを隠しているように見える。\n\n五十嵐の失踪は単なる行方不明か、それとも背後に複雑な人間関係と陰謀が渦巻く事件なのか？霧に包まれた街のように、真相は深い闇に覆われている。7つのカフェを巡り、散りばめられた証拠を集め、消えたコーヒー鑑定士の謎を解き明かせ。\n\n五十嵐は特定のカフェの砂糖入れに、重要なメモを隠す癖があったという情報も浮上している。これは単なる噂なのか、それとも事件解決の鍵となるのか？",
+    "victim": {
+      "name": "五十嵐 馨",
+      "age": 55,
+      "occupation": "コーヒー鑑定士",
+      "personality": "完璧主義者、厳格",
+      "temperament": "calm",
+      "relationship": "著名なコーヒー鑑定士",
+      "alibi": null,
+      "motive": null,
+      "background": "独自のブレンド開発で業界を牽引してきたが、最近はスランプ気味だった"
+    },
+    "suspects": [
+      {
+        "name": "黒木 誠",
+        "age": 28,
+        "occupation": "五十嵐の首席弟子",
+        "personality": "真面目、努力家",
+        "temperament": "nervous",
+        "relationship": "師弟関係",
+        "alibi": "失踪時刻には自宅で焙煎の練習をしていた",
+        "motive": "五十嵐の厳しい指導にプレッシャーを感じていた",
+        "background": "五十嵐の技術を継承することを夢見ている"
+      },
+      {
+        "name": "緑川 恵",
+        "age": 35,
+        "occupation": "ライバル会社の社員",
+        "personality": "野心家、冷徹",
+        "temperament": "volatile",
+        "relationship": "ビジネスライバル",
+        "alibi": "取引先との会食中だった",
+        "motive": "五十嵐の新ブレンドの情報を得ようとしていた",
+        "background": "業界でのし上がるために手段を選ばない"
+      },
+      {
+        "name": "白井 智也",
+        "age": 42,
+        "occupation": "コーヒー愛好家",
+        "personality": "偏屈、批評家",
+        "temperament": "sarcastic",
+        "relationship": "コーヒーを通じた因縁",
+        "alibi": "カフェでコーヒーを飲んでいた",
+        "motive": "五十嵐のブレンドを酷評し、反感を買っていた",
+        "background": "独自のコーヒー哲学を持つ"
+      },
+      {
+        "name": "赤井 秀樹",
+        "age": 48,
+        "occupation": "カフェオーナー",
+        "personality": "温厚、社交的",
+        "temperament": "defensive",
+        "relationship": "常連客",
+        "alibi": "店で仕込みをしていた",
+        "motive": "五十嵐に借金があった",
+        "background": "経営難に悩まされていた"
+      },
+      {
+        "name": "青田 美咲",
+        "age": 25,
+        "occupation": "カフェ店員",
+        "personality": "明るい、世話好き",
+        "temperament": "calm",
+        "relationship": "顔なじみ",
+        "alibi": "他のカフェでアルバイトをしていた",
+        "motive": "五十嵐にコーヒー豆の選定で意見を無視された",
+        "background": "コーヒーの知識が豊富"
+      },
+      {
+        "name": "黄瀬 健太",
+        "age": 30,
+        "occupation": "フリーライター",
+        "personality": "好奇心旺盛、観察力が高い",
+        "temperament": "calm",
+        "relationship": "取材対象",
+        "alibi": "図書館で資料を調べていた",
+        "motive": "五十嵐の特集記事を執筆予定だった",
+        "background": "コーヒー業界の裏事情を探っている"
+      }
+    ],
+    "culprit": "黒木 誠",
+    "motive": "五十嵐の新ブレンドを盗み、自分のものとして発表するため",
+    "method": "睡眠薬を混ぜたコーヒーを飲ませ、拉致",
+    "timeline": [
+      "五十嵐が複数のカフェを巡る",
+      "黒木が五十嵐に睡眠薬入りのコーヒーを飲ませる",
+      "黒木が五十嵐を連れ去る"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [
+      "複雑な人間関係",
+      "複数のカフェを巡る必要がある"
+    ],
+    "red_herrings": [
+      "ライバル会社の社員の工作",
+      "コーヒー愛好家の恨み"
+    ]
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "緑川恵の領収書",
+      "description": "緑川恵が事件発生時刻に『Nagauri tea』で取引先と会食していたことを示す領収書。日付と時刻が明記されており、取引先のサインもある。",
+      "discovery_text": "五十嵐のオフィスを捜索していた探偵は、ゴミ箱の中からくしゃくしゃになった領収書を見つけた。広げてみると、それは緑川恵のアリバイを証明する決定的な証拠だった。",
+      "importance": "important",
+      "location": {
+        "lat": 19.0784747,
+        "lng": 72.8767838
+      },
+      "poi_name": "Nagauri tea",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "緑川 恵",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "白井智也のカフェのレシート",
+      "description": "白井智也が事件発生時刻に『New Star Cafe』でコーヒーを飲んでいたことを示すレシート。日付と時刻が印字されている。注文内容はエスプレッソダブル。",
+      "discovery_text": "聞き込みを続けていた探偵は、『New Star Cafe』の店員から白井智也らしき人物を見かけたという証言を得た。レジを確認すると、確かに白井智也のレシートが残されていた。",
+      "importance": "important",
+      "location": {
+        "lat": 19.0752092,
+        "lng": 72.8770648
+      },
+      "poi_name": "New Star Cafe",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "白井 智也",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "焙煎豆の残骸と五十嵐のノート",
+      "description": "黒木誠の自宅（『BISMILLAH HOTEL』と判明）の焙煎機から、五十嵐の新ブレンドと同一の豆の残骸が発見された。さらに、五十嵐のノートには新ブレンドのレシピが詳細に記されており、黒木誠が盗み見る機会があったことが示唆されている。ノートには黒木誠の指紋も付着していた。",
+      "discovery_text": "黒木誠の自宅を家宅捜索した結果、焙煎機から微量のコーヒー豆の残骸が発見された。鑑定の結果、それは五十嵐の秘蔵の新ブレンドと一致した。さらに、五十嵐のオフィスから見つかったノートには新ブレンドのレシピが記されており、黒木誠の指紋が付着していた。",
+      "importance": "critical",
+      "location": {
+        "lat": 19.0780713,
+        "lng": 72.8747447
+      },
+      "poi_name": "BISMILLAH HOTEL",
+      "poi_type": "cafe",
+      "discovered_at": null,
+      "related_character": "黒木 誠",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 19.075984,
+    "lng": 72.877656
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-27T19:26:19.621397",
+  "updated_at": "2025-08-27T19:26:19.621610",
+  "completed_at": null,
+  "final_score": null
+}

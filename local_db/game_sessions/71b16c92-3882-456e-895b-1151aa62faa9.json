@@ -1,0 +1,133 @@
+{
+  "game_id": "71b16c92-3882-456e-895b-1151aa62faa9",
+  "player_id": "player_1756314101748_kiht96wky",
+  "status": "active",
+  "difficulty": "easy",
+  "scenario": {
+    "title": "公園の落書き事件",
+    "description": "穏やかな日曜日の午後、平和な公園に不穏な空気が漂っていた。公園のシンボルである大きな木の幹に、赤いスプレーで醜い落書きがされていたのだ。被害者はこの公園を管理する市役所職員の山田花子。彼女は落書きを発見した第一発見者でもあった。警察はすぐに3人の容疑者を特定した。近所の高校生、加藤健太。公園でスケートボードをすることを禁止されたことに腹を立てていた。次に、近所の犬の散歩愛好家、佐藤美咲。山田花子に犬の散歩マナーを注意されて逆恨みしていた。最後に、公園近くのカフェのオーナー、田中一郎。公園の景観が悪くなることで客足が減ることを心配していた。一見単純な落書き事件だが、それぞれの証言には微妙な食い違いがあり、真相は謎に包まれている。あなたは3つの公園を巡り、証拠を集めて真犯人を突き止めなければならない。",
+    "victim": {
+      "name": "山田花子",
+      "age": 35,
+      "occupation": "市役所職員",
+      "personality": "真面目",
+      "temperament": "calm",
+      "relationship": "公園管理担当",
+      "alibi": null,
+      "motive": null,
+      "background": "公園の美化に熱心に取り組んでいた。"
+    },
+    "suspects": [
+      {
+        "name": "加藤健太",
+        "age": 17,
+        "occupation": "高校生",
+        "personality": "反抗的",
+        "temperament": "volatile",
+        "relationship": "公園利用者（スケートボード）",
+        "alibi": "友達と別の公園にいた",
+        "motive": "スケートボード禁止への腹いせ",
+        "background": "頻繁に公園でスケートボードをしていた。"
+      },
+      {
+        "name": "佐藤美咲",
+        "age": 45,
+        "occupation": "主婦",
+        "personality": "神経質",
+        "temperament": "nervous",
+        "relationship": "公園利用者（犬の散歩）",
+        "alibi": "家で昼寝をしていた",
+        "motive": "犬の散歩マナーを注意されたことへの逆恨み",
+        "background": "毎日公園で犬の散歩をしていた。"
+      },
+      {
+        "name": "田中一郎",
+        "age": 50,
+        "occupation": "カフェオーナー",
+        "personality": "几帳面",
+        "temperament": "defensive",
+        "relationship": "公園近くのカフェ経営",
+        "alibi": "カフェで仕込みをしていた",
+        "motive": "公園の景観悪化による客足減少の懸念",
+        "background": "公園の景観を大切にしていた。"
+      }
+    ],
+    "culprit": "加藤健太",
+    "motive": "スケートボード禁止への腹いせ。落書きの内容がスケートボードに関するものだった。",
+    "method": "赤いスプレーによる落書き",
+    "timeline": [
+      "午前10時: 山田花子が公園を巡回",
+      "午後1時: 加藤健太が公園で落書き",
+      "午後3時: 山田花子が落書きを発見し通報"
+    ],
+    "theme": "human_drama",
+    "difficulty_factors": [],
+    "red_herrings": []
+  },
+  "evidence_list": [
+    {
+      "evidence_id": "evidence_1",
+      "name": "カフェの領収書",
+      "description": "田中一郎の名前と事件発生時刻を含むカフェの領収書。",
+      "discovery_text": "カフェのゴミ箱から、くしゃくしゃになった領収書を見つけた。よく見ると、田中一郎の名前と事件発生時刻が印字されていた…",
+      "importance": "important",
+      "location": {
+        "lat": 35.5304348,
+        "lng": 139.559814
+      },
+      "poi_name": "都田公園レストハウス",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "田中一郎",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_2",
+      "name": "目撃証言",
+      "description": "佐藤美咲が事件発生時刻に自宅にいるところを隣人が目撃したという証言。",
+      "discovery_text": "近隣住民への聞き込みで、佐藤美咲の家の隣人が、事件発生時刻に彼女が自宅のベランダで昼寝をしていたのを目撃していたことが判明した。",
+      "importance": "important",
+      "location": {
+        "lat": 35.53526840000001,
+        "lng": 139.5612376
+      },
+      "poi_name": "高山あかしあ公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "佐藤美咲",
+      "clue_text": null
+    },
+    {
+      "evidence_id": "evidence_3",
+      "name": "赤いスプレー缶",
+      "description": "高山くすのき公園の茂みに隠された、赤い塗料の残るスプレー缶。加藤健太の指紋が付着している。",
+      "discovery_text": "落書き現場近くの高山くすのき公園の茂みを捜索すると、赤いスプレー缶が隠されているのを発見した。鑑識の結果、缶からは加藤健太の指紋が検出された！",
+      "importance": "critical",
+      "location": {
+        "lat": 35.536904,
+        "lng": 139.5595391
+      },
+      "poi_name": "高山くすのき公園",
+      "poi_type": "park",
+      "discovered_at": null,
+      "related_character": "加藤健太",
+      "clue_text": null
+    }
+  ],
+  "discovered_evidence": [],
+  "player_location": {
+    "lat": 35.5331,
+    "lng": 139.5569
+  },
+  "game_rules": {
+    "discovery_radius": 50.0,
+    "time_limit": null,
+    "max_evidence": 8,
+    "hint_enabled": true,
+    "allow_multiple_attempts": false
+  },
+  "created_at": "2025-08-28T02:02:03.825808",
+  "updated_at": "2025-08-28T02:02:03.825903",
+  "completed_at": null,
+  "final_score": null
+}

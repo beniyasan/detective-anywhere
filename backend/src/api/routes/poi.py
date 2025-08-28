@@ -6,7 +6,8 @@ from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
-from ...services.poi_service import poi_service
+# LazyServiceManagerを使用
+from ...services.lazy_service_manager import lazy_service_manager
 from shared.models.location import Location, POI, POIType
 from ..errors import APIError, POIAPIError
 
@@ -48,6 +49,9 @@ async def get_nearby_pois(
     
     try:
         location = Location(lat=lat, lng=lng)
+        
+        # POIサービスを取得（遅延初期化）
+        poi_service = await lazy_service_manager.get_poi_service()
         
         # 位置の有効性チェック
         if not await poi_service.validate_location(location):
@@ -109,6 +113,9 @@ async def get_location_context(
     
     try:
         location = Location(lat=lat, lng=lng)
+        
+        # POIサービスを取得（遅延初期化）
+        poi_service = await lazy_service_manager.get_poi_service()
         
         if not await poi_service.validate_location(location):
             raise POIAPIError.invalid_location()
@@ -185,6 +192,9 @@ async def validate_game_area(
     
     try:
         location = Location(lat=lat, lng=lng)
+        
+        # POIサービスを取得（遅延初期化）
+        poi_service = await lazy_service_manager.get_poi_service()
         
         if not await poi_service.validate_location(location):
             return {

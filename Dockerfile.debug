@@ -1,7 +1,5 @@
-# Python 3.11 公式イメージを使用
 FROM python:3.11-slim
 
-# 作業ディレクトリを設定
 WORKDIR /app
 
 # システムパッケージの更新とインストール
@@ -18,8 +16,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # アプリケーションファイルをコピー
 COPY . .
 
-# ポート8080を公開（Cloud Run要件）
+# デバッグスクリプトを追加
+COPY debug_imports.py .
+
 EXPOSE 8080
 
-# Gunicornでアプリケーションを起動（シングルワーカー、タイムアウト延長）
-CMD ["gunicorn", "backend.src.main:app", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8080", "--timeout", "120"]
+# デバッグ用エントリポイント
+CMD ["python", "debug_imports.py"]

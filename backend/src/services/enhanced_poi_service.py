@@ -140,12 +140,19 @@ class EnhancedPOIService:
     
     async def initialize(self):
         """サービス初期化"""
-        google_maps_api_key = get_api_key('google_maps')
-        if google_maps_api_key:
-            self.gmaps = googlemaps.Client(key=google_maps_api_key)
-            logger.info("Google Maps APIが初期化されました")
-        else:
-            logger.warning("Google Maps API キーが設定されていません。モックデータを使用します")
+        try:
+            google_maps_api_key = get_api_key('google_maps')
+            if google_maps_api_key:
+                logger.info(f"Google Maps API key取得成功 (長さ: {len(google_maps_api_key)})")
+                self.gmaps = googlemaps.Client(key=google_maps_api_key)
+                logger.info("Google Maps API初期化完了")
+            else:
+                logger.error("Google Maps API key取得失敗 - Secret ManagerまたはCloud Run環境変数を確認してください")
+                logger.warning("モックデータモードで動作します")
+                
+        except Exception as e:
+            logger.error(f"Enhanced POI Service初期化エラー: {e}")
+            logger.warning("Google Maps API初期化失敗 - モックデータモードで動作します")
     
     async def find_evidence_suitable_pois(
         self,

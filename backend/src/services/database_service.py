@@ -91,6 +91,55 @@ class LocalFileDatabase:
         except Exception as e:
             logger.error(f"ドキュメント更新エラー: {e}")
             return False
+
+    async def update_game_scenario(self, game_id: str, enhanced_scenario):
+        """ゲームセッションのシナリオ部分のみ更新"""
+        try:
+            # 既存ゲームデータを取得
+            existing_data = await self.get_document("game_sessions", game_id)
+            if not existing_data:
+                raise ValueError(f"Game session not found: {game_id}")
+            
+            # シナリオ部分を更新
+            if hasattr(enhanced_scenario, 'dict'):
+                existing_data['scenario'] = enhanced_scenario.dict()
+            else:
+                existing_data['scenario'] = enhanced_scenario
+            
+            existing_data['updated_at'] = datetime.utcnow().isoformat()
+            
+            # ファイルに保存
+            await self.save_document("game_sessions", game_id, existing_data)
+            
+        except Exception as e:
+            logger.error(f"Failed to update game scenario in local DB: {e}")
+            raise
+
+    async def update_game_evidence(self, game_id: str, enhanced_evidence):
+        """ゲームセッションの証拠リスト部分のみ更新"""
+        try:
+            # 既存ゲームデータを取得
+            existing_data = await self.get_document("game_sessions", game_id)
+            if not existing_data:
+                raise ValueError(f"Game session not found: {game_id}")
+            
+            # 証拠リストを更新
+            evidence_data = []
+            for ev in enhanced_evidence:
+                if hasattr(ev, 'dict'):
+                    evidence_data.append(ev.dict())
+                else:
+                    evidence_data.append(ev)
+            
+            existing_data['evidence_list'] = evidence_data
+            existing_data['updated_at'] = datetime.utcnow().isoformat()
+            
+            # ファイルに保存
+            await self.save_document("game_sessions", game_id, existing_data)
+            
+        except Exception as e:
+            logger.error(f"Failed to update game evidence in local DB: {e}")
+            raise
     
     async def delete_document(self, collection: str, document_id: str) -> bool:
         """ドキュメントを削除"""
@@ -291,6 +340,49 @@ class DatabaseService:
                 return False
         else:
             return await self.local_db.update_document("game_sessions", game_id, update_data)
+
+    async def update_game_scenario(self, game_id: str, enhanced_scenario):
+        """ゲームのシナリオ部分のみ更新（段階的生成用）"""
+        try:
+            if self.use_firestore and self.firestore_client:
+                # Firestore更新
+                doc_ref = self.firestore_client.collection('game_sessions').document(game_id)
+                await doc_ref.update({
+                    'scenario': enhanced_scenario.dict() if hasattr(enhanced_scenario, 'dict') else enhanced_scenario,
+                    'updated_at': datetime.utcnow().isoformat()
+                })
+            else:
+                # ローカルファイル更新
+                await self.local_db.update_game_scenario(game_id, enhanced_scenario)
+                
+            logger.info(f"Game scenario updated: {game_id}")
+            
+        except Exception as e:
+            logger.error(f"Failed to update game scenario {game_id}: {e}")
+            raise
+
+    async def update_game_evidence(self, game_id: str, enhanced_evidence):
+        """ゲームの証拠リストのみ更新（段階的生成用）"""
+        try:
+            if self.use_firestore and self.firestore_client:
+                # Firestore更新
+                doc_ref = self.firestore_client.collection('game_sessions').document(game_id)
+                evidence_data = [
+                    ev.dict() if hasattr(ev, 'dict') else ev for ev in enhanced_evidence
+                ]
+                await doc_ref.update({
+                    'evidence_list': evidence_data,
+                    'updated_at': datetime.utcnow().isoformat()
+                })
+            else:
+                # ローカルファイル更新
+                await self.local_db.update_game_evidence(game_id, enhanced_evidence)
+                
+            logger.info(f"Game evidence updated: {game_id}")
+            
+        except Exception as e:
+            logger.error(f"Failed to update game evidence {game_id}: {e}")
+            raise
     
     async def get_active_games_by_player(self, player_id: str) -> List[Dict[str, Any]]:
         """プレイヤーのアクティブゲームを取得"""

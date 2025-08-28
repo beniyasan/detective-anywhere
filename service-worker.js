@@ -5,10 +5,8 @@
 const CACHE_NAME = 'detective-anywhere-v1';
 const urlsToCache = [
   '/',
-  '/web-demo.html',
-  '/manifest.json',
-  '/static/css/mobile.css',
-  '/static/js/app.js'
+  '/mobile-app.html',
+  '/manifest.json'
 ];
 
 // キャッシュ戦略
@@ -161,12 +159,19 @@ async function cacheFirst(request) {
 async function staleWhileRevalidate(request) {
   const cachedResponse = await caches.match(request);
   
-  const fetchPromise = fetch(request).then(networkResponse => {
-    if (networkResponse.ok) {
-      const cache = caches.open(CACHE_NAME);
-      cache.then(c => c.put(request, networkResponse.clone()));
+  const fetchPromise = fetch(request).then(async networkResponse => {
+    if (networkResponse && networkResponse.ok) {
+      try {
+        const cache = await caches.open(CACHE_NAME);
+        await cache.put(request, networkResponse.clone());
+      } catch (err) {
+        console.warn('[Service Worker] Cache update failed:', err);
+      }
     }
     return networkResponse;
+  }).catch(err => {
+    console.warn('[Service Worker] Network request failed:', err);
+    throw err;
   });
   
   return cachedResponse || fetchPromise;
